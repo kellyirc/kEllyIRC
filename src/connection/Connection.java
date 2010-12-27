@@ -1,13 +1,13 @@
 package connection;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.jibble.pircbot.PircBot;
 import org.jibble.pircbot.TrustingSSLSocketFactory;
 
 import shared.GlobalSettings;
 import shared.Message;
-import ui.MainWindow;
 
 public class Connection extends PircBot{
 	//this will have to be extended to allow more server connections, and the class will have to be renamed
@@ -20,6 +20,8 @@ public class Connection extends PircBot{
 		globals = g;
 		this.server = server;
 		this.nick = nick;
+		
+		globals.messages.put(server, new HashMap<String, ArrayList<Message>>());
 		
 		setAutoNickChange(true);
 		setName(nick);
