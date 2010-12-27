@@ -30,7 +30,6 @@ public class TrustingSSLSocketFactory extends SSLSocketFactory {
      * is used.
      * @throws SSLException if it cannot initialize correctly.
      */
-    @SuppressWarnings("restriction")
 	public TrustingSSLSocketFactory() throws SSLException {
         Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
         System.setProperty("java.protocol.handler.pkgs", "com.sun.net.ssl.internal.www.protocol");
