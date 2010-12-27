@@ -8,6 +8,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -16,6 +17,8 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.DisposeEvent;
 
 import shared.GlobalSettings;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 
 public class MainWindow extends ApplicationWindow {
 	
@@ -24,21 +27,26 @@ public class MainWindow extends ApplicationWindow {
 	private Text temp_output;
 	private Text temp_input;
 	private Text temp_who;
+	
+	private Display display;
 
 	/**
 	 * Create the application window.
 	 */
-	public MainWindow(GlobalSettings g) {
+	public MainWindow(Display d, GlobalSettings g) {
 		super(null);
 		
+		display = d;
 		globals = g;
+		globals.setMain(this);
 		
 		createActions();
 		addToolBar(SWT.FLAT | SWT.WRAP);
 		addMenuBar();
 		addStatusLine();
-
+		
 		new Connection(globals, "irc.esper.net","SlaveOfElly");
+		globals.manageQueue(this);
 	}
 
 	/**
@@ -55,6 +63,20 @@ public class MainWindow extends ApplicationWindow {
 		temp_output.setBounds(10, 10, 464, 332);
 		
 		temp_input = new Text(container, SWT.BORDER);
+		temp_input.addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				if(e.character == SWT.CR){
+					//TODO:
+					//send to message queue
+					//also send to the server
+					//somehow, the connection needs to be passed into this method, or needs to be gottem
+					//	or something.. so it knows what connection to use when sending the message to the server
+					//perhaps 
+					//THATS IT -- a new Text class must exist. It must be extended to have a connection variable passed to it
+					//	then it can store the connection so it knows what one to use. 
+				}
+			}
+		});
 		temp_input.setBounds(10, 348, 464, 21);
 		
 		temp_who = new Text(container, SWT.BORDER);
@@ -122,5 +144,17 @@ public class MainWindow extends ApplicationWindow {
 	@Override
 	protected Point getInitialSize() {
 		return new Point(640, 480);
+	}
+
+	public void setDisplay(Display display) {
+		this.display = display;
+	}
+
+	public Display getDisplay() {
+		return display;
+	}
+	
+	public Text getTO() {
+		return temp_output;
 	}
 }

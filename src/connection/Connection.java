@@ -1,8 +1,5 @@
 package connection;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import org.jibble.pircbot.PircBot;
 import org.jibble.pircbot.TrustingSSLSocketFactory;
 
@@ -20,8 +17,6 @@ public class Connection extends PircBot{
 		globals = g;
 		this.server = server;
 		this.nick = nick;
-		
-		globals.messages.put(server, new HashMap<String, ArrayList<Message>>());
 		
 		setAutoNickChange(true);
 		setName(nick);
@@ -44,15 +39,8 @@ public class Connection extends PircBot{
 	protected void onMessage(String channel, String sender, String login,
 			String hostname, String message) {
 
-		
-		Message newMessage = new Message(message);
-		if(globals==null) {
-			System.err.println("CAKE");
-		} else {
-			globals.messages.get(server).get(channel).add(newMessage);
-		}
-		
-		
+		globals.queue.add(new Message(message,sender));	
+		globals.manageQueue(globals.getMain());
 
 		super.onMessage(channel, sender, login, hostname, message);
 	}
@@ -63,7 +51,7 @@ public class Connection extends PircBot{
 	@Override
 	public void joinChannel(String channel) {
 
-		globals.messages.get(server).put(channel, new ArrayList<Message>());
+		//globals.messages.get(server).put(channel, new ArrayList<Message>());
 		
 		super.joinChannel(channel);
 	}
@@ -74,7 +62,7 @@ public class Connection extends PircBot{
 	@Override
 	public void joinChannel(String channel, String key) {
 		
-		globals.messages.get(server).put(channel, new ArrayList<Message>());
+		//globals.messages.get(server).put(channel, new ArrayList<Message>());
 		
 		super.joinChannel(channel, key);
 	}

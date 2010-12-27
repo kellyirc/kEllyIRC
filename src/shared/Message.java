@@ -2,11 +2,12 @@ package shared;
 
 public class Message {
 	
-	private String content;
+	private String content, sender;
 	
 	//other things like author, timestamp, etc
-	public Message(String content){
-		this.setContent(content);
+	public Message(String content, String sender){
+		this.setContent(content+"\n");
+		this.setSender(sender);
 	}
 
 	public void setContent(String content) {
@@ -15,5 +16,13 @@ public class Message {
 
 	public String getContent() {
 		return content;
+	}
+
+	public void setSender(String sender) {
+		this.sender = sender;
+	}
+
+	public String getSender() {
+		return sender;
 	}
 }
