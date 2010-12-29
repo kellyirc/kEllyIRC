@@ -10,43 +10,62 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 
 import connection.Connection;
+
+import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.DisposeEvent;
 
-import shared.GlobalSettings;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.layout.FormLayout;
 
 public class MainWindow extends ApplicationWindow {
 	
-	GlobalSettings globals;
-	
-	private Text temp_output;
-	private Text temp_input;
-	private Text temp_who;
-	
 	private Display display;
+	private Composite parent;
+	private CTabFolder container;
 
 	/**
 	 * Create the application window.
 	 */
-	public MainWindow(Display d, GlobalSettings g) {
+	public MainWindow(Display d) {
 		super(null);
-		
-		display = d;
-		globals = g;
-		globals.setMain(this);
 		
 		createActions();
 		addToolBar(SWT.FLAT | SWT.WRAP);
 		addMenuBar();
 		addStatusLine();
 		
-		new Connection(globals, "irc.esper.net","SlaveOfElly");
-		globals.manageQueue(this);
+		display = d;
+		RoomManager.setMain(this);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#open()
+	 */
+	@Override
+	public int open() {
+		int i = super.open();
+		
+		return i;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#create()
+	 */
+	@Override
+	public void create() {
+		super.create();
+		//TODO: remove this, and make it based on the actual connection settings instead of this.
+		new Connection(container, "irc.esper.net","DeadBaby");
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.ApplicationWindow#close()
+	 */
+	@Override
+	public boolean close() {
+		return super.close();
 	}
 
 	/**
@@ -56,32 +75,11 @@ public class MainWindow extends ApplicationWindow {
 	@Override
 	protected Control createContents(Composite parent) {
 		setStatus("");
-		Composite container = new Composite(parent, SWT.NONE);
+		this.parent = parent;
 		
-		temp_output = new Text(container, SWT.BORDER | SWT.V_SCROLL);
-		temp_output.setEditable(false);
-		temp_output.setBounds(10, 10, 464, 332);
-		
-		temp_input = new Text(container, SWT.BORDER);
-		temp_input.addKeyListener(new KeyAdapter() {
-			public void keyPressed(KeyEvent e) {
-				if(e.character == SWT.CR){
-					//TODO:
-					//send to message queue
-					//also send to the server
-					//somehow, the connection needs to be passed into this method, or needs to be gottem
-					//	or something.. so it knows what connection to use when sending the message to the server
-					//perhaps 
-					//THATS IT -- a new Text class must exist. It must be extended to have a connection variable passed to it
-					//	then it can store the connection so it knows what one to use. 
-				}
-			}
-		});
-		temp_input.setBounds(10, 348, 464, 21);
-		
-		temp_who = new Text(container, SWT.BORDER);
-		temp_who.setEditable(false);
-		temp_who.setBounds(480, 10, 134, 359);
+		CTabFolder container = new CTabFolder(parent, SWT.NONE);
+		container.setLayout(new FormLayout());
+		this.container = container;
 
 		return container;
 	}
@@ -131,11 +129,13 @@ public class MainWindow extends ApplicationWindow {
 	protected void configureShell(Shell newShell) {
 		newShell.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent arg0) {
+				//TODO: do quitting stuff here
 				System.exit(0);
 			}
 		});
 		super.configureShell(newShell);
 		newShell.setText("kellyIRC");
+		newShell.setMinimumSize(640, 480); 
 	}
 
 	/**
@@ -153,8 +153,16 @@ public class MainWindow extends ApplicationWindow {
 	public Display getDisplay() {
 		return display;
 	}
-	
-	public Text getTO() {
-		return temp_output;
+
+	public void setParent(Composite parent) {
+		this.parent = parent;
+	}
+
+	public Composite getParent() {
+		return parent;
+	}
+
+	public Composite getContainer() {
+		return container;
 	}
 }

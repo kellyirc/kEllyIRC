@@ -11,11 +11,13 @@ public class Initializer {
 	 * @param args
 	 */
 	public static void main(String args[]) {
-		//first time setup stuff if properties file not found
-		GlobalSettings g = new GlobalSettings();
+		
+		//TODO: first time setup stuff if properties file not found
+		
 		final Display disp = Display.getDefault();
+		MainWindow window = null;
 		try {
-			MainWindow window = new MainWindow(disp, g);
+			window = new MainWindow(disp);
 			window.setBlockOnOpen(true);
 			window.open();
 			Display.getCurrent().dispose();
