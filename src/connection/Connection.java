@@ -43,13 +43,6 @@ public class Connection extends PircBot{
 		setName(nick);
 		setVerbose(true);
 		
-		try {
-			this.connect(server, 6697, new TrustingSSLSocketFactory());
-			//TODO: This can be modified for specific server-settings (including SSL)
-			//this.connect(server);
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
 		CTabItem c = new CTabItem(parent, SWT.NONE);
 		c.setText(server);
 		
@@ -63,14 +56,40 @@ public class Connection extends PircBot{
 		chanList.setLayoutData(fd_tabFolder);
 		chanList.setSelectionBackground(Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
 		
+		chanList.setSimple(false);
+
 		//every connection needs a console
 		createRoom("Console");
 		
 		//tell the channel list that it has a tab, and that it needs to be drawn
 		c.setControl(chanList);
+
+		try {
+			this.connect(server, 6697, new TrustingSSLSocketFactory());
+			//TODO: This can be modified for specific server-settings (including SSL)
+			//this.connect(server);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 		
 		//TODO: remove this -- it is temporary
 		this.joinChannel("#dgr");
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jibble.pircbot.PircBot#onNotice(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 */
+	@Override
+	protected void onNotice(String sourceNick, String sourceLogin,
+			String sourceHostname, String target, String notice) {
+
+		if(sourceLogin.equals("")) {
+			RoomManager.queue.add(new Message(this, notice, "Notice from "+sourceNick, "Console"));	
+			RoomManager.manageQueue();
+		}
+		
+		super.onNotice(sourceNick, sourceLogin, sourceHostname, target, notice);
 	}
 
 	/**
@@ -112,7 +131,7 @@ public class Connection extends PircBot{
 	private void createRoom(String channel) {
 		Room r = RoomManager.createRoom(chanList,SWT.NONE);
 
-		r.setChannel(new Channel(getChanList(), channel));
+		r.setChannel(new Channel(getChanList(), channel, this));
 		r.setServerConnection(this);
 		r.instantiate();
 	}
@@ -125,6 +144,7 @@ public class Connection extends PircBot{
 		//TODO: not auto generated, just needs to be modified to function like joinChannel(String channel)	
 		super.joinChannel(channel, key);
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.jibble.pircbot.PircBot#onAction(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
@@ -133,6 +153,37 @@ public class Connection extends PircBot{
 			String target, String action) {
 		// TODO Auto-generated method stub
 		super.onAction(sender, login, hostname, target, action);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jibble.pircbot.PircBot#onServerResponse(int, java.lang.String)
+	 */
+	@Override
+	protected void onServerResponse(int code, String response) {
+		switch(code){
+		//topic
+		case 332:
+			String channel = response.split(":")[0].trim();
+			channel = channel.substring(channel.indexOf("#"));
+			String topic = response;//.split(":")[1];
+			topic = topic.substring(topic.indexOf("'"));//.substring(channel.indexOf("'"));
+			for(Room r : RoomManager.getRooms()){
+				if(r.getChannel().getChannelName().equals(channel)){
+					RoomManager.changeTopic(r, topic);
+					break;
+				}
+			}
+			break;
+		//
+		case 333:
+		//who list
+		case 353:
+			
+		default:
+			RoomManager.queue.add(new Message(this, response, "["+code+"] Server Response", "Console"));	
+			RoomManager.manageQueue();
+		}
+		super.onServerResponse(code, response);
 	}
 
 	/* (non-Javadoc)
@@ -183,11 +234,11 @@ public class Connection extends PircBot{
 	@Override
 	protected void onMessage(String channel, String sender, String login,
 			String hostname, String message) {
-
+		
 		//add the message to the queue, and then make the queue clean itself out
-		RoomManager.queue.add(new Message(this, message,sender,channel));	
+		RoomManager.queue.add(new Message(this, message, sender, channel));	
 		RoomManager.manageQueue();
-
+		
 		super.onMessage(channel, sender, login, hostname, message);
 	}
 
@@ -227,6 +278,9 @@ public class Connection extends PircBot{
 	@Override
 	protected void onPrivateMessage(String sender, String login,
 			String hostname, String message) {
+
+		// TODO: check for a pm tab, if not, create one
+		
 		// TODO Auto-generated method stub
 		super.onPrivateMessage(sender, login, hostname, message);
 	}

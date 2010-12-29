@@ -14,7 +14,7 @@ public class RoomManager {
 	public static CopyOnWriteArrayList<Message> pmQueue = new CopyOnWriteArrayList<Message>();
 	public static CopyOnWriteArrayList<Message> queue = new CopyOnWriteArrayList<Message>();
 	
-	private static ArrayList<Room> rooms = new ArrayList<Room>();
+	public static ArrayList<Room> rooms = new ArrayList<Room>();
 
 	public static Room createRoom(Composite c, int style) {
 		Room r = new Room(c, style);
@@ -35,8 +35,22 @@ public class RoomManager {
         }
 	}
 	
+	public static void changeTopic(final Room c, final String t) {
+        if(!m.getDisplay().isDisposed()){
+            m.getDisplay().asyncExec (new Runnable () {
+               public void run () {
+            	   c.setTopic(t);
+               }
+            });
+        }
+	}
+	
 	public static void setMain(MainWindow w){
 		m = w;
+	}
+	
+	public static MainWindow getMain(){
+		return m;
 	}
 	
 	public static void addRoom(Room r){
@@ -51,7 +65,7 @@ public class RoomManager {
 		}
 	}
 
-	public ArrayList<Room> getRooms() {
+	public static ArrayList<Room> getRooms() {
 		return rooms;
 	}
 	

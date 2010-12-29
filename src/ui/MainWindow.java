@@ -57,7 +57,7 @@ public class MainWindow extends ApplicationWindow {
 	public void create() {
 		super.create();
 		//TODO: remove this, and make it based on the actual connection settings instead of this.
-		new Connection(container, "irc.esper.net","DeadBaby");
+		new Connection(container, "irc.esper.net","kellyIRC");
 	}
 
 	/* (non-Javadoc)

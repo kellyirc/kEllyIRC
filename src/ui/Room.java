@@ -15,7 +15,9 @@ public class Room extends Composite{
 	
 	private Channel channel;
 	
-	private Text output, input, who;
+	private Text output, input, who, topicBox;
+	
+	private String topic;
 	
 	public Room(Composite parent, int style){
 		super(parent, style);
@@ -27,16 +29,25 @@ public class Room extends Composite{
 		Composite composite = new Composite(getServerConnection().getChanList(), SWT.NONE);
 		channel.getTabRef().setControl(composite);
 		
+		topicBox = new Text(composite, SWT.BORDER | SWT.WRAP);
+		topicBox.setEditable(false);
+		
 		//set up the output window
-		output = new Text(composite, SWT.BORDER | SWT.V_SCROLL);
+		output = new Text(composite, SWT.BORDER | SWT.V_SCROLL | SWT.WRAP);
 		output.setEditable(false);
 		
 		//set up the input box and it's enter-key listener
 		input = new Text(composite, SWT.BORDER);
+		
+		//TODO: make this work
+		if(input.forceFocus()){
+			System.out.println("AWESOMESAUCE");
+		}
 		input.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				//CR == Carriage Return == Enter
+				//TODO: text parsing for commands -- funnel through a doCommand method
 				if(e.character == SWT.CR){
 					serverConnection.sendMessage(channel.getChannelName(), input.getText());
 					input.setText("");
@@ -55,6 +66,7 @@ public class Room extends Composite{
 			gl_composite.createParallelGroup(GroupLayout.LEADING)
 				.add(gl_composite.createSequentialGroup()
 					.add(gl_composite.createParallelGroup(GroupLayout.LEADING)
+						.add(topicBox, GroupLayout.DEFAULT_SIZE, 496, Short.MAX_VALUE)
 						.add(output, GroupLayout.DEFAULT_SIZE, 496, Short.MAX_VALUE)
 						.add(input, GroupLayout.DEFAULT_SIZE, 496, Short.MAX_VALUE))
 					.add(who, GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE))
@@ -62,7 +74,8 @@ public class Room extends Composite{
 		gl_composite.setVerticalGroup(
 			gl_composite.createParallelGroup(GroupLayout.LEADING)
 				.add(gl_composite.createSequentialGroup()
-					.add(output, GroupLayout.DEFAULT_SIZE, 323, Short.MAX_VALUE)
+					.add(topicBox,GroupLayout.DEFAULT_SIZE, 15, Short.MAX_VALUE)
+					.add(output, GroupLayout.DEFAULT_SIZE, 308, Short.MAX_VALUE)
 					.add(input))
 				.add(who, GroupLayout.DEFAULT_SIZE, 344, Short.MAX_VALUE)
 		);
@@ -111,6 +124,19 @@ public class Room extends Composite{
 
 	public Connection getServerConnection() {
 		return serverConnection;
+	}
+
+	
+	public void setTopic(String topic) {
+		this.topic = topic;
+		//topicBox.setSize(width, height)
+		topicBox.setText(topic);
+		topicBox.setToolTipText(topic);
+	}
+
+	
+	public String getTopic() {
+		return topic;
 	}
 	
 }
