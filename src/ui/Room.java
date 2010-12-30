@@ -6,6 +6,7 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.layout.grouplayout.GroupLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Tree;
 
 import connection.Connection;
 
@@ -15,9 +16,14 @@ public class Room extends Composite{
 	
 	private Channel channel;
 	
-	private Text output, input, who, topicBox;
+	//TODO: turn who to a Tree
+	private Text output, input, topicBox;
+	
+	private Tree who;
 	
 	private String topic;
+	
+	//User[] whoIsHere
 	
 	public Room(Composite parent, int style){
 		super(parent, style);
@@ -49,7 +55,11 @@ public class Room extends Composite{
 				//CR == Carriage Return == Enter
 				//TODO: text parsing for commands -- funnel through a doCommand method
 				if(e.character == SWT.CR){
-					serverConnection.sendMessage(channel.getChannelName(), input.getText());
+					if(input.getText().startsWith("/")){
+						serverConnection.doCommand(input.getText().substring(1));
+					} else {
+						serverConnection.sendMessage(channel.getChannelName(), input.getText());
+					}
 					input.setText("");
 				}
 			}
@@ -57,8 +67,7 @@ public class Room extends Composite{
 		
 		//TODO: make this more functional (clicky/right-clicky for individual people)
 		//TODO: make this temporary measure work for testing purposes
-		who = new Text(composite, SWT.BORDER);
-		who.setEditable(false);
+		who = new Tree(composite, SWT.BORDER);
 		
 		//generate the anchors for the windows
 		GroupLayout gl_composite = new GroupLayout(composite);
@@ -98,11 +107,11 @@ public class Room extends Composite{
 		return input;
 	}
 
-	public void setWho(Text who) {
+	public void setWho(Tree who) {
 		this.who = who;
 	}
 
-	public Text getWho() {
+	public Tree getWho() {
 		return who;
 	}
 
@@ -125,15 +134,12 @@ public class Room extends Composite{
 	public Connection getServerConnection() {
 		return serverConnection;
 	}
-
 	
 	public void setTopic(String topic) {
 		this.topic = topic;
-		//topicBox.setSize(width, height)
 		topicBox.setText(topic);
 		topicBox.setToolTipText(topic);
 	}
-
 	
 	public String getTopic() {
 		return topic;

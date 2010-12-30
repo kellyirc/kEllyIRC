@@ -1067,6 +1067,12 @@ public abstract class PircBot implements ReplyConstants {
         }
         else if (command.equals("TOPIC")) {
             // Someone is changing the topic.
+        	String[] args = line.split(" ");
+        	for(String s : args){
+        		if(s.startsWith("#") || s.startsWith("&")){
+        			target = s;
+        		}
+        	}
             this.onTopic(target, line.substring(line.indexOf(" :") + 2), sourceNick, System.currentTimeMillis(), true);
         }
         else if (command.equals("INVITE")) {
@@ -2918,7 +2924,7 @@ public abstract class PircBot implements ReplyConstants {
      * Add a user to the specified channel in our memory.
      * Overwrite the existing entry if it exists.
      */
-    private final void addUser(String channel, User user) {
+    protected void addUser(String channel, User user) {
     	channel = channel.toLowerCase();
     	Set<User> users = _channels.get(channel);
     	if (users == null) {
@@ -2932,7 +2938,7 @@ public abstract class PircBot implements ReplyConstants {
     /**
      * Remove a user from the specified channel in our memory.
      */
-    private final User removeUser(String channel, String nick) {
+    protected User removeUser(String channel, String nick) {
         channel = channel.toLowerCase();
         User user = new User("", nick);
         Set<User> users =  _channels.get(channel);
@@ -2946,7 +2952,7 @@ public abstract class PircBot implements ReplyConstants {
     /**
      * Remove a user from all channels in our memory.
      */
-    private final void removeUser(String nick) {
+    protected void removeUser(String nick) {
     	for (String channel : _channels.keySet()) {
     		this.removeUser(channel, nick);
     	}
@@ -2956,7 +2962,7 @@ public abstract class PircBot implements ReplyConstants {
     /**
      * Rename a user if they appear in any of the channels we know about.
      */
-    private final void renameUser(String oldNick, String newNick) {
+    protected void renameUser(String oldNick, String newNick) {
     	for (String channel : _channels.keySet()) {
     		User user = this.removeUser(channel, oldNick);
     		if (user != null) {

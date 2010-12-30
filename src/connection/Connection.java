@@ -8,6 +8,7 @@ import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.widgets.Display;
 import org.jibble.pircbot.PircBot;
 import org.jibble.pircbot.TrustingSSLSocketFactory;
+import org.jibble.pircbot.User;
 
 import shared.Message;
 import ui.Channel;
@@ -17,22 +18,22 @@ import ui.RoomManager;
 /*
  * TODO:
  * 		features for each connection: 
- * 			ssl support
- * 			server password
- * 			specify port to use (default 6669)
- * 			nickname
- * 			quit message
- * 			"ident" (pircbot is a crappy ident to have)
- * 			real name
+ * 			ssl support [checkbox]
+ * 			server password [text]
+ * 			specify port to use (default 6669) [text]
+ * 			nickname [text]
+ * 			quit message [text]
+ * 			"ident" (pircbot is a crappy ident to have) [text]
+ * 			real name [text]
  */
 
 public class Connection extends PircBot{
 	
 	private CTabFolder chanList;
 	
-	private String nick;
-
 	private String myServer;
+
+	private String nick;
 
 	public Connection(CTabFolder parent, String server, String nick){
 		
@@ -78,49 +79,12 @@ public class Connection extends PircBot{
 	}
 
 	/* (non-Javadoc)
-	 * @see org.jibble.pircbot.PircBot#onNotice(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 * @see org.jibble.pircbot.PircBot#changeNick(java.lang.String)
 	 */
 	@Override
-	protected void onNotice(String sourceNick, String sourceLogin,
-			String sourceHostname, String target, String notice) {
-
-		if(sourceLogin.equals("")) {
-			RoomManager.queue.add(new Message(this, notice, "Notice from "+sourceNick, "Console"));	
-			RoomManager.manageQueue();
-		}
-		
-		super.onNotice(sourceNick, sourceLogin, sourceHostname, target, notice);
-	}
-
-	/**
-	 * @return the chanList
-	 */
-	public CTabFolder getChanList() {
-		return chanList;
-	}
-
-	/**
-	 * @return the nick
-	 */
-	public String getNick() {
-		return nick;
-	}
-
-	/**
-	 * @return the server
-	 */
-	public String getMyServer() {
-		return this.myServer;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.jibble.pircbot.PircBot#joinChannel(java.lang.String)
-	 */
-	@Override
-	public void joinChannel(String channel) {
-		createRoom(channel);		
-		
-		super.joinChannel(channel);
+	public void changeNick(String newNick) {
+		// TODO Auto-generated method stub
+		super.changeNick(newNick);
 	}
 
 	/**Create a new room based on a channel name. This does NOT need to lead to an actual channel, 
@@ -135,16 +99,82 @@ public class Connection extends PircBot{
 		r.setServerConnection(this);
 		r.instantiate();
 	}
+
+	/* (non-Javadoc)
+	 * @see org.jibble.pircbot.PircBot#onTopic(java.lang.String, java.lang.String, java.lang.String, long, boolean)
+	 */
+	@Override
+	protected void onTopic(String channel, String topic, String setBy,
+			long date, boolean changed) {
+		for(Room c : RoomManager.getRooms()){
+			if(c.getServerConnection().equals(this) && c.getChannel().getChannelName().equals(channel)){
+				RoomManager.changeTopic(c, topic);
+			}
+		}
+		super.onTopic(channel, topic, setBy, date, changed);
+	}
+
+	//TODO: fix this and make a proper command class and aliases function with javascript
+	public void doCommand(String command){
+		if(command.split(" ")[0].equals("join")){
+			joinChannel(command.split(" ")[1]);
+		}
+	}
 	
+	/**
+	 * Find a Room in RoomManager.rooms given a name to look for
+	 * @param channel the name of the channel to look for on this connection
+	 * @return a Room with the given channel name on this connection, or null
+	 */
+	private Room findRoom(String channel) {
+		for(Room r : RoomManager.getRooms()){
+			if(r.getServerConnection().equals(this) && r.getChannel().getChannelName().equals(channel)){
+				return r;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * @return the chanList
+	 */
+	public CTabFolder getChanList() {
+		return chanList;
+	}
+
+	/**
+	 * @return the server
+	 */
+	public String getMyServer() {
+		return this.myServer;
+	}
+	
+	/**
+	 * @return the nick
+	 */
+	public String getNick() {
+		return nick;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.jibble.pircbot.PircBot#joinChannel(java.lang.String)
+	 */
+	@Override
+	public void joinChannel(String channel) {
+		createRoom(channel);		
+		
+		super.joinChannel(channel);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.jibble.pircbot.PircBot#joinChannel(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public void joinChannel(String channel, String key) {
-		//TODO: not auto generated, just needs to be modified to function like joinChannel(String channel)	
+		createRoom(channel);			
 		super.joinChannel(channel, key);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.jibble.pircbot.PircBot#onAction(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
@@ -156,34 +186,14 @@ public class Connection extends PircBot{
 	}
 
 	/* (non-Javadoc)
-	 * @see org.jibble.pircbot.PircBot#onServerResponse(int, java.lang.String)
+	 * @see org.jibble.pircbot.PircBot#onChannelInfo(java.lang.String, int, java.lang.String)
 	 */
 	@Override
-	protected void onServerResponse(int code, String response) {
-		switch(code){
-		//topic
-		case 332:
-			String channel = response.split(":")[0].trim();
-			channel = channel.substring(channel.indexOf("#"));
-			String topic = response;//.split(":")[1];
-			topic = topic.substring(topic.indexOf("'"));//.substring(channel.indexOf("'"));
-			for(Room r : RoomManager.getRooms()){
-				if(r.getChannel().getChannelName().equals(channel)){
-					RoomManager.changeTopic(r, topic);
-					break;
-				}
-			}
-			break;
-		//
-		case 333:
-		//who list
-		case 353:
-			
-		default:
-			RoomManager.queue.add(new Message(this, response, "["+code+"] Server Response", "Console"));	
-			RoomManager.manageQueue();
-		}
-		super.onServerResponse(code, response);
+	protected void onChannelInfo(String channel, int userCount, String topic) {
+		
+		System.out.println(channel+userCount+topic);
+		
+		super.onChannelInfo(channel, userCount, topic);
 	}
 
 	/* (non-Javadoc)
@@ -192,7 +202,7 @@ public class Connection extends PircBot{
 	@Override
 	protected void onDeop(String channel, String sourceNick,
 			String sourceLogin, String sourceHostname, String recipient) {
-		// TODO Auto-generated method stub
+		//updateWho(channel);
 		super.onDeop(channel, sourceNick, sourceLogin, sourceHostname, recipient);
 	}
 
@@ -202,7 +212,7 @@ public class Connection extends PircBot{
 	@Override
 	protected void onDeVoice(String channel, String sourceNick,
 			String sourceLogin, String sourceHostname, String recipient) {
-		// TODO Auto-generated method stub
+		//updateWho(channel);
 		super.onDeVoice(channel, sourceNick, sourceLogin, sourceHostname, recipient);
 	}
 
@@ -212,7 +222,7 @@ public class Connection extends PircBot{
 	@Override
 	protected void onJoin(String channel, String sender, String login,
 			String hostname) {
-		// TODO Auto-generated method stub
+		updateWho(channel);
 		super.onJoin(channel, sender, login, hostname);
 	}
 
@@ -223,7 +233,7 @@ public class Connection extends PircBot{
 	protected void onKick(String channel, String kickerNick,
 			String kickerLogin, String kickerHostname, String recipientNick,
 			String reason) {
-		// TODO Auto-generated method stub
+		updateWho(channel);
 		super.onKick(channel, kickerNick, kickerLogin, kickerHostname, recipientNick,
 				reason);
 	}
@@ -243,13 +253,42 @@ public class Connection extends PircBot{
 	}
 
 	/* (non-Javadoc)
+	 * @see org.jibble.pircbot.PircBot#onMode(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 */
+	@Override
+	protected void onMode(String channel, String sourceNick,
+			String sourceLogin, String sourceHostname, String mode) {
+		updateWho(channel);
+		super.onMode(channel, sourceNick, sourceLogin, sourceHostname, mode);
+	}
+
+	/* (non-Javadoc)
 	 * @see org.jibble.pircbot.PircBot#onNickChange(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
 	protected void onNickChange(String oldNick, String login, String hostname,
 			String newNick) {
-		// TODO Auto-generated method stub
+		for(Room r : RoomManager.getRooms()){
+			if(r.getServerConnection().equals(this)){
+				RoomManager.updateWho(r);
+			}
+		}
 		super.onNickChange(oldNick, login, hostname, newNick);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jibble.pircbot.PircBot#onNotice(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 */
+	@Override
+	protected void onNotice(String sourceNick, String sourceLogin,
+			String sourceHostname, String target, String notice) {
+
+		if(sourceLogin.equals("")) {
+			RoomManager.queue.add(new Message(this, notice, "Notice from "+sourceNick, "Console"));	
+			RoomManager.manageQueue();
+		}
+		
+		super.onNotice(sourceNick, sourceLogin, sourceHostname, target, notice);
 	}
 
 	/* (non-Javadoc)
@@ -258,7 +297,7 @@ public class Connection extends PircBot{
 	@Override
 	protected void onOp(String channel, String sourceNick, String sourceLogin,
 			String sourceHostname, String recipient) {
-		// TODO Auto-generated method stub
+		//updateWho(channel);
 		super.onOp(channel, sourceNick, sourceLogin, sourceHostname, recipient);
 	}
 
@@ -268,7 +307,7 @@ public class Connection extends PircBot{
 	@Override
 	protected void onPart(String channel, String sender, String login,
 			String hostname) {
-		// TODO Auto-generated method stub
+		updateWho(channel);
 		super.onPart(channel, sender, login, hostname);
 	}
 
@@ -279,9 +318,10 @@ public class Connection extends PircBot{
 	protected void onPrivateMessage(String sender, String login,
 			String hostname, String message) {
 
-		// TODO: check for a pm tab, if not, create one
+		createRoom(sender);
+		RoomManager.queue.add(new Message(this, message, sender, sender));	
+		RoomManager.manageQueue();
 		
-		// TODO Auto-generated method stub
 		super.onPrivateMessage(sender, login, hostname, message);
 	}
 
@@ -291,8 +331,79 @@ public class Connection extends PircBot{
 	@Override
 	protected void onQuit(String sourceNick, String sourceLogin,
 			String sourceHostname, String reason) {
-		// TODO Auto-generated method stub
+		
+		for(Room r : RoomManager.getRooms()){
+			if(r.getServerConnection().equals(this)){
+				RoomManager.updateWho(r);
+			}
+		}
+		
 		super.onQuit(sourceNick, sourceLogin, sourceHostname, reason);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jibble.pircbot.PircBot#onServerResponse(int, java.lang.String)
+	 */
+	@Override
+	protected void onServerResponse(int code, String response) {
+		switch(code){
+		//topic
+		case 332:
+			String channel = response.split(":")[0].trim();
+			channel = channel.substring(channel.indexOf("#"));
+			String topic = response;
+			topic = topic.substring(topic.indexOf("'"));
+			for(Room r : RoomManager.getRooms()){
+				if(r.getChannel().getChannelName().equals(channel)){
+					RoomManager.changeTopic(r, topic);
+					break;
+				}
+			}
+			break;
+			
+		//no idea?
+		case 333:
+			break;
+			
+		//who list - taken care of with onUserList	
+		case 353:
+			break;
+			
+		default:
+			RoomManager.queue.add(new Message(this, response, "["+code+"] Server Response", "Console"));	
+			RoomManager.manageQueue();
+		}
+		super.onServerResponse(code, response);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jibble.pircbot.PircBot#onUserList(java.lang.String, org.jibble.pircbot.User[])
+	 */
+	@Override
+	protected void onUserList(String channel, User[] users) {
+
+		updateWho(channel);
+		
+		super.onUserList(channel, users);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jibble.pircbot.PircBot#onUserMode(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 */
+	@Override
+	protected void onUserMode(String targetNick, String sourceNick,
+			String sourceLogin, String sourceHostname, String mode) {
+		super.onUserMode(targetNick, sourceNick, sourceLogin, sourceHostname, mode);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jibble.pircbot.PircBot#onVoice(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 */
+	@Override
+	protected void onVoice(String channel, String sourceNick,
+			String sourceLogin, String sourceHostname, String recipient) {
+		//updateWho(channel);
+		super.onVoice(channel, sourceNick, sourceLogin, sourceHostname, recipient);
 	}
 
 	/* (non-Javadoc)
@@ -314,6 +425,15 @@ public class Connection extends PircBot{
 	}
 
 	/* (non-Javadoc)
+	 * @see org.jibble.pircbot.PircBot#sendAction(java.lang.String, java.lang.String)
+	 */
+	@Override
+	public void sendAction(String target, String action) {
+		// TODO Auto-generated method stub
+		super.sendAction(target, action);
+	}
+
+	/* (non-Javadoc)
 	 * @see org.jibble.pircbot.PircBot#sendMessage(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -325,11 +445,27 @@ public class Connection extends PircBot{
 		super.sendMessage(target, message);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.jibble.pircbot.PircBot#sendNotice(java.lang.String, java.lang.String)
+	 */
+	@Override
+	public void sendNotice(String target, String notice) {
+		// TODO Auto-generated method stub
+		super.sendNotice(target, notice);
+	}
+
 	/**
 	 * @param chanList the chanList to set
 	 */
 	public void setChanList(CTabFolder chanList) {
 		this.chanList = chanList;
+	}
+
+	/**
+	 * @param server the server to set
+	 */
+	public void setMyServer(String server) {
+		this.myServer = server;
 	}
 
 	/**
@@ -339,10 +475,8 @@ public class Connection extends PircBot{
 		this.nick = nick;
 	}
 
-	/**
-	 * @param server the server to set
-	 */
-	public void setMyServer(String server) {
-		this.myServer = server;
+	private void updateWho(String channel) {
+		Room r = findRoom(channel);
+		RoomManager.updateWho(r);
 	}
 }
