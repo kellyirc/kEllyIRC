@@ -57,6 +57,7 @@ public class MainWindow extends ApplicationWindow {
 	@Override
 	public void create() {
 		super.create();
+		//new Exception().printStackTrace();
 		//TODO: remove this, and make it based on the actual connection settings instead of this.
 		new Connection(container, "irc.esper.net","kellyIRC");
 	}

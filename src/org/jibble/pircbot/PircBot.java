@@ -60,10 +60,10 @@ public abstract class PircBot implements ReplyConstants
 {
     
     /**
-     * The definitive version number of this release of PircBot. (Note: Change this before
+     * The definitive version number of this release of kellyIRC (NOT PIRCBOT). (Note: Change this before
      * automatically building releases)
      */
-    public static final String VERSION = "1.4.6";
+    public static final String VERSION = "0.0.4";
     
     /*
     private static final int OP_ADD = 1;
@@ -828,7 +828,34 @@ public abstract class PircBot implements ReplyConstants
     {
         this.sendRawLine("MODE " + channel + " -b " + hostmask);
     }
+    /**
+     * Grants hoperator privilidges to a user on a channel. Successful use of this method
+     * may require the bot to have operator status itself.
+     * 
+     * @param channel
+     *            The channel we're hopping the user on.
+     * @param nick
+     *            The nick of the user we are hopping.
+     */
+    public void halfop(String channel, String nick)
+    {
+        this.setMode(channel, "+h " + nick);
+    }
     
+    /**
+     * Removes hoperator privilidges from a user on a channel. Successful use of this
+     * method may require the bot to have operator status itself.
+     * 
+     * @param channel
+     *            The channel we're dehopping the user on.
+     * @param nick
+     *            The nick of the user we are dehopping.
+     */
+    public void deHalfop(String channel, String nick)
+    {
+        this.setMode(channel, "-h " + nick);
+    }
+       
     /**
      * Grants operator privilidges to a user on a channel. Successful use of this method
      * may require the bot to have operator status itself.
@@ -838,7 +865,7 @@ public abstract class PircBot implements ReplyConstants
      * @param nick
      *            The nick of the user we are opping.
      */
-    public final void op(String channel, String nick)
+    public void op(String channel, String nick)
     {
         this.setMode(channel, "+o " + nick);
     }
@@ -1151,9 +1178,6 @@ public abstract class PircBot implements ReplyConstants
     protected void handleLine(String line)
     {
         this.log(line);
-        // FIXME: add a config var that can disable this, since it's sorta verbose
-        //System.out.println("Line received from " + _server + " for name " + _name + ": "
-        //        + line);
         // Check for server pings.
         if (line.startsWith("PING "))
         {
@@ -1999,6 +2023,33 @@ public abstract class PircBot implements ReplyConstants
                             onDeVoice(channel, sourceNick, sourceLogin, sourceHostname,
                                     params[p]);
                     }
+                    else if (atPos == 'h')
+                    {
+                        if (pn == '+')
+                            onHalfop(channel, sourceNick, sourceLogin, sourceHostname,
+                                    params[p]);
+                        else
+                            onDeHalfop(channel, sourceNick, sourceLogin, sourceHostname,
+                                    params[p]);
+                    }
+                    else if (atPos == 'a')
+                    {
+                        if (pn == '+')
+                            onAdmin(channel, sourceNick, sourceLogin, sourceHostname,
+                                    params[p]);
+                        else
+                            onDeAdmin(channel, sourceNick, sourceLogin, sourceHostname,
+                                    params[p]);
+                    }
+                    else if (atPos == 'q')
+                    {
+                        if (pn == '+')
+                            onOwner(channel, sourceNick, sourceLogin, sourceHostname,
+                                    params[p]);
+                        else
+                            onDeOwner(channel, sourceNick, sourceLogin, sourceHostname,
+                                    params[p]);
+                    }
                     /*
                      * Then we'll increment the parameter positions
                      */
@@ -2128,7 +2179,27 @@ public abstract class PircBot implements ReplyConstants
         }
     }
     
-    private boolean isUserMode(char atPos)
+    protected void onDeOwner(String channel, String sourceNick,
+			String sourceLogin, String sourceHostname, String string) {
+		
+	}
+
+	protected void onOwner(String channel, String sourceNick, String sourceLogin,
+			String sourceHostname, String string) {
+		
+	}
+
+	protected void onDeAdmin(String channel, String sourceNick,
+			String sourceLogin, String sourceHostname, String string) {
+		
+	}
+
+	protected void onAdmin(String channel, String sourceNick, String sourceLogin,
+			String sourceHostname, String string) {
+		
+	}
+
+	private boolean isUserMode(char atPos)
     {
         try
         {
@@ -2242,11 +2313,63 @@ public abstract class PircBot implements ReplyConstants
      * @param recipient
      *            The nick of the user that got 'deopped'.
      */
+    protected void onHalfop(String channel, String sourceNick, String sourceLogin,
+            String sourceHostname, String recipient)
+    {
+    }
+    /**
+     * Called when a user (possibly us) gets operator status taken away.
+     * <p>
+     * This is a type of mode change and is also passed to the onMode method in the
+     * PircBot class.
+     * <p>
+     * The implementation of this method in the PircBot abstract class performs no actions
+     * and may be overridden as required.
+     * 
+     * @since PircBot 0.9.5
+     * 
+     * @param channel
+     *            The channel in which the mode change took place.
+     * @param sourceNick
+     *            The nick of the user that performed the mode change.
+     * @param sourceLogin
+     *            The login of the user that performed the mode change.
+     * @param sourceHostname
+     *            The hostname of the user that performed the mode change.
+     * @param recipient
+     *            The nick of the user that got 'deopped'.
+     */
+    protected void onDeHalfop(String channel, String sourceNick, String sourceLogin,
+            String sourceHostname, String recipient)
+    {
+    }
+    /**
+     * Called when a user (possibly us) gets operator status taken away.
+     * <p>
+     * This is a type of mode change and is also passed to the onMode method in the
+     * PircBot class.
+     * <p>
+     * The implementation of this method in the PircBot abstract class performs no actions
+     * and may be overridden as required.
+     * 
+     * @since PircBot 0.9.5
+     * 
+     * @param channel
+     *            The channel in which the mode change took place.
+     * @param sourceNick
+     *            The nick of the user that performed the mode change.
+     * @param sourceLogin
+     *            The login of the user that performed the mode change.
+     * @param sourceHostname
+     *            The hostname of the user that performed the mode change.
+     * @param recipient
+     *            The nick of the user that got 'deopped'.
+     */
     protected void onDeop(String channel, String sourceNick, String sourceLogin,
             String sourceHostname, String recipient)
     {
     }
-    
+      
     /**
      * Called when a user (possibly us) gets voice status granted in a channel.
      * <p>
@@ -3704,7 +3827,7 @@ public abstract class PircBot implements ReplyConstants
             return current.replace(n, "");
     }
     
-    private final void updateUser(String channel, String prefix, boolean add, String nick)
+    protected void updateUser(String channel, String prefix, boolean add, String nick)
     {
         channel = channel.toLowerCase();
         synchronized (_channels)
