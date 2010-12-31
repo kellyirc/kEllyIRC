@@ -13,7 +13,6 @@ import org.jibble.pircbot.IrcUser;
 
 import connection.Connection;
 
-import shared.Initializer;
 import shared.Message;
 
 public class RoomManager {
