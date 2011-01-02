@@ -6,6 +6,8 @@ import ui.MainWindow;
 
 public class Initializer {
 
+	public static boolean DEBUG_MODE = true;
+	
 	/**
 	 * Launch the application.
 	 * @param args
@@ -23,6 +25,12 @@ public class Initializer {
 			Display.getCurrent().dispose();
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+	}
+	
+	public static void Debug(String s){
+		if(DEBUG_MODE){
+			System.err.println(s);
 		}
 	}
 }

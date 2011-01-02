@@ -30,7 +30,7 @@ public class MainWindow extends ApplicationWindow {
 	 */
 	public MainWindow(Display d) {
 		super(null);
-		
+
 		createActions();
 		addToolBar(SWT.FLAT | SWT.WRAP);
 		addMenuBar();
@@ -45,6 +45,7 @@ public class MainWindow extends ApplicationWindow {
 	 */
 	@Override
 	public int open() {
+
 		int i = super.open();
 		
 		return i;
@@ -56,6 +57,7 @@ public class MainWindow extends ApplicationWindow {
 	@Override
 	public void create() {
 		super.create();
+		//new Exception().printStackTrace();
 		//TODO: remove this, and make it based on the actual connection settings instead of this.
 		new Connection(container, "irc.esper.net","kellyIRC");
 	}

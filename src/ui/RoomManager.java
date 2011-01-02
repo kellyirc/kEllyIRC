@@ -6,9 +6,12 @@ import java.util.Comparator;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TreeItem;
-import org.jibble.pircbot.User;
+import org.jibble.pircbot.IrcUser;
+
+import connection.Connection;
 
 import shared.Message;
 
@@ -21,13 +24,28 @@ public class RoomManager {
 	
 	public static CopyOnWriteArrayList<Room> rooms = new CopyOnWriteArrayList<Room>();
 
-	public static Room createRoom(Composite c, int style) {
-		if(c == null){return null;}
-		Room r = new Room(c, style);
-		if(canAddRoom(r)){
-			rooms.add(r);
-		}
-		return r;
+	public static void createRoom(final Composite c, final int style, final String channel, final Connection connection, final int layout) {
+        if(!m.getDisplay().isDisposed()){
+        	m.getDisplay().asyncExec (new Runnable () {
+            	public void run () {
+					if(canAddRoom(connection, channel)){
+						Room r = new Room(c, style, layout);
+						r.setChannel(new Channel((CTabFolder)c, channel, connection));
+						r.setServerConnection(connection);
+						r.instantiate();
+						rooms.add(r);
+						updateWho(r);
+						for(String s : connection.getTopics().keySet()){
+							//Initializer.Debug("create - "+s);
+							if(s.equals(channel)){
+								//Initializer.Debug("create - #"+channel);
+								changeTopic(r, connection.getTopics().get(channel));
+							}
+						}
+					}
+            	}
+            }
+		);}
 	}
 	
 	public static void manageQueue() {
@@ -59,37 +77,82 @@ public class RoomManager {
         if(!m.getDisplay().isDisposed()){
             m.getDisplay().asyncExec (new Runnable () {
                public void run () {
-            	   
+            	   if(c.getWho()==null || 
+            			   c.getServerConnection()==null || 
+            			   c.getServerConnection().getUsers() == null ||
+            			   c.getChannel()==null || 
+            			   c.getChannel().getChannelName()==null)return;
+
             	   c.getWho().removeAll();
-            	   //TODO: update to pircbotx -- the lattermost two are not supported via pircbot
             	   
-            	   //					 none , voice, ops  , hops , owner
-            	   boolean[] contains = {false, false, false, false, false};
-            	   ArrayList<User> users = new ArrayList<User>();
-            	   
-            	   for(User u : c.getServerConnection().getUsers(c.getChannel().getChannelName())){
-            		   if(u.isOp()) 			{ contains[2] = true;}
+            	   //					 none , voice, ops  , hops , owner, admin
+            	   boolean[] contains = {false, false, false, false, false, false};
+            	   ArrayList<IrcUser> users = new ArrayList<IrcUser>();
+            	   try {
+            	   for(IrcUser u : c.getServerConnection().getUsers().get(c.getChannel().getChannelName())){
+            		   if(u.isAdmin())			{ contains[5] = true;}
+            		   else if(u.isFounder())	{ contains[4] = true;}
+            		   else if(u.isHalfop())	{ contains[3] = true;}
+            		   else if(u.isOp())		{ contains[2] = true;}
             		   else if(u.hasVoice()) 	{ contains[1] = true;}
             		   else 					{ contains[0] = true;}
             		   users.add(u);
             	   }
-            	   
-            	   Collections.sort(users, new Comparator<User>() {
-            		   public int compare(User arg0, User arg1) {
+            	   } catch(Exception e){
+            		   
+            	   }
+            	   Collections.sort(users, new Comparator<IrcUser>() {
+            		   public int compare(IrcUser arg0, IrcUser arg1) {
             			   return arg0.toString().compareTo(arg1.toString());
             		   }
 					});
             	   
-            	   CopyOnWriteArrayList<User> moarUsers = new CopyOnWriteArrayList<User>();
+            	   CopyOnWriteArrayList<IrcUser> moarUsers = new CopyOnWriteArrayList<IrcUser>();
             	   moarUsers.addAll(users);
-            	   
+
+            	   if(contains[5]){
+                	   TreeItem t = new TreeItem(c.getWho(), SWT.NONE);
+                	   t.setText("Admins");
+                	   for(IrcUser s : moarUsers){
+                		   if(s.isAdmin()){
+                			   UserTreeItem i = new UserTreeItem(t, SWT.NONE, s, c.getServerConnection(), c.getChannel());
+                			   i.getTree().setText(s.toString());
+                			   moarUsers.remove(s);
+                		   }
+                	   }
+                	   t.setExpanded(true);
+            	   }
+            	   if(contains[4]){
+                	   TreeItem t = new TreeItem(c.getWho(), SWT.NONE);
+                	   t.setText("Founder(s)");
+                	   for(IrcUser s : moarUsers){
+                		   if(s.isFounder()){
+                			   UserTreeItem i = new UserTreeItem(t, SWT.NONE, s, c.getServerConnection(), c.getChannel());
+                			   i.getTree().setText(s.getNick());
+                			   moarUsers.remove(s);
+                		   }
+                	   }
+                	   t.setExpanded(true);
+            	   }
+            	   if(contains[3]){
+                	   TreeItem t = new TreeItem(c.getWho(), SWT.NONE);
+                	   t.setText("Half-Ops");
+                	   for(IrcUser s : moarUsers){
+                		   if(s.isHalfop()){
+                			   UserTreeItem i = new UserTreeItem(t, SWT.NONE, s, c.getServerConnection(), c.getChannel());
+                			   i.getTree().setText(s.getNick());
+                			   moarUsers.remove(s);
+                		   }
+                	   }
+                	   t.setExpanded(true);
+            	   }
             	   if(contains[2]){
                 	   TreeItem t = new TreeItem(c.getWho(), SWT.NONE);
                 	   t.setText("Ops");
-                	   for(User s : moarUsers){
+                	   for(IrcUser s : moarUsers){
                 		   if(s.isOp()){
-                			   UserTreeItem i = new UserTreeItem(t, SWT.NONE, s, c.getServerConnection());
-                			   i.getTree().setText(s.toString());
+                			   UserTreeItem i = new UserTreeItem(t, SWT.NONE, s, c.getServerConnection(), c.getChannel());
+                			   i.getTree().setText(s.getNick());
                 			   moarUsers.remove(s);
                 		   }
                 	   }
@@ -98,10 +161,10 @@ public class RoomManager {
             	   if(contains[1]){
                 	   TreeItem t = new TreeItem(c.getWho(), SWT.NONE);
                 	   t.setText("Voice");
-                	   for(User s : moarUsers){
+                	   for(IrcUser s : moarUsers){
                 		   if(s.hasVoice()){
-                			   UserTreeItem i = new UserTreeItem(t, SWT.NONE, s, c.getServerConnection());
-                			   i.getTree().setText(s.toString());
+                			   UserTreeItem i = new UserTreeItem(t, SWT.NONE, s, c.getServerConnection(), c.getChannel());
+                			   i.getTree().setText(s.getNick());
                 			   moarUsers.remove(s);
                 		   }
                 	   }
@@ -110,9 +173,9 @@ public class RoomManager {
             	   if(contains[0]){
                 	   TreeItem t = new TreeItem(c.getWho(), SWT.NONE);
                 	   t.setText("Normal");
-                	   for(User s : moarUsers){
-            			   UserTreeItem i = new UserTreeItem(t, SWT.NONE, s, c.getServerConnection());
-            			   i.getTree().setText(s.toString());
+                	   for(IrcUser s : moarUsers){
+            			   UserTreeItem i = new UserTreeItem(t, SWT.NONE, s, c.getServerConnection(), c.getChannel());
+            			   i.getTree().setText(s.getNick());
                 	   }
                 	   t.setExpanded(true);
             	   }
@@ -129,9 +192,9 @@ public class RoomManager {
 		return m;
 	}
 	
-	public static boolean canAddRoom(Room r){
+	public static boolean canAddRoom(Connection c, String s){
 		for(Room n : getRooms()){
-			if(n.getServerConnection().equals(r.getServerConnection()) && n.getChannel().equals(r.getChannel())){
+			if(n.getServerConnection().equals(c) && n.getChannel().getChannelName().equals(s)){
 				return false;
 			}
 		}
