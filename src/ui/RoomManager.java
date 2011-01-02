@@ -77,13 +77,18 @@ public class RoomManager {
         if(!m.getDisplay().isDisposed()){
             m.getDisplay().asyncExec (new Runnable () {
                public void run () {
-            	   
+            	   if(c.getWho()==null || 
+            			   c.getServerConnection()==null || 
+            			   c.getServerConnection().getUsers() == null ||
+            			   c.getChannel()==null || 
+            			   c.getChannel().getChannelName()==null)return;
+
             	   c.getWho().removeAll();
             	   
             	   //					 none , voice, ops  , hops , owner, admin
             	   boolean[] contains = {false, false, false, false, false, false};
             	   ArrayList<IrcUser> users = new ArrayList<IrcUser>();
-            	   
+            	   try {
             	   for(IrcUser u : c.getServerConnection().getUsers().get(c.getChannel().getChannelName())){
             		   if(u.isAdmin())			{ contains[5] = true;}
             		   else if(u.isFounder())	{ contains[4] = true;}
@@ -93,7 +98,9 @@ public class RoomManager {
             		   else 					{ contains[0] = true;}
             		   users.add(u);
             	   }
-            	   
+            	   } catch(Exception e){
+            		   
+            	   }
             	   Collections.sort(users, new Comparator<IrcUser>() {
             		   public int compare(IrcUser arg0, IrcUser arg1) {
             			   return arg0.toString().compareTo(arg1.toString());
@@ -108,7 +115,7 @@ public class RoomManager {
                 	   t.setText("Admins");
                 	   for(IrcUser s : moarUsers){
                 		   if(s.isAdmin()){
-                			   UserTreeItem i = new UserTreeItem(t, SWT.NONE, s, c.getServerConnection());
+                			   UserTreeItem i = new UserTreeItem(t, SWT.NONE, s, c.getServerConnection(), c.getChannel());
                 			   i.getTree().setText(s.toString());
                 			   moarUsers.remove(s);
                 		   }
@@ -120,7 +127,7 @@ public class RoomManager {
                 	   t.setText("Founder(s)");
                 	   for(IrcUser s : moarUsers){
                 		   if(s.isFounder()){
-                			   UserTreeItem i = new UserTreeItem(t, SWT.NONE, s, c.getServerConnection());
+                			   UserTreeItem i = new UserTreeItem(t, SWT.NONE, s, c.getServerConnection(), c.getChannel());
                 			   i.getTree().setText(s.getNick());
                 			   moarUsers.remove(s);
                 		   }
@@ -132,7 +139,7 @@ public class RoomManager {
                 	   t.setText("Half-Ops");
                 	   for(IrcUser s : moarUsers){
                 		   if(s.isHalfop()){
-                			   UserTreeItem i = new UserTreeItem(t, SWT.NONE, s, c.getServerConnection());
+                			   UserTreeItem i = new UserTreeItem(t, SWT.NONE, s, c.getServerConnection(), c.getChannel());
                 			   i.getTree().setText(s.getNick());
                 			   moarUsers.remove(s);
                 		   }
@@ -144,7 +151,7 @@ public class RoomManager {
                 	   t.setText("Ops");
                 	   for(IrcUser s : moarUsers){
                 		   if(s.isOp()){
-                			   UserTreeItem i = new UserTreeItem(t, SWT.NONE, s, c.getServerConnection());
+                			   UserTreeItem i = new UserTreeItem(t, SWT.NONE, s, c.getServerConnection(), c.getChannel());
                 			   i.getTree().setText(s.getNick());
                 			   moarUsers.remove(s);
                 		   }
@@ -156,7 +163,7 @@ public class RoomManager {
                 	   t.setText("Voice");
                 	   for(IrcUser s : moarUsers){
                 		   if(s.hasVoice()){
-                			   UserTreeItem i = new UserTreeItem(t, SWT.NONE, s, c.getServerConnection());
+                			   UserTreeItem i = new UserTreeItem(t, SWT.NONE, s, c.getServerConnection(), c.getChannel());
                 			   i.getTree().setText(s.getNick());
                 			   moarUsers.remove(s);
                 		   }
@@ -167,7 +174,7 @@ public class RoomManager {
                 	   TreeItem t = new TreeItem(c.getWho(), SWT.NONE);
                 	   t.setText("Normal");
                 	   for(IrcUser s : moarUsers){
-            			   UserTreeItem i = new UserTreeItem(t, SWT.NONE, s, c.getServerConnection());
+            			   UserTreeItem i = new UserTreeItem(t, SWT.NONE, s, c.getServerConnection(), c.getChannel());
             			   i.getTree().setText(s.getNick());
                 	   }
                 	   t.setExpanded(true);
@@ -198,7 +205,6 @@ public class RoomManager {
 		for(Room r : rooms){
 			if(m.getConnection().equals(r.getServerConnection()) && r.getChannel().getChannelName().equals(m.getChannel())){
 				r.getOutput().append(m.getSender() + ": "+m.getContent());
-				//TODO: make output scroll to bottom
 			}
 		}
 	}

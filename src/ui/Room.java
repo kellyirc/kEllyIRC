@@ -3,12 +3,20 @@ package ui;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.grouplayout.GroupLayout;
 import org.eclipse.swt.layout.grouplayout.GroupLayout.ParallelGroup;
 import org.eclipse.swt.layout.grouplayout.GroupLayout.SequentialGroup;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 
 import connection.Connection;
 
@@ -65,11 +73,44 @@ public class Room extends Composite{
 			});
 			
 		}
-		
-		//TODO: make this more functional (clicky/right-clicky for individual people)
-		//TODO: make this temporary measure work for testing purposes
+
 		if((layout & WHO)!=0){
 			who = new Tree(composite, SWT.BORDER);
+			who.addListener(SWT.MouseDown, new Listener () {
+				public void handleEvent (Event event) {
+					Point point = new Point (event.x, event.y);
+					final TreeItem item = who.getItem (point);
+
+					if (item != null && item.getData()!=null && item.getData().equals(true)) {
+						Menu m = new Menu(item.getParent().getShell(), SWT.POP_UP);
+						MenuItem mitem = new MenuItem(m, SWT.PUSH);
+						mitem.setText("Query");
+						mitem.addSelectionListener(new SelectionListener() {
+
+							@Override
+							public void widgetDefaultSelected(
+									SelectionEvent arg0) {
+							}
+
+							@Override
+							public void widgetSelected(SelectionEvent arg0) {
+								serverConnection.createRoom(item.getText(), IO);	
+
+							}
+						});
+						item.getParent().setMenu(m);
+					}
+				}
+			});			
+			who.addListener(SWT.MouseDoubleClick, new Listener() {
+
+				@Override
+				public void handleEvent(Event event) {
+					Point point = new Point (event.x, event.y);
+					TreeItem item = who.getItem (point);
+					serverConnection.createRoom(item.getText(), IO);		
+				}});
+
 		}
 		
 		//generate the anchors for the windows

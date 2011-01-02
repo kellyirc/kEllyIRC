@@ -17,28 +17,13 @@ import shared.Message;
 import ui.Room;
 import ui.RoomManager;
 
-/*
- * TODO:
- * 		features for each connection: 
- * 			ssl support [checkbox]
- * 			server password [text]
- * 			specify port to use (default 6669) [text]
- * 			nickname [text]
- * 			quit message [text]
- * 			"ident" (pircbot is a crappy ident to have) [text]
- * 			real name [text]
- * 			nickserv password
- * 
- * commands: quit, join, part, msg, notice, nick, kick, ban, op, halfop, voice, identify, mode, unban
- */
-
 public class Connection extends PircBot{
 	
 	private CTabFolder chanList;
 
 	private String myServer, nick;
 	
-					//channel, users
+				  //channel, users
 	private HashMap<String, ArrayList<IrcUser>> users = new HashMap<String,ArrayList<IrcUser>>();
 	private HashMap<String, String> topics = new HashMap<String, String>();
 
@@ -82,7 +67,6 @@ public class Connection extends PircBot{
 
 		try {
 			this.connect(server, 6697, new TrustingSSLSocketFactory());
-			//TODO: This can be modified for specific server-settings (including SSL)
 			//this.connect(server);
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -116,7 +100,7 @@ public class Connection extends PircBot{
 	 * 
 	 * @param channel the name of the ctabitem that will be created
 	 */
-	private void createRoom(String channel, int layout) {
+	public void createRoom(String channel, int layout) {
 		RoomManager.createRoom(chanList,SWT.NONE,channel,this,layout);
 	}
 
@@ -514,7 +498,11 @@ public class Connection extends PircBot{
 	 */
 	@Override
 	protected void onServerResponse(int code, String response) {
+		//TODO: add more codes as they show up
 		switch(code){
+		//end of names list
+		case 366:
+			break;
 		//topic
 		case 332:
 			String channel = response.split(":")[0].trim();

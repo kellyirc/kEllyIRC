@@ -11,17 +11,23 @@ public class UserTreeItem{
 	private IrcUser myUser;
 	private Connection connection;
 	private TreeItem tree;
+	private String chan;
 	
 	public UserTreeItem(Tree parent, int style, IrcUser u, Connection c) {
-		setTree(new TreeItem(parent, style));
+		TreeItem myItem = new TreeItem(parent, style);
+		myItem.setData(false);
+		setTree(myItem);
 		setMyUser(u);
 		setConnection(c);
 	}
 
-	public UserTreeItem(TreeItem t, int none, IrcUser s, Connection c) {
-		setTree(new TreeItem(t, none));
+	public UserTreeItem(TreeItem t, int none, IrcUser s, Connection c, Channel chan) {
+		TreeItem myItem = new TreeItem(t, none);
+		myItem.setData(true);
+		setTree(myItem);
 		setMyUser(s);
 		setConnection(c);
+		setChan(chan.getChannelName());
 	}
 
 	public void setMyUser(IrcUser myUser) {
@@ -46,6 +52,15 @@ public class UserTreeItem{
 
 	public TreeItem getTree() {
 		return tree;
+	}
+
+	
+	public void setChan(String chan) {
+		this.chan = chan;
+	}
+
+	public String getChan() {
+		return chan;
 	}
 
 }
