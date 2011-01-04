@@ -8,13 +8,25 @@ public class Message {
 	private Connection connection;
 	
 	//other things like author, timestamp, etc
+	//TODO: pass in the actual IrcUser object instead of a string
 	public Message(Connection c, String content, String sender, String channel){
 		this.setConnection(c);
 		this.setContent(content+"\n");
 		this.setSender(sender);
 		this.setChannel(channel);
+		parseLinks();
 	}
 
+	private void parseLinks(){
+		StringBuilder sb = new StringBuilder();
+		for(String s : content.split(" ")){
+			if(s.contains("://")){
+				s = "<a>"+s+"</a>";
+			}
+			sb.append(s+" ");
+		}
+	}
+	
 	public void setContent(String content) {
 		this.content = content;
 	}
@@ -30,13 +42,11 @@ public class Message {
 	public String getSender() {
 		return sender;
 	}
-
 	
 	public void setChannel(String channel) {
 		this.channel = channel;
 	}
 
-	
 	public String getChannel() {
 		return channel;
 	}
