@@ -1,6 +1,7 @@
 package ui;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionEvent;
@@ -14,7 +15,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
@@ -28,7 +28,9 @@ public class Room extends Composite{
 	
 	private Channel channel;
 	
-	private Text output, input, topicBox;
+	//make clickable links by changing the style and the data of the individual messages
+	//http://eclipse.org/articles/StyledText%201/article1.html
+	private StyledText output, input, topicBox;
 	
 	private Tree who;
 	
@@ -47,16 +49,16 @@ public class Room extends Composite{
 		channel.getTabRef().setControl(composite);
 		
 		if((layout & TOPIC)!=0){
-			topicBox = new Text(composite, SWT.BORDER | SWT.WRAP);
+			topicBox = new StyledText(composite, SWT.BORDER | SWT.WRAP);
 			topicBox.setEditable(false);
 		}
 		if((layout & IO)!=0){
 			//set up the output window
-			output = new Text(composite, SWT.BORDER | SWT.V_SCROLL | SWT.WRAP | SWT.MULTI);
+			output = new StyledText(composite, SWT.BORDER | SWT.V_SCROLL | SWT.WRAP | SWT.MULTI);
 			output.setEditable(false);
 			
 			//set up the input box and it's enter-key listener
-			input = new Text(composite, SWT.BORDER);
+			input = new StyledText(composite, SWT.BORDER);
 			input.addKeyListener(new KeyAdapter() {
 				@Override
 				public void keyPressed(KeyEvent e) {
@@ -165,19 +167,19 @@ public class Room extends Composite{
 		return layout;
 	}
 
-	public void setOutput(Text output) {
+	public void setOutput(StyledText output) {
 		this.output = output;
 	}
 
-	public Text getOutput() {
+	public StyledText getOutput() {
 		return output;
 	}
 
-	public void setInput(Text input) {
+	public void setInput(StyledText input) {
 		this.input = input;
 	}
 
-	public Text getInput() {
+	public StyledText getInput() {
 		return input;
 	}
 
