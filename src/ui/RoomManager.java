@@ -15,11 +15,14 @@ import org.jibble.pircbot.IrcUser;
 
 import connection.Connection;
 
+import shared.Customs;
 import shared.Message;
 
 public class RoomManager {
 
 	private static MainWindow m;
+	
+	public static Customs colorset = new Customs();
 	
 	public static CopyOnWriteArrayList<Message> pmQueue = new CopyOnWriteArrayList<Message>();
 	public static CopyOnWriteArrayList<Message> queue = new CopyOnWriteArrayList<Message>();
@@ -219,8 +222,6 @@ public class RoomManager {
 						styleRange.underline=true;
 						styleRange.underlineStyle = SWT.UNDERLINE_LINK;
 						r.getOutput().setStyleRange(styleRange);
-						//TODO: embed a Link http://dev.eclipse.org/viewcvs/viewvc.cgi/org.eclipse.swt.snippets/src/org/eclipse/swt/snippets/Snippet217.java?view=co
-
 					}
 				}			
 			}

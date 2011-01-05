@@ -3,6 +3,7 @@ package shared;
 import org.eclipse.swt.widgets.Display;
 
 import ui.MainWindow;
+import ui.RoomManager;
 
 public class Initializer {
 
@@ -15,7 +16,6 @@ public class Initializer {
 	public static void main(String args[]) {
 		
 		//TODO: first time setup stuff if properties file not found
-		
 		final Display disp = Display.getDefault();
 		MainWindow window = null;
 		try {
@@ -23,6 +23,7 @@ public class Initializer {
 			window.setBlockOnOpen(true);
 			window.open();
 			Display.getCurrent().dispose();
+			RoomManager.colorset.cleanUp();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

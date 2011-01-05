@@ -1,8 +1,10 @@
 package scripting;
 
+//import java.nio.file.*; THIS IS IMPORTANT
+
 public class ScriptManager {
-	/* TODO: find a way to keep a constantly updated list of files
-	 * 
+	
+	/* 
 	 * To execute scripts:
 	 * 	every time a message is recieved or sent, check every file in a directory (/scripts)
 	 * 	if the file has changed (check name vs list of objects, 
