@@ -11,21 +11,9 @@ public class Message {
 	//TODO: pass in the actual IrcUser object instead of a string
 	public Message(Connection c, String content, String sender, String channel){
 		this.setConnection(c);
-		this.setContent(content);
+		this.setContent(content+(content.contains("\r\n") ? "" : "\r\n"));
 		this.setSender(sender);
 		this.setChannel(channel);
-		parseLinks();
-	}
-
-	private void parseLinks(){
-		StringBuilder sb = new StringBuilder();
-		for(String s : content.split(" ")){
-			if(s.contains("://")){
-				s = "<a>"+s+"</a>";
-			}
-			sb.append(s+" ");
-		}
-		setContent(sb.toString()+"\n");
 	}
 	
 	public void setContent(String content) {

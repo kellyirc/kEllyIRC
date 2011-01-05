@@ -110,7 +110,9 @@ public class Room extends Composite{
 				public void handleEvent(Event event) {
 					Point point = new Point (event.x, event.y);
 					TreeItem item = who.getItem (point);
-					serverConnection.createRoom(item.getText(), IO);		
+					if(item!=null){
+						serverConnection.createRoom(item.getText(), IO);	
+					}	
 				}});
 
 		}

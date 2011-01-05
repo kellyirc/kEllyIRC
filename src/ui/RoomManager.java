@@ -7,6 +7,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.StyleRange;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TreeItem;
 import org.jibble.pircbot.IrcUser;
@@ -36,9 +38,7 @@ public class RoomManager {
 						rooms.add(r);
 						updateWho(r);
 						for(String s : connection.getTopics().keySet()){
-							//Initializer.Debug("create - "+s);
 							if(s.equals(channel)){
-								//Initializer.Debug("create - #"+channel);
 								changeTopic(r, connection.getTopics().get(channel));
 							}
 						}
@@ -204,7 +204,25 @@ public class RoomManager {
 	public static void filterMessage(Message m){
 		for(Room r : rooms){
 			if(m.getConnection().equals(r.getServerConnection()) && r.getChannel().getChannelName().equals(m.getChannel())){
-				r.getOutput().append(m.getSender() + ": "+m.getContent());
+
+				r.getOutput().append("<"+m.getSender() + "> "+m.getContent());
+				
+				for(String s : m.getContent().split(" ")){
+					if(s.contains("://")){
+						//TODO: make a global colors list, and make it fit IRC standards
+						Color blue = new Color(r.getOutput().getDisplay(),0,0,255);
+						StyleRange styleRange = new StyleRange();
+						styleRange.start = r.getOutput().getCharCount() - m.getContent().length() + m.getContent().indexOf(s)-1;
+						styleRange.length = s.length();
+						styleRange.foreground = blue;
+						styleRange.data = s;
+						styleRange.underline=true;
+						styleRange.underlineStyle = SWT.UNDERLINE_LINK;
+						r.getOutput().setStyleRange(styleRange);
+						//TODO: embed a Link http://dev.eclipse.org/viewcvs/viewvc.cgi/org.eclipse.swt.snippets/src/org/eclipse/swt/snippets/Snippet217.java?view=co
+
+					}
+				}			
 			}
 		}
 	}

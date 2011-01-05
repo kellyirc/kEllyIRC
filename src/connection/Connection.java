@@ -508,7 +508,7 @@ public class Connection extends PircBot{
 			String channel = response.split(":")[0].trim();
 			channel = channel.substring(channel.indexOf("#"));
 			String topic = response;
-			topic = topic.substring(topic.indexOf("'"));
+			//topic = topic.substring(topic.indexOf("'"));
 			//for(Room r : RoomManager.getRooms()){
 				//Initializer.Debug("serverresponse - "+r.getChannel().getChannelName());
 			//	if(r.getChannel().getChannelName().equals(channel)){
