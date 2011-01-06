@@ -22,7 +22,7 @@ public class RoomManager {
 
 	private static MainWindow m;
 	
-	public static Customs colorset = new Customs();
+	public static Customs colorset;
 	
 	public static CopyOnWriteArrayList<Message> pmQueue = new CopyOnWriteArrayList<Message>();
 	public static CopyOnWriteArrayList<Message> queue = new CopyOnWriteArrayList<Message>();
@@ -212,7 +212,7 @@ public class RoomManager {
 				
 				for(String s : m.getContent().split(" ")){
 					if(s.contains("://")){
-						//TODO: make a global colors list, and make it fit IRC standards
+						//TODO: make this conform to the global list, and make the global list work
 						Color blue = new Color(r.getOutput().getDisplay(),0,0,255);
 						StyleRange styleRange = new StyleRange();
 						styleRange.start = r.getOutput().getCharCount() - m.getContent().length() + m.getContent().indexOf(s)-1;

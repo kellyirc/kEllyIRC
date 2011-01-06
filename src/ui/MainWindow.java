@@ -19,6 +19,8 @@ import org.eclipse.swt.events.DisposeEvent;
 
 import org.eclipse.swt.layout.FormLayout;
 
+import shared.Customs;
+
 public class MainWindow extends ApplicationWindow {
 	
 	private Display display;
@@ -60,6 +62,7 @@ public class MainWindow extends ApplicationWindow {
 		//new Exception().printStackTrace();
 		//TODO: remove this, and make it based on the actual connection settings instead of this.
 		new Connection(container, "irc.esper.net","kellyIRC");
+		//RoomManager.colorset = new Customs();
 	}
 
 	/* (non-Javadoc)

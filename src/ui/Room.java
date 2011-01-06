@@ -1,6 +1,8 @@
 package ui;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.MovementEvent;
+import org.eclipse.swt.custom.MovementListener;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -10,6 +12,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.grouplayout.GroupLayout;
 import org.eclipse.swt.layout.grouplayout.GroupLayout.ParallelGroup;
 import org.eclipse.swt.layout.grouplayout.GroupLayout.SequentialGroup;
+import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -56,6 +59,24 @@ public class Room extends Composite{
 			//set up the output window
 			output = new StyledText(composite, SWT.BORDER | SWT.V_SCROLL | SWT.WRAP | SWT.MULTI);
 			output.setEditable(false);
+			output.addWordMovementListener(new MovementListener(){
+
+				@Override
+				public void getNextOffset(MovementEvent arg0) {
+					String[] message = arg0.lineText.split(" ");
+					for(String s : message){
+						if(arg0.lineText.indexOf(s)+s.length() < arg0.offset) continue;
+						if(s.contains("://") && arg0.lineText.indexOf(s) + s.length() > arg0.offset) {
+							Program.launch(s);
+						}
+					}
+					
+				}
+
+				@Override
+				public void getPreviousOffset(MovementEvent arg0) {
+					
+				}});
 			
 			//set up the input box and it's enter-key listener
 			input = new StyledText(composite, SWT.BORDER);
