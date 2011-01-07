@@ -209,6 +209,7 @@ public class RoomManager {
 			if(m.getConnection().equals(r.getServerConnection()) && r.getChannel().getChannelName().equals(m.getChannel())){
 
 				r.getOutput().append("<"+m.getSender() + "> "+m.getContent());
+				r.getOutput().setSelection(r.getOutput().getText().length()); //scroll the ouput control down
 				
 				for(String s : m.getContent().split(" ")){
 					if(s.contains("://")){
