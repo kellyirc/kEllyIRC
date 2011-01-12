@@ -89,9 +89,6 @@ public class Room extends Composite{
 						if(input.getText().startsWith("/")){
 							serverConnection.doCommand(input.getText().substring(1));
 						} else {
-							for(char c : input.getText().toCharArray()){
-								System.out.println((int)c);
-							}
 							serverConnection.sendMessage(channel.getChannelName(), input.getText().replaceAll("\r\n", ""));
 						}
 						input.setText("");
