@@ -1,5 +1,7 @@
 package ui;
 
+import java.util.Arrays;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.MovementEvent;
 import org.eclipse.swt.custom.MovementListener;
@@ -70,7 +72,6 @@ public class Room extends Composite{
 							Program.launch(s);
 						}
 					}
-					
 				}
 
 				@Override
@@ -88,7 +89,10 @@ public class Room extends Composite{
 						if(input.getText().startsWith("/")){
 							serverConnection.doCommand(input.getText().substring(1));
 						} else {
-							serverConnection.sendMessage(channel.getChannelName(), input.getText());
+							for(char c : input.getText().toCharArray()){
+								System.out.println((int)c);
+							}
+							serverConnection.sendMessage(channel.getChannelName(), input.getText().replaceAll("\r\n", ""));
 						}
 						input.setText("");
 					}
