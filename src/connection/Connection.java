@@ -369,6 +369,7 @@ public class Connection extends PircBot{
 	protected void onJoin(String channel, String sender, String login,
 			String hostname) {
 		updateWho(channel);
+		this.findRoom(channel).updateUserCount();
 		super.onJoin(channel, sender, login, hostname);
 	}
 
@@ -380,6 +381,7 @@ public class Connection extends PircBot{
 			String kickerLogin, String kickerHostname, String recipientNick,
 			String reason) {
 		updateWho(channel);
+		this.findRoom(channel).updateUserCount();
 		super.onKick(channel, kickerNick, kickerLogin, kickerHostname, recipientNick,
 				reason);
 	}
@@ -394,6 +396,7 @@ public class Connection extends PircBot{
 		//add the message to the queue, and then make the queue clean itself out
 		RoomManager.queue.add(new Message(this, message, sender, channel));	
 		RoomManager.manageQueue();
+		this.findRoom(channel).updateLastMessage("<" + sender + "> " + message);
 		
 		super.onMessage(channel, sender, login, hostname, message);
 	}
@@ -462,6 +465,7 @@ public class Connection extends PircBot{
 	protected void onPart(String channel, String sender, String login,
 			String hostname) {
 		updateWho(channel);
+		this.findRoom(channel).updateUserCount();
 		super.onPart(channel, sender, login, hostname);
 	}
 
@@ -488,6 +492,11 @@ public class Connection extends PircBot{
 		
 		for(String r : getUsers().keySet()){
 			updateWho(r);
+		}
+		
+		for(String channel: this.getChannels())
+		{
+			this.findRoom(channel).updateUserCount();
 		}
 		
 		super.onQuit(sourceNick, sourceLogin, sourceHostname, reason);

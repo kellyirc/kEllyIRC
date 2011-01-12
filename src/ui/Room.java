@@ -43,6 +43,11 @@ public class Room extends Composite{
 	
 	private int layout;
 	
+	//variables used with the tool tip
+	private int userCount;
+	private String lastMessage;
+	private String channelName;
+	
 	public Room(Composite parent, int style, int layout){
 		super(parent, style);
 		this.layout = layout;
@@ -52,6 +57,9 @@ public class Room extends Composite{
 		//get the parent composite ready to roll
 		Composite composite = new Composite(getServerConnection().getChanList(), SWT.NONE);
 		channel.getTabRef().setControl(composite);
+		
+		
+		
 		
 		if((layout & TOPIC)!=0){
 			topicBox = new StyledText(composite, SWT.BORDER | SWT.WRAP);
@@ -182,6 +190,13 @@ public class Room extends Composite{
 		gl_composite.setVerticalGroup(p);
 		
 		composite.setLayout(gl_composite);
+		
+		
+		
+		//initial tab tool tip text setting
+		userCount = channel.getConn().getUsers(channel.getChannelName()).length;
+		lastMessage = "N/A";
+		channelName = channel.getChannelName();
 	}
 	
 	/**
@@ -239,10 +254,30 @@ public class Room extends Composite{
 		this.topic = topic;
 		topicBox.setText(topic);
 		topicBox.setToolTipText(topic);
+		updateToolTipText();
 	}
 	
 	public String getTopic() {
 		return topic;
+	}
+	
+	public void updateToolTipText()
+	{
+		channel.getTabRef().setToolTipText("Channnel: " + channelName +
+									"\nCurrent Users: " + userCount   +
+									 "\nLast Message: " + lastMessage);
+	}
+	
+	public void updateUserCount()
+	{
+	    userCount = channel.getConn().getUsers(channel.getChannelName()).length;
+	    setTopic(getTopic()); //FIX THIS: Uses the wrong thread
+	}
+	
+	public void updateLastMessage(String lastMessage)
+	{
+		this.lastMessage = lastMessage;
+		setTopic(getTopic());//FIX THIS: Uses the wrong thread
 	}
 	
 }

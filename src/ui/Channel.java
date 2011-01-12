@@ -13,12 +13,16 @@ public class Channel {
 	private String channelName;
 	private CTabItem tabRef;
 	private Connection conn;
+
 	
 	public Channel(CTabFolder c, String s, final Connection conn){
 		this.setConn(conn);
 		setChannelName(s.trim());
 		tabRef = new CTabItem(c, SWT.NONE | (s.equals("Console") ? 0 : SWT.CLOSE));
 		tabRef.setText(s);
+		
+		
+		
 		tabRef.addDisposeListener(new DisposeListener() {
 
 			@Override
@@ -50,4 +54,6 @@ public class Channel {
 	public Connection getConn() {
 		return conn;
 	}
+	
+	
 }
