@@ -61,7 +61,7 @@ public class MainWindow extends ApplicationWindow {
 		super.create();
 		//new Exception().printStackTrace();
 		//TODO: remove this, and make it based on the actual connection settings instead of this.
-		new Connection(container, "irc.esper.net","kellyIRC");
+		new Connection(container, "irc.esper.net", "kellyIRC-KR");
 		//RoomManager.colorset = new Customs();
 	}
 

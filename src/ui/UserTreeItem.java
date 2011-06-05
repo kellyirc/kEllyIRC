@@ -2,18 +2,19 @@ package ui;
 
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.jibble.pircbot.IrcUser;
+import org.pircbotx.Channel;
+import org.pircbotx.User;
 
 import connection.Connection;
 
 public class UserTreeItem{
 
-	private IrcUser myUser;
+	private User myUser;
 	private Connection connection;
 	private TreeItem tree;
-	private String chan;
+	private CustomChannel chan;
 	
-	public UserTreeItem(Tree parent, int style, IrcUser u, Connection c) {
+	public UserTreeItem(Tree parent, int style, User u, Connection c) {
 		TreeItem myItem = new TreeItem(parent, style);
 		myItem.setData(false);
 		setTree(myItem);
@@ -21,20 +22,20 @@ public class UserTreeItem{
 		setConnection(c);
 	}
 
-	public UserTreeItem(TreeItem t, int none, IrcUser s, Connection c, Channel chan) {
+	public UserTreeItem(TreeItem t, int none, User s, Connection c, CustomChannel chan) {
 		TreeItem myItem = new TreeItem(t, none);
 		myItem.setData(true);
 		setTree(myItem);
 		setMyUser(s);
 		setConnection(c);
-		setChan(chan.getChannelName());
+		setChan(chan);
 	}
 
-	public void setMyUser(IrcUser myUser) {
+	public void setMyUser(User myUser) {
 		this.myUser = myUser;
 	}
 
-	public IrcUser getMyUser() {
+	public User getMyUser() {
 		return myUser;
 	}
 
@@ -55,11 +56,11 @@ public class UserTreeItem{
 	}
 
 	
-	public void setChan(String chan) {
+	public void setChan(CustomChannel chan) {
 		this.chan = chan;
 	}
 
-	public String getChan() {
+	public CustomChannel getChan() {
 		return chan;
 	}
 

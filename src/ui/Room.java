@@ -1,7 +1,5 @@
 package ui;
 
-import java.util.Arrays;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.MovementEvent;
 import org.eclipse.swt.custom.MovementListener;
@@ -22,6 +20,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.pircbotx.Channel;
 
 import connection.Connection;
 
@@ -31,7 +30,7 @@ public class Room extends Composite{
 
 	private Connection serverConnection;
 	
-	private Channel channel;
+	private CustomChannel channel;
 	
 	//make clickable links by changing the style and the data of the individual messages
 	//http://eclipse.org/articles/StyledText%201/article1.html
@@ -57,9 +56,6 @@ public class Room extends Composite{
 		//get the parent composite ready to roll
 		Composite composite = new Composite(getServerConnection().getChanList(), SWT.NONE);
 		channel.getTabRef().setControl(composite);
-		
-		
-		
 		
 		if((layout & TOPIC)!=0){
 			topicBox = new StyledText(composite, SWT.BORDER | SWT.WRAP);
@@ -97,7 +93,7 @@ public class Room extends Composite{
 						if(input.getText().startsWith("/")){
 							serverConnection.doCommand(input.getText().substring(1));
 						} else {
-							serverConnection.sendMessage(channel.getChannelName(), input.getText().replaceAll("\r\n", ""));
+							serverConnection.sendMessage(channel.getChannel().getName(), input.getText().replaceAll("\r\n", ""));
 						}
 						input.setText("");
 					}
@@ -194,9 +190,9 @@ public class Room extends Composite{
 		
 		
 		//initial tab tool tip text setting
-		userCount = channel.getConn().getUsers(channel.getChannelName()).length;
+		userCount = channel.getChannel() != null ? channel.getChannel().getUsers().size() : 0;
 		lastMessage = "N/A";
-		channelName = channel.getChannelName();
+		channelName = channel.getChannelString();
 	}
 	
 	/**
@@ -230,16 +226,16 @@ public class Room extends Composite{
 		return who;
 	}
 
-	public void setChannelName(String channelName) {
+	/*public void setChannelName(Channel channel) {
 		this.channel.setChannelName(channelName);
-	}
+	}//*/
 
-	public Channel getChannel() {
+	public CustomChannel getChannel() {
 		return channel;
 	}
 	
-	public void setChannel(Channel c){
-		this.channel = c;
+	public void setChannel(CustomChannel customChannel){
+		this.channel = customChannel;
 	}
 
 	public void setServerConnection(Connection serverConnection) {
@@ -270,7 +266,7 @@ public class Room extends Composite{
 	
 	public void updateUserCount()
 	{
-	    userCount = channel.getConn().getUsers(channel.getChannelName()).length;
+	    userCount = channel.getConn().getBot().getUsers(channel.getChannel()).size();
 	    setTopic(getTopic()); //FIX THIS: Uses the wrong thread
 	}
 	

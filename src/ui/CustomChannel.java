@@ -5,19 +5,23 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.pircbotx.Channel;
 
 import connection.Connection;
 
-public class Channel {
+public class CustomChannel {
 	
-	private String channelName;
+	private Channel channel;
 	private CTabItem tabRef;
 	private Connection conn;
-
+	private String channelString;
 	
-	public Channel(CTabFolder c, String s, final Connection conn){
+	
+	
+	public CustomChannel(CTabFolder c, String s, final Connection conn, Channel chan){
 		this.setConn(conn);
-		setChannelName(s.trim());
+		setChannel(chan);
+		setChannelString(s);
 		tabRef = new CTabItem(c, SWT.NONE | (s.equals("Console") ? 0 : SWT.CLOSE));
 		tabRef.setText(s);
 		
@@ -27,16 +31,24 @@ public class Channel {
 
 			@Override
 			public void widgetDisposed(DisposeEvent arg0) {
-				conn.partChannel(channelName);
+				conn.partChannel(channel.getName());
 			}});
 	}
-
-	public void setChannelName(String channelName) {
-		this.channelName = channelName;
+	
+	public void setChannelString(String channelString) {
+		this.channelString = channelString;
+	}
+	
+	public String getChannelString() {
+		return channelString;
+	}
+	
+	public void setChannel(Channel channel) {
+		this.channel = channel;
 	}
 
-	public String getChannelName() {
-		return channelName;
+	public Channel getChannel() {
+		return channel;
 	}
 
 	public void setTabRef(CTabItem tabRef) {

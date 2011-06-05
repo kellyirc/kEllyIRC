@@ -9,22 +9,79 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.widgets.Display;
-import org.jibble.pircbot.PircBot;
-import org.jibble.pircbot.TrustingSSLSocketFactory;
-import org.jibble.pircbot.IrcUser;
+import org.pircbotx.Channel;
+import org.pircbotx.PircBotX;
+import org.pircbotx.TrustingSSLSocketFactory;
+import org.pircbotx.User;
+import org.pircbotx.hooks.Event;
+import org.pircbotx.hooks.ListenerAdapter;
+import org.pircbotx.hooks.events.ActionEvent;
+import org.pircbotx.hooks.events.ChannelInfoEvent;
+import org.pircbotx.hooks.events.ConnectEvent;
+import org.pircbotx.hooks.events.DisconnectEvent;
+import org.pircbotx.hooks.events.FileTransferFinishedEvent;
+import org.pircbotx.hooks.events.FingerEvent;
+import org.pircbotx.hooks.events.FounderEvent;
+import org.pircbotx.hooks.events.HalfOpEvent;
+import org.pircbotx.hooks.events.IncomingChatRequestEvent;
+import org.pircbotx.hooks.events.IncomingFileTransferEvent;
+import org.pircbotx.hooks.events.InviteEvent;
+import org.pircbotx.hooks.events.JoinEvent;
+import org.pircbotx.hooks.events.KickEvent;
+import org.pircbotx.hooks.events.MessageEvent;
+import org.pircbotx.hooks.events.ModeEvent;
+import org.pircbotx.hooks.events.MotdEvent;
+import org.pircbotx.hooks.events.NickChangeEvent;
+import org.pircbotx.hooks.events.NoticeEvent;
+import org.pircbotx.hooks.events.OpEvent;
+import org.pircbotx.hooks.events.PartEvent;
+import org.pircbotx.hooks.events.PingEvent;
+import org.pircbotx.hooks.events.PrivateMessageEvent;
+import org.pircbotx.hooks.events.QuitEvent;
+import org.pircbotx.hooks.events.RemoveChannelBanEvent;
+import org.pircbotx.hooks.events.RemoveChannelKeyEvent;
+import org.pircbotx.hooks.events.RemoveChannelLimitEvent;
+import org.pircbotx.hooks.events.RemoveInviteOnlyEvent;
+import org.pircbotx.hooks.events.RemoveModeratedEvent;
+import org.pircbotx.hooks.events.RemoveNoExternalMessagesEvent;
+import org.pircbotx.hooks.events.RemovePrivateEvent;
+import org.pircbotx.hooks.events.RemoveSecretEvent;
+import org.pircbotx.hooks.events.RemoveTopicProtectionEvent;
+import org.pircbotx.hooks.events.ServerPingEvent;
+import org.pircbotx.hooks.events.ServerResponseEvent;
+import org.pircbotx.hooks.events.SetChannelBanEvent;
+import org.pircbotx.hooks.events.SetChannelKeyEvent;
+import org.pircbotx.hooks.events.SetChannelLimitEvent;
+import org.pircbotx.hooks.events.SetInviteOnlyEvent;
+import org.pircbotx.hooks.events.SetModeratedEvent;
+import org.pircbotx.hooks.events.SetNoExternalMessagesEvent;
+import org.pircbotx.hooks.events.SetPrivateEvent;
+import org.pircbotx.hooks.events.SetSecretEvent;
+import org.pircbotx.hooks.events.SetTopicProtectionEvent;
+import org.pircbotx.hooks.events.SuperOpEvent;
+import org.pircbotx.hooks.events.TimeEvent;
+import org.pircbotx.hooks.events.TopicEvent;
+import org.pircbotx.hooks.events.UnknownEvent;
+import org.pircbotx.hooks.events.UserListEvent;
+import org.pircbotx.hooks.events.UserModeEvent;
+import org.pircbotx.hooks.events.VersionEvent;
+import org.pircbotx.hooks.events.VoiceEvent;
+import org.pircbotx.hooks.managers.ListenerManager;
 
 import shared.Message;
 import ui.Room;
 import ui.RoomManager;
 
-public class Connection extends PircBot{
+public class Connection extends ListenerAdapter{
+	
+	private PircBotX bot;
 	
 	private CTabFolder chanList;
 
 	private String myServer, nick;
 	
 				  //channel, users
-	private HashMap<String, ArrayList<IrcUser>> users = new HashMap<String,ArrayList<IrcUser>>();
+	private HashMap<String, ArrayList<User>> users = new HashMap<String,ArrayList<User>>();
 	private HashMap<String, String> topics = new HashMap<String, String>();
 
 	/**
@@ -38,11 +95,15 @@ public class Connection extends PircBot{
 		this.myServer = server;
 		this.nick = nick;
 		
-		setVersion("kellyIRC v"+VERSION);
+		bot = new PircBotX();
+		ListenerManager<PircBotX> manager = bot.getListenerManager();
+		manager.addListener(this);
 		
-		setAutoNickChange(true);
-		setName(nick);
-		setVerbose(true);
+		bot.setVersion("kellyIRCX v"+bot.VERSION);
+		
+		bot.setAutoNickChange(true);
+		bot.setName(nick);
+		bot.setVerbose(true);
 		
 		CTabItem c = new CTabItem(parent, SWT.NONE);
 		c.setText(server);
@@ -66,33 +127,46 @@ public class Connection extends PircBot{
 		c.setControl(chanList);
 
 		try {
-			this.connect(server, 6697, new TrustingSSLSocketFactory());
+			bot.connect(server, 6667);
 			//this.connect(server);
 		} catch(Exception e) {
+			System.out.println("Here comes some error stuff! " + e.toString());
 			e.printStackTrace();
 		}
 		
 		//TODO: remove this -- it is temporary
-		this.joinChannel("#dgr");
+		this.joinChannel("#warcan");
 		
+	}
+	
+	public void setBot(PircBotX bot) {
+		this.bot = bot;
+	}
+	
+	public PircBotX getBot() {
+		return bot;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.jibble.pircbot.PircBot#ban(java.lang.String, java.lang.String)
 	 */
-	@Override
+	
 	public void ban(String channel, String hostmask) {
 		// TODO Auto-generated method stub
-		super.ban(channel, hostmask);
+		bot.ban(channel, hostmask);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.jibble.pircbot.PircBot#changeNick(java.lang.String)
 	 */
-	@Override
+	
 	public void changeNick(String newNick) {
 		// TODO Auto-generated method stub
-		super.changeNick(newNick);
+		bot.changeNick(newNick);
+	}
+	
+	public void createRoom(String s, int layout) {
+		createRoom(s,layout,null);
 	}
 
 	/**Create a new room based on a channel name. This does NOT need to lead to an actual channel, 
@@ -100,35 +174,26 @@ public class Connection extends PircBot{
 	 * 
 	 * @param channel the name of the ctabitem that will be created
 	 */
-	public void createRoom(String channel, int layout) {
-		RoomManager.createRoom(chanList,SWT.NONE,channel,this,layout);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.jibble.pircbot.PircBot#deHalfop(java.lang.String, java.lang.String)
-	 */
-	@Override
-	public void deHalfop(String channel, String nick) {
-		// TODO Auto-generated method stub
-		super.deHalfop(channel, nick);
+	public void createRoom(String chanstr, int layout, Channel chan) {
+		RoomManager.createRoom(chanList,SWT.NONE,chanstr,this,layout,chan);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.jibble.pircbot.PircBot#deOp(java.lang.String, java.lang.String)
 	 */
-	@Override
-	public void deOp(String channel, String nick) {
+	
+	public void deOp(Channel channel, User nick) {
 		// TODO Auto-generated method stub
-		super.deOp(channel, nick);
+		bot.deOp(channel, nick);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.jibble.pircbot.PircBot#deVoice(java.lang.String, java.lang.String)
 	 */
-	@Override
-	public void deVoice(String channel, String nick) {
+	
+	public void deVoice(Channel channel, User nick) {
 		// TODO Auto-generated method stub
-		super.deVoice(channel, nick);
+		bot.deVoice(channel, nick);
 	}
 
 	//TODO: fix this and make a proper command class and aliases function with javascript
@@ -144,8 +209,10 @@ public class Connection extends PircBot{
 	 * @return a Room with the given channel name on this connection, or null
 	 */
 	private Room findRoom(String channel) {
+		System.out.println("Looking for " + channel);
 		for(Room r : RoomManager.getRooms()){
-			if(r.getServerConnection().equals(this) && r.getChannel().getChannelName().equals(channel)){
+			System.out.println("Checking room " + r.getChannel().getChannelString());
+			if(r.getServerConnection().equals(this) && r.getChannel().getChannelString().equals(channel)){
 				return r;
 			}
 		}
@@ -173,340 +240,502 @@ public class Connection extends PircBot{
 		return nick;
 	}
 
-	public HashMap<String, ArrayList<IrcUser>> getUsers() {
+	public HashMap<String, ArrayList<User>> getUsers() {
 		return users;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.jibble.pircbot.PircBot#halfop(java.lang.String, java.lang.String)
-	 */
-	@Override
-	public void halfop(String channel, String nick) {
-		// TODO Auto-generated method stub
-		super.halfop(channel, nick);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.jibble.pircbot.PircBot#identify(java.lang.String)
 	 */
-	@Override
+	
 	public void identify(String password) {
 		// TODO Auto-generated method stub
-		super.identify(password);
+		bot.identify(password);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.jibble.pircbot.PircBot#joinChannel(java.lang.String)
 	 */
-	@Override
+	
 	public void joinChannel(String channel) {
-		createRoom(channel, Room.IO | Room.TOPIC | Room.WHO);		
-		
-		super.joinChannel(channel);
+		Channel channelObj = bot.getChannel(channel);
+		//System.out.println("Debug: " + channelObj);
+		createRoom(channel, Room.IO | Room.TOPIC | Room.WHO, channelObj);
+		bot.joinChannel(channel);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.jibble.pircbot.PircBot#joinChannel(java.lang.String, java.lang.String)
 	 */
-	@Override
+	
 	public void joinChannel(String channel, String key) {
-		createRoom(channel, Room.IO | Room.TOPIC | Room.WHO);			
-		super.joinChannel(channel, key);
+		Channel channelObj = bot.getChannel(channel);
+		//System.out.println("Debug: " + channelObj);
+		createRoom(channel, Room.IO | Room.TOPIC | Room.WHO, channelObj);
+		bot.joinChannel(channel, key);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.jibble.pircbot.PircBot#kick(java.lang.String, java.lang.String)
 	 */
-	@Override
-	public void kick(String channel, String nick) {
+	
+	public void kick(Channel channel, User nick) {
 		// TODO Auto-generated method stub
-		super.kick(channel, nick);
-		updateWho(channel);
+		bot.kick(channel, nick);
+		updateWho(channel.getName());
 	}
 
 	/* (non-Javadoc)
 	 * @see org.jibble.pircbot.PircBot#kick(java.lang.String, java.lang.String, java.lang.String)
 	 */
-	@Override
-	public void kick(String channel, String nick, String reason) {
+	
+	public void kick(Channel channel, User nick, String reason) {
 		// TODO Auto-generated method stub
-		super.kick(channel, nick, reason);
-		updateWho(channel);
+		bot.kick(channel, nick, reason);
+		updateWho(channel.getName());
 	}
 
 	/* (non-Javadoc)
 	 * @see org.jibble.pircbot.PircBot#listChannels()
 	 */
-	@Override
+	
 	public void listChannels() {
 		// TODO Auto-generated method stub
-		super.listChannels();
+		bot.listChannels();
+	}
+
+	/**
+	 * @return the topics
+	 */
+	public HashMap<String, String> getTopics() {
+		return topics;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.jibble.pircbot.PircBot#onAction(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 * @see org.jibble.pircbot.PircBot#partChannel(java.lang.String)
 	 */
-	@Override
-	protected void onAction(String sender, String login, String hostname,
-			String target, String action) {
-		// TODO Auto-generated method stub
-		super.onAction(sender, login, hostname, target, action);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.jibble.pircbot.PircBot#onAdmin(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
-	 */
-	@Override
-	protected void onAdmin(String channel, String sourceNick,
-			String sourceLogin, String sourceHostname, String string) {
-		updateWho(channel);
-		super.onAdmin(channel, sourceNick, sourceLogin, sourceHostname, string);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.jibble.pircbot.PircBot#onBeforeQuit(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
-	 */
-	@Override
-	protected void onBeforeQuit(String sourceNick, String sourceLogin,
-			String sourceHostname, String reason) {
-		for(String s : getUsers().keySet()){
-			updateWho(s);
-		}
-		super.onBeforeQuit(sourceNick, sourceLogin, sourceHostname, reason);
-	}
 	
+	public void partChannel(String channel) {
+		users.remove(channel);
+		bot.partChannel(channel);
+	}
+
 	/* (non-Javadoc)
-	 * @see org.jibble.pircbot.PircBot#onChannelInfo(java.lang.String, int, java.lang.String)
+	 * @see org.jibble.pircbot.PircBot#partChannel(java.lang.String, java.lang.String)
 	 */
-	@Override
-	protected void onChannelInfo(String channel, int userCount, String topic) {
+	
+	public void partChannel(String channel, String reason) {
+		users.remove(channel);
+		bot.partChannel(channel, reason);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jibble.pircbot.PircBot#quitServer()
+	 */
+	
+	public void quitServer() {
+		// TODO Auto-generated method stub
+		bot.quitServer();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jibble.pircbot.PircBot#quitServer(java.lang.String)
+	 */
+	
+	public void quitServer(String reason) {
+		// TODO Auto-generated method stub
+		bot.quitServer(reason);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jibble.pircbot.PircBot#sendAction(java.lang.String, java.lang.String)
+	 */
+	
+	public void sendAction(String target, String action) {
+		// TODO Auto-generated method stub
+		bot.sendAction(target, action);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jibble.pircbot.PircBot#sendInvite(java.lang.String, java.lang.String)
+	 */
+	
+	public void sendInvite(String nick, String channel) {
+		// TODO Auto-generated method stub
+		bot.sendInvite(nick, channel);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jibble.pircbot.PircBot#sendMessage(java.lang.String, java.lang.String)
+	 */
+	
+	public void sendMessage(String target, String message) {
 		
-		super.onChannelInfo(channel, userCount, topic);
+		RoomManager.queue.add(new Message(this, message,getNick(),target));	
+		RoomManager.manageQueue();
+		
+		bot.sendMessage(target, message);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.jibble.pircbot.PircBot#onConnect()
+	 * @see org.jibble.pircbot.PircBot#sendNotice(java.lang.String, java.lang.String)
 	 */
-	@Override
-	protected void onConnect() {
-		// TODO Auto-generated method stub
-		super.onConnect();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.jibble.pircbot.PircBot#onDeAdmin(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
-	 */
-	@Override
-	protected void onDeAdmin(String channel, String sourceNick,
-			String sourceLogin, String sourceHostname, String string) {
-		updateWho(channel);
-		super.onDeAdmin(channel, sourceNick, sourceLogin, sourceHostname, string);
-	}
 	
-	/* (non-Javadoc)
-	 * @see org.jibble.pircbot.PircBot#onDeHalfop(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
-	 */
-	@Override
-	protected void onDeHalfop(String channel, String sourceNick,
-			String sourceLogin, String sourceHostname, String recipient) {
-		updateWho(channel);
-		super.onDeHalfop(channel, sourceNick, sourceLogin, sourceHostname, recipient);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.jibble.pircbot.PircBot#onDeop(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
-	 */
-	@Override
-	protected void onDeop(String channel, String sourceNick,
-			String sourceLogin, String sourceHostname, String recipient) {
-		updateWho(channel);
-		super.onDeop(channel, sourceNick, sourceLogin, sourceHostname, recipient);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.jibble.pircbot.PircBot#onDeOwner(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
-	 */
-	@Override
-	protected void onDeOwner(String channel, String sourceNick,
-			String sourceLogin, String sourceHostname, String string) {
-		updateWho(channel);
-		super.onDeOwner(channel, sourceNick, sourceLogin, sourceHostname, string);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.jibble.pircbot.PircBot#onDeVoice(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
-	 */
-	@Override
-	protected void onDeVoice(String channel, String sourceNick,
-			String sourceLogin, String sourceHostname, String recipient) {
-		updateWho(channel);
-		super.onDeVoice(channel, sourceNick, sourceLogin, sourceHostname, recipient);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.jibble.pircbot.PircBot#onDisconnect()
-	 */
-	@Override
-	protected void onDisconnect() {
+	public void sendNotice(String target, String notice) {
 		// TODO Auto-generated method stub
-		super.onDisconnect();
+		bot.sendNotice(target, notice);
+	}
+
+	/**
+	 * @param chanList the chanList to set
+	 */
+	public void setChanList(CTabFolder chanList) {
+		this.chanList = chanList;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.jibble.pircbot.PircBot#onHalfop(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 * @see org.jibble.pircbot.PircBot#setMode(java.lang.String, java.lang.String)
 	 */
-	@Override
-	protected void onHalfop(String channel, String sourceNick,
-			String sourceLogin, String sourceHostname, String recipient) {
-		updateWho(channel);
-		super.onHalfop(channel, sourceNick, sourceLogin, sourceHostname, recipient);
+	
+	public void setMode(Channel channel, String mode) {
+		// TODO Auto-generated method stub
+		bot.setMode(channel, mode);
+	}
+
+	/**
+	 * @param server the server to set
+	 */
+	public void setMyServer(String server) {
+		this.myServer = server;
+	}
+
+	/**
+	 * @param nick the nick to set
+	 */
+	public void setNick(String nick) {
+		this.nick = nick;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.jibble.pircbot.PircBot#onJoin(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 * @see org.jibble.pircbot.PircBot#setTopic(java.lang.String, java.lang.String)
 	 */
-	@Override
-	protected void onJoin(String channel, String sender, String login,
-			String hostname) {
-		updateWho(channel);
-		this.findRoom(channel).updateUserCount();
-		super.onJoin(channel, sender, login, hostname);
+	
+	public void setTopic(Channel channel, String topic) {
+		// TODO Auto-generated method stub
+		bot.setTopic(channel, topic);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.jibble.pircbot.PircBot#onKick(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 * @see org.jibble.pircbot.PircBot#unBan(java.lang.String, java.lang.String)
 	 */
-	@Override
-	protected void onKick(String channel, String kickerNick,
-			String kickerLogin, String kickerHostname, String recipientNick,
-			String reason) {
-		updateWho(channel);
-		this.findRoom(channel).updateUserCount();
-		super.onKick(channel, kickerNick, kickerLogin, kickerHostname, recipientNick,
-				reason);
+	
+	public void unBan(String channel, String hostmask) {
+		// TODO Auto-generated method stub
+		bot.unBan(channel, hostmask);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.jibble.pircbot.PircBot#onMessage(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 * @see org.jibble.pircbot.PircBot#updateUser(java.lang.String, java.lang.String, boolean, java.lang.String)
 	 */
+	
+	/*protected void updateUser(String channel, String prefix, boolean add,
+			String nick) {
+		for(User i : users.get(channel)){
+			if(i.getNick().equals(nick)){
+				i.setPrefix(add ? prefix : "");
+			}
+		}
+		bot.updateUser(channel, prefix, add, nick);
+	}*/
+
+	/**
+	 * Update the who list for a given channel.
+	 * @param channel the channel to update the who list on
+	 */
+	private void updateWho(String channel) {
+		Room r = findRoom(channel);
+		RoomManager.updateWho(r);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jibble.pircbot.PircBot#voice(java.lang.String, java.lang.String)
+	 */
+	public void voice(Channel channel, User nick) {
+		// TODO Auto-generated method stub
+		bot.voice(channel, nick);
+	}
+
 	@Override
-	protected void onMessage(String channel, String sender, String login,
-			String hostname, String message) {
+	public void onAction(ActionEvent event) throws Exception {
+		// TODO Auto-generated method stub
+		super.onAction(event);
+	}
+
+	@Override
+	public void onChannelInfo(ChannelInfoEvent event) throws Exception {
+		// TODO Auto-generated method stub
+		super.onChannelInfo(event);
+	}
+
+	@Override
+	public void onConnect(ConnectEvent event) throws Exception {
+		// TODO Auto-generated method stub
+		super.onConnect(event);
+	}
+
+	@Override
+	public void onDisconnect(DisconnectEvent event) throws Exception {
+		// TODO Auto-generated method stub
+		super.onDisconnect(event);
+	}
+
+	@Override
+	public void onEvent(Event arg0) throws Exception {
+		// TODO Auto-generated method stub
+		super.onEvent(arg0);
+	}
+
+	@Override
+	public void onFileTransferFinished(FileTransferFinishedEvent event)
+			throws Exception {
+		// TODO Auto-generated method stub
+		super.onFileTransferFinished(event);
+	}
+
+	@Override
+	public void onFinger(FingerEvent event) throws Exception {
+		// TODO Auto-generated method stub
+		super.onFinger(event);
+	}
+
+	@Override
+	public void onFounder(FounderEvent event) throws Exception {
+		// TODO Auto-generated method stub
+		super.onFounder(event);
+	}
+
+	@Override
+	public void onHalfOp(HalfOpEvent event) throws Exception {
+		// TODO Auto-generated method stub
+		super.onHalfOp(event);
+		updateWho(event.getChannel().getName());
+	}
+
+	@Override
+	public void onIncomingChatRequest(IncomingChatRequestEvent event)
+			throws Exception {
+		// TODO Auto-generated method stub
+		super.onIncomingChatRequest(event);
+	}
+
+	@Override
+	public void onIncomingFileTransfer(IncomingFileTransferEvent event)
+			throws Exception {
+		// TODO Auto-generated method stub
+		super.onIncomingFileTransfer(event);
+	}
+
+	@Override
+	public void onInvite(InviteEvent event) throws Exception {
+		// TODO Auto-generated method stub
+		super.onInvite(event);
+	}
+
+	@Override
+	public void onJoin(JoinEvent event) throws Exception {
+		// TODO Auto-generated method stub
+		super.onJoin(event);
+		
+		System.out.println("*1* " + event.getChannel());
+		System.out.println("*2* " + event.getChannel().getName());
+		System.out.println("*3* " + findRoom(event.getChannel().getName()));
+		
+		updateWho(event.getChannel().getName());
+		this.findRoom(
+				event.
+				getChannel().
+				getName())
+				.updateUserCount();
+	}
+
+	@Override
+	public void onKick(KickEvent event) throws Exception {
+		// TODO Auto-generated method stub
+		super.onKick(event);
+		updateWho(event.getChannel().getName());
+		this.findRoom(event.getChannel().getName()).updateUserCount();
+	}
+
+	@Override
+	public void onMessage(MessageEvent event) throws Exception {
+		// TODO Auto-generated method stub
+		super.onMessage(event);
+		
+		String message = event.getMessage();
+		String sender = event.getUser().getNick();
+		String channel = event.getChannel().getName();
 		
 		//add the message to the queue, and then make the queue clean itself out
 		RoomManager.queue.add(new Message(this, message, sender, channel));	
 		RoomManager.manageQueue();
 		this.findRoom(channel).updateLastMessage("<" + sender + "> " + message);
 		
-		super.onMessage(channel, sender, login, hostname, message);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.jibble.pircbot.PircBot#onMode(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
-	 */
-	@Override
-	protected void onMode(String channel, String sourceNick,
-			String sourceLogin, String sourceHostname, String mode) {
-		updateWho(channel);
-		super.onMode(channel, sourceNick, sourceLogin, sourceHostname, mode);
+		
 	}
 
-	/* (non-Javadoc)
-	 * @see org.jibble.pircbot.PircBot#onNickChange(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
-	 */
 	@Override
-	protected void onNickChange(String oldNick, String login, String hostname,
-			String newNick) {
-		for(String r : getUsers().keySet()){
-			updateWho(r);
+	public void onMode(ModeEvent event) throws Exception {
+		// TODO Auto-generated method stub
+		super.onMode(event);
+		updateWho(event.getChannel().getName());
+	}
+
+	@Override
+	public void onMotd(MotdEvent event) throws Exception {
+		// TODO Auto-generated method stub
+		super.onMotd(event);
+	}
+
+	@Override
+	public void onNickChange(NickChangeEvent event) throws Exception {
+		// TODO Auto-generated method stub
+		super.onNickChange(event);
+		
+		for(Channel r : bot.getChannels()){
+			updateWho(r.getName());
 		}
-		super.onNickChange(oldNick, login, hostname, newNick);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.jibble.pircbot.PircBot#onNotice(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
-	 */
 	@Override
-	protected void onNotice(String sourceNick, String sourceLogin,
-			String sourceHostname, String target, String notice) {
-
-		if(sourceLogin.equals("")) {
-			RoomManager.queue.add(new Message(this, notice, "Notice from "+sourceNick, "Console"));	
+	public void onNotice(NoticeEvent event) throws Exception {
+		// TODO Auto-generated method stub
+		super.onNotice(event);
+		if(event.getUser().getLogin().equals("")) {
+			RoomManager.queue.add(new Message(this, event.getNotice(), "Notice from "+event.getUser().getNick(), "Console"));	
 			RoomManager.manageQueue();
 		}
+	}
+
+	@Override
+	public void onOp(OpEvent event) throws Exception {
+		// TODO Auto-generated method stub
+		super.onOp(event);
 		
-		super.onNotice(sourceNick, sourceLogin, sourceHostname, target, notice);
+		updateWho(event.getChannel().getName());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.jibble.pircbot.PircBot#onOp(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
-	 */
 	@Override
-	protected void onOp(String channel, String sourceNick, String sourceLogin,
-			String sourceHostname, String recipient) {
-		updateWho(channel);
-		super.onOp(channel, sourceNick, sourceLogin, sourceHostname, recipient);
+	public void onPart(PartEvent event) throws Exception {
+		// TODO Auto-generated method stub
+		super.onPart(event);
+		
+		updateWho(event.getChannel().getName());
+		this.findRoom(event.getChannel().getName()).updateUserCount();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.jibble.pircbot.PircBot#onOwner(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
-	 */
 	@Override
-	protected void onOwner(String channel, String sourceNick,
-			String sourceLogin, String sourceHostname, String string) {
-		updateWho(channel);
-		super.onOwner(channel, sourceNick, sourceLogin, sourceHostname, string);
+	public void onPing(PingEvent event) throws Exception {
+		// TODO Auto-generated method stub
+		super.onPing(event);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.jibble.pircbot.PircBot#onPart(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
-	 */
 	@Override
-	protected void onPart(String channel, String sender, String login,
-			String hostname) {
-		updateWho(channel);
-		this.findRoom(channel).updateUserCount();
-		super.onPart(channel, sender, login, hostname);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.jibble.pircbot.PircBot#onPrivateMessage(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
-	 */
-	@Override
-	protected void onPrivateMessage(String sender, String login,
-			String hostname, String message) {
-
-		createRoom(sender, Room.IO);
-		RoomManager.queue.add(new Message(this, message, sender, sender));	
+	public void onPrivateMessage(PrivateMessageEvent event) throws Exception {
+		// TODO Auto-generated method stub
+		super.onPrivateMessage(event);
+		createRoom(event.getUser().getNick(), Room.IO);
+		RoomManager.queue.add(new Message(this, event.getMessage(), event.getUser().getNick(), event.getUser().getNick()));	
 		RoomManager.manageQueue();
-		
-		super.onPrivateMessage(sender, login, hostname, message);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.jibble.pircbot.PircBot#onQuit(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
-	 */
 	@Override
-	protected void onQuit(String sourceNick, String sourceLogin,
-			String sourceHostname, String reason) {
+	public void onQuit(QuitEvent event) throws Exception {
+		// TODO Auto-generated method stub
+		super.onQuit(event);
 		
 		for(String r : getUsers().keySet()){
 			updateWho(r);
 		}
 		
-		for(String channel: this.getChannels())
+		for(Channel channel: bot.getChannels())
 		{
-			this.findRoom(channel).updateUserCount();
+			this.findRoom(channel.getName()).updateUserCount();
 		}
-		
-		super.onQuit(sourceNick, sourceLogin, sourceHostname, reason);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.jibble.pircbot.PircBot#onServerResponse(int, java.lang.String)
-	 */
 	@Override
-	protected void onServerResponse(int code, String response) {
+	public void onRemoveChannelBan(RemoveChannelBanEvent event)
+			throws Exception {
+		// TODO Auto-generated method stub
+		super.onRemoveChannelBan(event);
+	}
+
+	@Override
+	public void onRemoveChannelKey(RemoveChannelKeyEvent event)
+			throws Exception {
+		// TODO Auto-generated method stub
+		super.onRemoveChannelKey(event);
+	}
+
+	@Override
+	public void onRemoveChannelLimit(RemoveChannelLimitEvent event)
+			throws Exception {
+		// TODO Auto-generated method stub
+		super.onRemoveChannelLimit(event);
+	}
+
+	@Override
+	public void onRemoveInviteOnly(RemoveInviteOnlyEvent event)
+			throws Exception {
+		// TODO Auto-generated method stub
+		super.onRemoveInviteOnly(event);
+	}
+
+	@Override
+	public void onRemoveModerated(RemoveModeratedEvent event) throws Exception {
+		// TODO Auto-generated method stub
+		super.onRemoveModerated(event);
+	}
+
+	@Override
+	public void onRemoveNoExternalMessages(RemoveNoExternalMessagesEvent event)
+			throws Exception {
+		// TODO Auto-generated method stub
+		super.onRemoveNoExternalMessages(event);
+	}
+
+	@Override
+	public void onRemovePrivate(RemovePrivateEvent event) throws Exception {
+		// TODO Auto-generated method stub
+		super.onRemovePrivate(event);
+	}
+
+	@Override
+	public void onRemoveSecret(RemoveSecretEvent event) throws Exception {
+		// TODO Auto-generated method stub
+		super.onRemoveSecret(event);
+	}
+
+	@Override
+	public void onRemoveTopicProtection(RemoveTopicProtectionEvent event)
+			throws Exception {
+		// TODO Auto-generated method stub
+		super.onRemoveTopicProtection(event);
+	}
+
+	@Override
+	public void onServerPing(ServerPingEvent event) throws Exception {
+		// TODO Auto-generated method stub
+		super.onServerPing(event);
+	}
+
+	@Override
+	public void onServerResponse(ServerResponseEvent event) throws Exception {
+		// TODO Auto-generated method stub
+		super.onServerResponse(event);
+		
+		int code = event.getCode();
+		
 		//TODO: add more codes as they show up
 		switch(code){
 		//end of names list
@@ -514,9 +743,9 @@ public class Connection extends PircBot{
 			break;
 		//topic
 		case 332:
-			String channel = response.split(":")[0].trim();
+			String channel = event.getResponse().split(":")[0].trim();
 			channel = channel.substring(channel.indexOf("#"));
-			String topic = response;
+			String topic = event.getResponse();
 			//topic = topic.substring(topic.indexOf("'"));
 			//for(Room r : RoomManager.getRooms()){
 				//Initializer.Debug("serverresponse - "+r.getChannel().getChannelName());
@@ -537,221 +766,128 @@ public class Connection extends PircBot{
 			break;
 			
 		default:
-			RoomManager.queue.add(new Message(this, response, "["+code+"] Server Response", "Console"));	
+			RoomManager.queue.add(new Message(this, event.getResponse(), "["+code+"] Server Response", "Console"));	
 			RoomManager.manageQueue();
 		}
-		super.onServerResponse(code, response);
 	}
 
-	/**
-	 * @return the topics
-	 */
-	public HashMap<String, String> getTopics() {
-		return topics;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.jibble.pircbot.PircBot#onTopic(java.lang.String, java.lang.String, java.lang.String, long, boolean)
-	 */
 	@Override
-	protected void onTopic(String channel, String topic, String setBy, String setByLogin, String setByHost,
-			long date, boolean changed) {
+	public void onSetChannelBan(SetChannelBanEvent event) throws Exception {
+		// TODO Auto-generated method stub
+		super.onSetChannelBan(event);
+	}
+
+	@Override
+	public void onSetChannelKey(SetChannelKeyEvent event) throws Exception {
+		// TODO Auto-generated method stub
+		super.onSetChannelKey(event);
+	}
+
+	@Override
+	public void onSetChannelLimit(SetChannelLimitEvent event) throws Exception {
+		// TODO Auto-generated method stub
+		super.onSetChannelLimit(event);
+	}
+
+	@Override
+	public void onSetInviteOnly(SetInviteOnlyEvent event) throws Exception {
+		// TODO Auto-generated method stub
+		super.onSetInviteOnly(event);
+	}
+
+	@Override
+	public void onSetModerated(SetModeratedEvent event) throws Exception {
+		// TODO Auto-generated method stub
+		super.onSetModerated(event);
+	}
+
+	@Override
+	public void onSetNoExternalMessages(SetNoExternalMessagesEvent event)
+			throws Exception {
+		// TODO Auto-generated method stub
+		super.onSetNoExternalMessages(event);
+	}
+
+	@Override
+	public void onSetPrivate(SetPrivateEvent event) throws Exception {
+		// TODO Auto-generated method stub
+		super.onSetPrivate(event);
+	}
+
+	@Override
+	public void onSetSecret(SetSecretEvent event) throws Exception {
+		// TODO Auto-generated method stub
+		super.onSetSecret(event);
+	}
+
+	@Override
+	public void onSetTopicProtection(SetTopicProtectionEvent event)
+			throws Exception {
+		// TODO Auto-generated method stub
+		super.onSetTopicProtection(event);
+	}
+
+	@Override
+	public void onSuperOp(SuperOpEvent event) throws Exception {
+		// TODO Auto-generated method stub
+		super.onSuperOp(event);
+	}
+
+	@Override
+	public void onTime(TimeEvent event) throws Exception {
+		// TODO Auto-generated method stub
+		super.onTime(event);
+	}
+
+	@Override
+	public void onTopic(TopicEvent event) throws Exception {
+		// TODO Auto-generated method stub
+		super.onTopic(event);
+		
 		for(Room c : RoomManager.getRooms()){
-			if(c.getServerConnection().equals(this) && c.getChannel().getChannelName().equals(channel)){
-				RoomManager.changeTopic(c, topic);
+			if(c.getServerConnection().equals(this) && c.getChannel().getChannelString().equals(event.getChannel())){
+				RoomManager.changeTopic(c, event.getTopic());
 			}
 		}
-		super.onTopic(channel, topic, setBy, setByLogin, setByHost, date, changed);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.jibble.pircbot.PircBot#onUserList(java.lang.String, org.jibble.pircbot.User[])
-	 */
 	@Override
-	protected void onUserList(String channel, IrcUser[] users) {
+	public void onUnknown(UnknownEvent event) throws Exception {
+		// TODO Auto-generated method stub
+		super.onUnknown(event);
+	}
 
-		ArrayList<IrcUser> temp = new ArrayList<IrcUser>();
-		for(IrcUser i : users){
+	@Override
+	public void onUserList(UserListEvent event) throws Exception {
+		// TODO Auto-generated method stub
+		super.onUserList(event);
+		
+		ArrayList<User> temp = new ArrayList<User>();
+		for(User i : event.getUsers()){
 			temp.add(i);
 		}
-		this.users.put(channel, temp);
+		this.users.put(event.getChannel().getName(), temp);
 		
-		updateWho(channel);
+		updateWho(event.getChannel().getName());
+	}
+
+	@Override
+	public void onUserMode(UserModeEvent event) throws Exception {
+		// TODO Auto-generated method stub
+		super.onUserMode(event);
+	}
+
+	@Override
+	public void onVersion(VersionEvent event) throws Exception {
+		// TODO Auto-generated method stub
+		super.onVersion(event);
+	}
+
+	@Override
+	public void onVoice(VoiceEvent event) throws Exception {
+		// TODO Auto-generated method stub
+		super.onVoice(event);
 		
-		super.onUserList(channel, users);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.jibble.pircbot.PircBot#onUserMode(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
-	 */
-	@Override
-	protected void onUserMode(String targetNick, String sourceNick,
-			String sourceLogin, String sourceHostname, String mode) {
-		super.onUserMode(targetNick, sourceNick, sourceLogin, sourceHostname, mode);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.jibble.pircbot.PircBot#onVoice(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
-	 */
-	@Override
-	protected void onVoice(String channel, String sourceNick,
-			String sourceLogin, String sourceHostname, String recipient) {
-		//updateWho(channel);
-		super.onVoice(channel, sourceNick, sourceLogin, sourceHostname, recipient);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.jibble.pircbot.PircBot#partChannel(java.lang.String)
-	 */
-	@Override
-	public void partChannel(String channel) {
-		users.remove(channel);
-		super.partChannel(channel);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.jibble.pircbot.PircBot#partChannel(java.lang.String, java.lang.String)
-	 */
-	@Override
-	public void partChannel(String channel, String reason) {
-		users.remove(channel);
-		super.partChannel(channel, reason);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.jibble.pircbot.PircBot#quitServer()
-	 */
-	@Override
-	public void quitServer() {
-		// TODO Auto-generated method stub
-		super.quitServer();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.jibble.pircbot.PircBot#quitServer(java.lang.String)
-	 */
-	@Override
-	public void quitServer(String reason) {
-		// TODO Auto-generated method stub
-		super.quitServer(reason);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.jibble.pircbot.PircBot#sendAction(java.lang.String, java.lang.String)
-	 */
-	@Override
-	public void sendAction(String target, String action) {
-		// TODO Auto-generated method stub
-		super.sendAction(target, action);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.jibble.pircbot.PircBot#sendInvite(java.lang.String, java.lang.String)
-	 */
-	@Override
-	public void sendInvite(String nick, String channel) {
-		// TODO Auto-generated method stub
-		super.sendInvite(nick, channel);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.jibble.pircbot.PircBot#sendMessage(java.lang.String, java.lang.String)
-	 */
-	@Override
-	public void sendMessage(String target, String message) {
-		
-		RoomManager.queue.add(new Message(this, message,getNick(),target));	
-		RoomManager.manageQueue();
-		
-		super.sendMessage(target, message);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.jibble.pircbot.PircBot#sendNotice(java.lang.String, java.lang.String)
-	 */
-	@Override
-	public void sendNotice(String target, String notice) {
-		// TODO Auto-generated method stub
-		super.sendNotice(target, notice);
-	}
-
-	/**
-	 * @param chanList the chanList to set
-	 */
-	public void setChanList(CTabFolder chanList) {
-		this.chanList = chanList;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.jibble.pircbot.PircBot#setMode(java.lang.String, java.lang.String)
-	 */
-	@Override
-	public void setMode(String channel, String mode) {
-		// TODO Auto-generated method stub
-		super.setMode(channel, mode);
-	}
-
-	/**
-	 * @param server the server to set
-	 */
-	public void setMyServer(String server) {
-		this.myServer = server;
-	}
-
-	/**
-	 * @param nick the nick to set
-	 */
-	public void setNick(String nick) {
-		this.nick = nick;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.jibble.pircbot.PircBot#setTopic(java.lang.String, java.lang.String)
-	 */
-	@Override
-	public void setTopic(String channel, String topic) {
-		// TODO Auto-generated method stub
-		super.setTopic(channel, topic);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.jibble.pircbot.PircBot#unBan(java.lang.String, java.lang.String)
-	 */
-	@Override
-	public void unBan(String channel, String hostmask) {
-		// TODO Auto-generated method stub
-		super.unBan(channel, hostmask);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.jibble.pircbot.PircBot#updateUser(java.lang.String, java.lang.String, boolean, java.lang.String)
-	 */
-	@Override
-	protected void updateUser(String channel, String prefix, boolean add,
-			String nick) {
-		for(IrcUser i : users.get(channel)){
-			if(i.getNick().equals(nick)){
-				i.setPrefix(add ? prefix : "");
-			}
-		}
-		super.updateUser(channel, prefix, add, nick);
-	}
-
-	/**
-	 * Update the who list for a given channel.
-	 * @param channel the channel to update the who list on
-	 */
-	private void updateWho(String channel) {
-		Room r = findRoom(channel);
-		RoomManager.updateWho(r);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.jibble.pircbot.PircBot#voice(java.lang.String, java.lang.String)
-	 */
-	@Override
-	public void voice(String channel, String nick) {
-		// TODO Auto-generated method stub
-		super.voice(channel, nick);
+		updateWho(event.getChannel().getName());
 	}
 }
