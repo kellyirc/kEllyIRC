@@ -1,5 +1,7 @@
 package ui;
 
+import lombok.Data;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -9,7 +11,7 @@ import org.pircbotx.Channel;
 
 import connection.Connection;
 
-public class CustomChannel {
+public @Data class CustomChannel {
 	
 	private Channel channel;
 	private CTabItem tabRef;
@@ -34,38 +36,5 @@ public class CustomChannel {
 				conn.partChannel(channel.getName());
 			}});
 	}
-	
-	public void setChannelString(String channelString) {
-		this.channelString = channelString;
-	}
-	
-	public String getChannelString() {
-		return channelString;
-	}
-	
-	public void setChannel(Channel channel) {
-		this.channel = channel;
-	}
-
-	public Channel getChannel() {
-		return channel;
-	}
-
-	public void setTabRef(CTabItem tabRef) {
-		this.tabRef = tabRef;
-	}
-
-	public CTabItem getTabRef() {
-		return tabRef;
-	}
-
-	public void setConn(Connection conn) {
-		this.conn = conn;
-	}
-
-	public Connection getConn() {
-		return conn;
-	}
-	
 	
 }

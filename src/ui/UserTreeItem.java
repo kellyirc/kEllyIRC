@@ -2,12 +2,11 @@ package ui;
 
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.pircbotx.Channel;
 import org.pircbotx.User;
 
 import connection.Connection;
 
-public class UserTreeItem{
+public class UserTreeItem {
 
 	private User myUser;
 	private Connection connection;
@@ -55,7 +54,6 @@ public class UserTreeItem{
 		return tree;
 	}
 
-	
 	public void setChan(CustomChannel chan) {
 		this.chan = chan;
 	}

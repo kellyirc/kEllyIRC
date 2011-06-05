@@ -14,12 +14,11 @@ import org.eclipse.swt.widgets.Shell;
 import connection.Connection;
 
 import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.DisposeEvent;
 
 import org.eclipse.swt.layout.FormLayout;
-
-import shared.Customs;
 
 public class MainWindow extends ApplicationWindow {
 	
@@ -59,9 +58,14 @@ public class MainWindow extends ApplicationWindow {
 	@Override
 	public void create() {
 		super.create();
-		//new Exception().printStackTrace();
 		//TODO: remove this, and make it based on the actual connection settings instead of this.
+
+		CTabItem c = new CTabItem(container, SWT.NONE);
+		c.setText("Options");
+
+		c.setControl(new OptionComposite(container, SWT.NONE));
 		new Connection(container, "irc.esper.net", "kellyIRC-Freek");
+		//new Connection(container, "irc.starlink.org", "kellyIRC-Freek");
 		//RoomManager.colorset = new Customs();
 	}
 
@@ -139,7 +143,7 @@ public class MainWindow extends ApplicationWindow {
 			}
 		});
 		super.configureShell(newShell);
-		newShell.setText("kellyIRC");
+		newShell.setText("kEllyIRC");
 		newShell.setMinimumSize(640, 480); 
 	}
 

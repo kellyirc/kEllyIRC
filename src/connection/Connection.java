@@ -11,7 +11,6 @@ import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.widgets.Display;
 import org.pircbotx.Channel;
 import org.pircbotx.PircBotX;
-import org.pircbotx.TrustingSSLSocketFactory;
 import org.pircbotx.User;
 import org.pircbotx.hooks.Event;
 import org.pircbotx.hooks.ListenerAdapter;
@@ -72,7 +71,7 @@ import shared.Message;
 import ui.Room;
 import ui.RoomManager;
 
-public class Connection extends ListenerAdapter{
+public class Connection extends ListenerAdapter {
 	
 	private PircBotX bot;
 	
@@ -99,7 +98,7 @@ public class Connection extends ListenerAdapter{
 		ListenerManager<PircBotX> manager = bot.getListenerManager();
 		manager.addListener(this);
 		
-		bot.setVersion("kellyIRCX v"+bot.VERSION);
+		bot.setVersion("kellyIRCX v"+PircBotX.VERSION);
 		
 		bot.setAutoNickChange(true);
 		bot.setName(nick);
