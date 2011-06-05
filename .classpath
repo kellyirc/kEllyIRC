@@ -20,6 +20,8 @@
 			<attribute name="javadoc_location" value="http://site.pircbotx.googlecode.com/hg/apidocs/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="libs/xstream-1.4-20110423.112604-3.jar"/>
+	<classpathentry kind="lib" path="libs/xpp3_min-1.1.4c.jar"/>
+	<classpathentry kind="lib" path="libs/xstream-1.3.1.jar"/>
+	<classpathentry kind="lib" path="libs/lombok-0.10.0-BETA2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

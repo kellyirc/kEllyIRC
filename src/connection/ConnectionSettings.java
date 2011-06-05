@@ -1,24 +1,28 @@
 package connection;
 
-public class ConnectionSettings {
-	public String connectionName;
-	public String server;
-	public String port;
-	public String serverPassword;
-	public boolean ssl;
-	public String nickname;
-	public String alternateNickname;
-	public String nickPassword;
+import lombok.Data;
+
+public @Data class ConnectionSettings {
+	private String connectionName;
+	private String server;
+	private String port;
+	private String serverPassword;
+	private boolean ssl;
+	private String nickname;
+	private String alternateNickname;
+	private String nickPassword;
 	
-	public ConnectionSettings(String connectionName, String server, String port, String serverPassword, boolean ssl, String username, String alternateUsername, String nickPassword)
-	{
+	public ConnectionSettings(String connectionName, String server,
+			String port, String serverPassword, boolean ssl, String nickname,
+			String alternateNickname, String nickPassword) {
+		super();
 		this.connectionName = connectionName;
 		this.server = server;
 		this.port = port;
 		this.serverPassword = serverPassword;
 		this.ssl = ssl;
-		this.nickname = username;
-		this.alternateNickname = alternateUsername;
+		this.nickname = nickname;
+		this.alternateNickname = alternateNickname;
 		this.nickPassword = nickPassword;
 	}
 }
