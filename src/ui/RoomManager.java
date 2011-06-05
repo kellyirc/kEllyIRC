@@ -33,7 +33,6 @@ public class RoomManager {
         if(!m.getDisplay().isDisposed()){
         	if(canAddRoom(connection, channelstr)){
         		Room r = new Room(c, style, layout);
-        		System.out.println("channel is " + channel + ", channelstr is " + channelstr);
         		r.setChannel(new CustomChannel((CTabFolder)c, channelstr, connection, channel));
         		r.setServerConnection(connection);
         		r.instantiate();
@@ -41,7 +40,7 @@ public class RoomManager {
         		updateWho(r);
         		for(String s : connection.getTopics().keySet()){
         			if(s.equals(channelstr)){
-        				changeTopic(r, connection.getTopics().get(channel));
+        				changeTopic(r, connection.getTopics().get(channelstr));
         			}
         		}
         	}
@@ -61,7 +60,7 @@ public class RoomManager {
         }
 	}
 	
-	public static void changeTopic(final Room c, final String t) {
+	public static void changeTopic(final Room c, final String t) {		
 		if(c == null){return;}
         if(!m.getDisplay().isDisposed()){
             m.getDisplay().asyncExec (new Runnable () {

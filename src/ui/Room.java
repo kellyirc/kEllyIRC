@@ -38,7 +38,7 @@ public class Room extends Composite{
 	
 	private Tree who;
 	
-	private String topic;
+	private String topic = "";
 	
 	private int layout;
 	
@@ -246,11 +246,15 @@ public class Room extends Composite{
 		return serverConnection;
 	}
 	
-	public void setTopic(String topic) {
-		this.topic = topic;
-		topicBox.setText(topic);
-		topicBox.setToolTipText(topic);
-		updateToolTipText();
+	public void setTopic(String topicToSet) {
+		this.topic = topicToSet;
+		RoomManager.getMain().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				topicBox.setText(topic);
+				topicBox.setToolTipText(topic);
+				updateToolTipText();
+			}
+		});
 	}
 	
 	public String getTopic() {

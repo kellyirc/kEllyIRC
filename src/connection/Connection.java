@@ -130,12 +130,11 @@ public class Connection extends ListenerAdapter{
 			bot.connect(server, 6667);
 			//this.connect(server);
 		} catch(Exception e) {
-			System.out.println("Here comes some error stuff! " + e.toString());
 			e.printStackTrace();
 		}
 		
 		//TODO: remove this -- it is temporary
-		this.joinChannel("#warcan");
+		this.joinChannel("#dgr");
 		
 	}
 	
@@ -209,9 +208,7 @@ public class Connection extends ListenerAdapter{
 	 * @return a Room with the given channel name on this connection, or null
 	 */
 	private Room findRoom(String channel) {
-		System.out.println("Looking for " + channel);
 		for(Room r : RoomManager.getRooms()){
-			System.out.println("Checking room " + r.getChannel().getChannelString());
 			if(r.getServerConnection().equals(this) && r.getChannel().getChannelString().equals(channel)){
 				return r;
 			}
@@ -259,7 +256,6 @@ public class Connection extends ListenerAdapter{
 	
 	public void joinChannel(String channel) {
 		Channel channelObj = bot.getChannel(channel);
-		//System.out.println("Debug: " + channelObj);
 		createRoom(channel, Room.IO | Room.TOPIC | Room.WHO, channelObj);
 		bot.joinChannel(channel);
 	}
@@ -270,7 +266,6 @@ public class Connection extends ListenerAdapter{
 	
 	public void joinChannel(String channel, String key) {
 		Channel channelObj = bot.getChannel(channel);
-		//System.out.println("Debug: " + channelObj);
 		createRoom(channel, Room.IO | Room.TOPIC | Room.WHO, channelObj);
 		bot.joinChannel(channel, key);
 	}
@@ -545,10 +540,6 @@ public class Connection extends ListenerAdapter{
 	public void onJoin(JoinEvent event) throws Exception {
 		// TODO Auto-generated method stub
 		super.onJoin(event);
-		
-		System.out.println("*1* " + event.getChannel());
-		System.out.println("*2* " + event.getChannel().getName());
-		System.out.println("*3* " + findRoom(event.getChannel().getName()));
 		
 		updateWho(event.getChannel().getName());
 		this.findRoom(
@@ -844,8 +835,10 @@ public class Connection extends ListenerAdapter{
 		// TODO Auto-generated method stub
 		super.onTopic(event);
 		
+		topics.put(event.getChannel().getName(), event.getTopic());
+		
 		for(Room c : RoomManager.getRooms()){
-			if(c.getServerConnection().equals(this) && c.getChannel().getChannelString().equals(event.getChannel())){
+			if(c.getServerConnection() == this && c.getChannel().getChannelString().equals(event.getChannel().getName())){
 				RoomManager.changeTopic(c, event.getTopic());
 			}
 		}
