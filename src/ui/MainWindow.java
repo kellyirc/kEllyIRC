@@ -12,6 +12,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import connection.Connection;
+import connection.Connection;
 
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -64,8 +65,7 @@ public class MainWindow extends ApplicationWindow {
 		c.setText("Options");
 
 		c.setControl(new OptionComposite(container, SWT.NONE));
-		new Connection(container, "irc.esper.net", "kellyIRC-Freek");
-		//new Connection(container, "irc.starlink.org", "kellyIRC-Freek");
+		new Connection(container, SWT.NONE, "irc.esper.net", "kellyIRC-Someone");
 		//RoomManager.colorset = new Customs();
 	}
 
@@ -87,6 +87,7 @@ public class MainWindow extends ApplicationWindow {
 		this.parent = parent;
 		
 		CTabFolder container = new CTabFolder(parent, SWT.NONE);
+		container.setSimple(false);
 		container.setLayout(new FormLayout());
 		this.container = container;
 
@@ -144,7 +145,7 @@ public class MainWindow extends ApplicationWindow {
 		});
 		super.configureShell(newShell);
 		newShell.setText("kEllyIRC");
-		newShell.setMinimumSize(640, 480); 
+		newShell.setMinimumSize(800, 480); 
 	}
 
 	/**
@@ -152,7 +153,7 @@ public class MainWindow extends ApplicationWindow {
 	 */
 	@Override
 	protected Point getInitialSize() {
-		return new Point(640, 480);
+		return new Point(800, 480);
 	}
 
 	public void setDisplay(Display display) {

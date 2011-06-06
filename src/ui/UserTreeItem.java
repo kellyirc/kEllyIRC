@@ -9,24 +9,21 @@ import connection.Connection;
 public class UserTreeItem {
 
 	private User myUser;
-	private Connection connection;
 	private TreeItem tree;
 	private CustomChannel chan;
 	
-	public UserTreeItem(Tree parent, int style, User u, Connection c) {
+	public UserTreeItem(Tree parent, int style, User u) {
 		TreeItem myItem = new TreeItem(parent, style);
 		myItem.setData(false);
 		setTree(myItem);
 		setMyUser(u);
-		setConnection(c);
 	}
 
-	public UserTreeItem(TreeItem t, int none, User s, Connection c, CustomChannel chan) {
+	public UserTreeItem(TreeItem t, int none, User s, CustomChannel chan) {
 		TreeItem myItem = new TreeItem(t, none);
 		myItem.setData(true);
 		setTree(myItem);
 		setMyUser(s);
-		setConnection(c);
 		setChan(chan);
 	}
 
@@ -36,14 +33,6 @@ public class UserTreeItem {
 
 	public User getMyUser() {
 		return myUser;
-	}
-
-	public void setConnection(Connection connection) {
-		this.connection = connection;
-	}
-
-	public Connection getConnection() {
-		return connection;
 	}
 
 	public void setTree(TreeItem tree) {

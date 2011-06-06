@@ -7,34 +7,25 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 import org.pircbotx.Channel;
 
+import connection.Connection;
 import connection.Connection;
 
 public @Data class CustomChannel {
 	
 	private Channel channel;
-	private CTabItem tabRef;
-	private Connection conn;
+	private TreeItem itemRef;
 	private String channelString;
 	
-	
-	
-	public CustomChannel(CTabFolder c, String s, final Connection conn, Channel chan){
-		this.setConn(conn);
+	public CustomChannel(Tree c, String s, final Connection newConnection, Channel chan, Room r){
 		setChannel(chan);
 		setChannelString(s);
-		tabRef = new CTabItem(c, SWT.NONE | (s.equals("Console") ? 0 : SWT.CLOSE));
-		tabRef.setText(s);
-		
-		
-		
-		tabRef.addDisposeListener(new DisposeListener() {
-
-			@Override
-			public void widgetDisposed(DisposeEvent arg0) {
-				conn.partChannel(channel.getName());
-			}});
+		itemRef = new TreeItem(c, SWT.NONE);
+		itemRef.setText(s);
+		itemRef.setData(r);
 	}
 	
 }

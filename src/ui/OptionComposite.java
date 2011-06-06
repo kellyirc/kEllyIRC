@@ -28,7 +28,8 @@ public class OptionComposite extends Composite {
 		super(parent, style);
 		
 		final Tree tree = new Tree(this, SWT.BORDER);
-	
+		tree.setBackground(tree.getShell().getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+
 		scrolledComposite = new ScrolledComposite(this, SWT.BORDER | SWT.V_SCROLL);
 		scrolledComposite.setExpandHorizontal(true);
 		scrolledComposite.setExpandVertical(true);

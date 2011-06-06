@@ -49,10 +49,4 @@ public class Initializer {
 		}
 		
 	}
-
-	public static void Debug(String s){
-		if(DEBUG_MODE){
-			System.err.println(s);
-		}
-	}
 }
