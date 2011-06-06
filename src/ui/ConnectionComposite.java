@@ -1,11 +1,38 @@
 package ui;
 
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Button;
+import java.util.ArrayList;
+
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
+
+import connection.ConnectionSettings;
+import connection.Settings;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.wb.swt.SWTResourceManager;
 
 public class ConnectionComposite extends Composite {
-
+	private Table table;
+	private Text textConnName;
+	private Text textServer;
+	private Text textServPass;
+	private Text textNick;
+	private Text textAltNick;
+	private Text textNickPass;
+	private Text textPort;
+	private Text textIdent;
+	private Button btnUseSsl;
+	private Button btnConnectOnStartup;
+	private Label incompleteAlert; 
+	private ConnectionSettings selected;
+	
 	/**
 	 * Create the composite.
 	 * @param parent
@@ -14,14 +41,293 @@ public class ConnectionComposite extends Composite {
 	public ConnectionComposite(Composite parent, int style) {
 		super(parent, style);
 		
-		Button btnNewButton = new Button(this, SWT.NONE);
-		btnNewButton.setBounds(53, 92, 281, 87);
-		btnNewButton.setText("New Button");
+		Group grpConnectionInfo = new Group(this, SWT.NONE);
+		grpConnectionInfo.setText("Connection Info");
+		grpConnectionInfo.setBounds(10, 130, 430, 160);
+		
+		Label lblName = new Label(grpConnectionInfo, SWT.NONE);
+		lblName.setBounds(10, 22, 95, 19);
+		lblName.setText("Name:");
+		
+		textConnName = new Text(grpConnectionInfo, SWT.BORDER);
+		textConnName.setBounds(111, 19, 76, 19);
+		
+		Label lblServer = new Label(grpConnectionInfo, SWT.NONE);
+		lblServer.setText("Server:");
+		lblServer.setBounds(10, 50, 95, 19);
+		
+		textServer = new Text(grpConnectionInfo, SWT.BORDER);
+		textServer.setBounds(111, 47, 76, 19);
+		
+		Label lblPort = new Label(grpConnectionInfo, SWT.NONE);
+		lblPort.setText("Port:");
+		lblPort.setBounds(10, 75, 95, 19);
+		
+		textPort = new Text(grpConnectionInfo, SWT.BORDER);
+		textPort.setBounds(111, 72, 76, 19);
+		
+		Label lblServerPassword = new Label(grpConnectionInfo, SWT.NONE);
+		lblServerPassword.setText("Server Password:");
+		lblServerPassword.setBounds(10, 103, 95, 19);
+		
+		textServPass = new Text(grpConnectionInfo, SWT.BORDER);
+		textServPass.setBounds(111, 100, 76, 19);
+		
+		btnUseSsl = new Button(grpConnectionInfo, SWT.CHECK);
+		btnUseSsl.setBounds(10, 128, 59, 16);
+		btnUseSsl.setText("Use SSL");
+		
+		btnConnectOnStartup = new Button(grpConnectionInfo, SWT.CHECK);
+		btnConnectOnStartup.setText("Connect On Startup");
+		btnConnectOnStartup.setBounds(75, 128, 112, 16);
+		
+		Label lblNickname = new Label(grpConnectionInfo, SWT.NONE);
+		lblNickname.setText("Nickname:");
+		lblNickname.setBounds(243, 22, 95, 19);
+		
+		textNick = new Text(grpConnectionInfo, SWT.BORDER);
+		textNick.setBounds(344, 19, 76, 19);
+		
+		Label lblAltNickname = new Label(grpConnectionInfo, SWT.NONE);
+		lblAltNickname.setText("Alt. Nickname:");
+		lblAltNickname.setBounds(243, 50, 95, 19);
+		
+		textAltNick = new Text(grpConnectionInfo, SWT.BORDER);
+		textAltNick.setBounds(344, 47, 76, 19);
+		
+		Label lblNickservPassword = new Label(grpConnectionInfo, SWT.NONE);
+		lblNickservPassword.setText("Nickserv Password:");
+		lblNickservPassword.setBounds(243, 75, 95, 19);
+		
+		textNickPass = new Text(grpConnectionInfo, SWT.BORDER);
+		textNickPass.setBounds(344, 72, 76, 19);
+		
+		Label lblIdent = new Label(grpConnectionInfo, SWT.NONE);
+		lblIdent.setText("Ident:");
+		lblIdent.setBounds(243, 100, 95, 19);
+		
+		textIdent = new Text(grpConnectionInfo, SWT.BORDER);
+		textIdent.setBounds(344, 97, 76, 19);
+		
+		
+		
+		Button btnSave = new Button(grpConnectionInfo, SWT.NONE);
+		btnSave.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if(checkIfCompleted())
+				{
+					//save stuff
+					incompleteAlert.setVisible(false);
+					ConnectionSettings newCS = new ConnectionSettings(textConnName.getText(),textServer.getText(),textPort.getText(),textServPass.getText(),btnUseSsl.getSelection(),btnConnectOnStartup.getSelection(),textNick.getText(),textAltNick.getText(),textNickPass.getText(),textIdent.getText());
+					table.getItem(table.getSelectionIndex()).setData(newCS);
+					table.getItem(table.getSelectionIndex()).setText(new String[] {newCS.getConnectionName(),newCS.getServer(),newCS.getNickname()});
+					saveTable();
+					Settings.writeToFile();
+				}
+				else
+				{
+					incompleteAlert.setVisible(true);
+				}
+			}
 
+		});
+		btnSave.setBounds(352, 127, 68, 23);
+		btnSave.setText("Save");
+		
+		incompleteAlert = new Label(grpConnectionInfo, SWT.NONE);
+		incompleteAlert.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
+		incompleteAlert.setBounds(243, 137, 95, 13);
+		incompleteAlert.setText("Some fields missing");
+		incompleteAlert.setVisible(false);
+		
+		table = new Table(this, SWT.BORDER | SWT.FULL_SELECTION);
+		table.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				enableFields();
+				loadForms((ConnectionSettings)table.getItem(table.getSelectionIndex()).getData());
+				//get rid of any blank items
+				clearBlanks();
+				
+			}
+		});
+		table.setLinesVisible(true);
+		table.setHeaderVisible(true);
+		table.setBounds(10, 10, 356, 114);
+		
+		TableColumn tblclmnName = new TableColumn(table, SWT.NONE);
+		tblclmnName.setWidth(100);
+		tblclmnName.setText("Name");
+		
+		TableColumn tblclmnServer = new TableColumn(table, SWT.NONE);
+		tblclmnServer.setWidth(146);
+		tblclmnServer.setText("Server");
+		
+		TableColumn tblclmnNickname = new TableColumn(table, SWT.NONE);
+		tblclmnNickname.setWidth(100);
+		tblclmnNickname.setText("Nickname");
+		
+		Button btnNew = new Button(this, SWT.NONE);
+		btnNew.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				clearBlanks();
+				TableItem i = new TableItem(table,SWT.NONE);
+				i.setText(new String[] {"[blank]","[blank]","[blank]"});
+				table.setSelection(i);
+				clearFields();
+				enableFields();
+			}
+		});
+		btnNew.setText("New");
+		btnNew.setBounds(372, 10, 68, 23);
+		
+		Button btnDel = new Button(this, SWT.NONE);
+		btnDel.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				int[] indices = table.getSelectionIndices();
+				if(indices.length!=0)
+				{
+					table.remove(indices);
+					saveTable();
+					Settings.writeToFile();
+					clearFields();
+					disableFields();
+				}
+			}
+		});
+		btnDel.setText("Delete");
+		btnDel.setBounds(372, 39, 68, 23);
+		
+		Button btnConnect = new Button(this, SWT.NONE);
+		btnConnect.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				//TODO: Connect when button pressed.
+			}
+		});
+		btnConnect.setBounds(372, 68, 68, 23);
+		btnConnect.setText("Connect");
+
+
+		loadTable();
+		disableFields();
 	}
-
+	//load table from connSettings from Settings
+	private void loadTable()
+	{
+		ArrayList<ConnectionSettings> list = Settings.getSettings().getConnSettings();
+		for(ConnectionSettings cs:list)
+		{
+			TableItem i = new TableItem(table,SWT.NONE);
+			i.setData(cs);
+			i.setText(new String[] {cs.getConnectionName(),cs.getServer(),cs.getNickname()});
+		}
+	}
+	
+	private void saveTable()
+	{
+		ArrayList<ConnectionSettings> list = new ArrayList<ConnectionSettings>();
+		for(TableItem i : table.getItems())
+		{
+			list.add((ConnectionSettings)i.getData());
+		}
+		Settings.getSettings().setConnSettings(list);
+	}
+	
+	private void loadForms(ConnectionSettings cs)
+	{
+		selected = cs;
+		textConnName.setText(cs.getConnectionName());
+		textServer.setText(cs.getServer());
+		textPort.setText(cs.getPort());
+		textServPass.setText(cs.getServerPassword());
+		btnUseSsl.setSelection(cs.isSsl());
+		btnConnectOnStartup.setSelection(cs.isConnectOnStart());
+		textNick.setText(cs.getNickname());
+		textAltNick.setText(cs.getAlternateNickname());
+		textNickPass.setText(cs.getNickPassword());
+		textIdent.setText(cs.getIdent());
+		
+	}
+	
 	@Override
 	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components
+	}
+	
+	private boolean checkIfCompleted() {
+		if(textConnName.getText().equals(""))
+			return false;
+		if(textServer.getText().equals(""))
+			return false;
+		if(textPort.getText().equals(""))
+			return false;
+		if(textServPass.getText().equals(""))
+			return false;
+		if(textNick.getText().equals(""))
+			return false;
+		if(textAltNick.getText().equals(""))
+			return false;
+		if(textNickPass.getText().equals(""))
+			return false;
+		if(textIdent.getText().equals(""))
+			return false;
+		return true;
+	}
+	
+	private void clearBlanks()
+	{
+		TableItem[] items = table.getItems();
+		for(int k=items.length-1;k>=0;k--)
+		{
+			if(items[k].getText(0).equals("[blank]"))
+			{
+				table.remove(k);
+			}	
+		}
+	}
+	
+	private void enableFields()
+	{
+		textConnName.setEnabled(true);
+		textServer.setEnabled(true);
+		textPort.setEnabled(true);
+		textServPass.setEnabled(true);
+		textNick.setEnabled(true);
+		textAltNick.setEnabled(true);
+		textNickPass.setEnabled(true);
+		textIdent.setEnabled(true);
+		btnUseSsl.setEnabled(true);
+		btnConnectOnStartup.setEnabled(true);
+	}
+	
+	private void disableFields()
+	{
+		textConnName.setEnabled(false);
+		textServer.setEnabled(false);
+		textPort.setEnabled(false);
+		textServPass.setEnabled(false);
+		textNick.setEnabled(false);
+		textAltNick.setEnabled(false);
+		textNickPass.setEnabled(false);
+		textIdent.setEnabled(false);
+		btnUseSsl.setEnabled(false);
+		btnConnectOnStartup.setEnabled(false);
+	}
+	private void clearFields()
+	{
+		textConnName.setText("");
+		textServer.setText("");
+		textPort.setText("");
+		textServPass.setText("");
+		btnUseSsl.setSelection(false);
+		btnConnectOnStartup.setSelection(false);
+		textNick.setText("");
+		textAltNick.setText("");
+		textNickPass.setText("");
+		textIdent.setText("");
 	}
 }
