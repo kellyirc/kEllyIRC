@@ -1,9 +1,13 @@
 package connection;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+
+import lombok.Getter;
+import lombok.Setter;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -13,39 +17,46 @@ public class Settings {
 	static String filename = "settings.xml";
 	static XStream xstream = new XStream();
 	
+	//the sole Settings instance
+	static @Getter Settings settings = Settings.readFromFile();
+	
 	//This keeps the list of servers the user has saved.
-	ArrayList<ConnectionSettings> connSettings;
+	@Getter @Setter ArrayList<ConnectionSettings> connSettings;
 	
 	//Other variables/objects to hold settings/preferences go here
 	
+	//creates default settings
 	public Settings()
 	{
 		connSettings = new ArrayList<ConnectionSettings>();
-		connSettings.add(new ConnectionSettings("EsperNet","irc.esper.net","6666","pass",true,"FireFreek","FireFreeek","pass"));
 	}
 	
-	public static void writeToFile(Settings s)
+	public static void writeToFile()
 	{
 		try {
-			xstream.toXML(s,new FileOutputStream(filename));
+			xstream.toXML(settings,new FileOutputStream(filename));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 		
 	}
 	
-	public static Settings readFromFile()
+	//if a settings file exists, returns that
+	//else returns default settings
+	public static Settings readFromFile() 
 	{
-		try {
-			return (Settings)xstream.fromXML(new FileInputStream(filename));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			return null;
+		File f = new File(filename);
+		if(f.exists())
+		{
+			try {
+				return (Settings)xstream.fromXML(new FileInputStream(filename));
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+				return new Settings();
+			}
 		}
+		else //TODO: Is this redundant?
+			return new Settings();
 	}
-	
-	public String toString()
-	{
-		return connSettings.toString();
-	}
+
 }
