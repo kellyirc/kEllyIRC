@@ -1,7 +1,5 @@
 package shared;
 
-import org.pircbotx.PircBotX;
-
 import lombok.Data;
 import connection.Connection;
 import connection.KEllyBot;

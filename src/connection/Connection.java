@@ -17,7 +17,6 @@ import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.Point;
 import org.pircbotx.Channel;
 import org.pircbotx.PircBotX;
-import org.pircbotx.hooks.Event;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.JoinEvent;
 import org.pircbotx.hooks.events.MessageEvent;
@@ -34,6 +33,7 @@ public class Connection extends Composite {
 		private @Getter KEllyBot bot;
 		private Connection nc;
 		
+		@SuppressWarnings("unchecked")
 		public ConnectionData(KEllyBot bot, String server, String nick, Connection nc){
 			this.bot = bot;
 			this.nc = nc;

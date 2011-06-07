@@ -3,15 +3,10 @@ package ui;
 import lombok.Data;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.pircbotx.Channel;
 
-import connection.Connection;
 import connection.Connection;
 
 public @Data class CustomChannel {

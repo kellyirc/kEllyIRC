@@ -4,8 +4,6 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.pircbotx.User;
 
-import connection.Connection;
-
 public class UserTreeItem {
 
 	private User myUser;
