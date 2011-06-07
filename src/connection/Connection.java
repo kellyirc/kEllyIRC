@@ -48,7 +48,7 @@ public class Connection extends Composite {
 				e.printStackTrace();
 			}
 
-			bot.setVersion("kellyIRCX v"+PircBotX.VERSION);
+			bot.setVersion(KEllyBot.VERSION);
 			
 			bot.setAutoNickChange(true);
 			bot.setName(nick);

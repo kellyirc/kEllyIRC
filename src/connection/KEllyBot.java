@@ -11,6 +11,8 @@ import ui.RoomManager;
 
 public class KEllyBot extends PircBotX {
 	
+	public static final String VERSION = "kEllyIRC 0.1.0 alpha";
+	
 	private @Getter @Setter Connection connection;
 
 	public KEllyBot(Connection c){
@@ -31,7 +33,11 @@ public class KEllyBot extends PircBotX {
 
 	public void doCommand(String command) {
 		if(command.split(" ")[0].equals("join")){
-			joinChannel(command.split(" ")[1]);
+			String s = command.split(" ")[1];
+			if(!s.startsWith("#")){
+				s = "#"+s;
+			}
+			joinChannel(s);
 		}
 	}
 
