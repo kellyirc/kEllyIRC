@@ -23,7 +23,12 @@ public class RoomManager {
 	public static Customs colorset;
 	
 	public static CopyOnWriteArrayList<Message> pmQueue = new CopyOnWriteArrayList<Message>();
-	public static CopyOnWriteArrayList<Message> queue = new CopyOnWriteArrayList<Message>();
+	private static CopyOnWriteArrayList<Message> queue = new CopyOnWriteArrayList<Message>();
+	
+	public static void enQueue(Message m){
+		queue.add(m);
+		manageQueue();
+	}
 	
 	//public static CopyOnWriteArrayList<Room> rooms = new CopyOnWriteArrayList<Room>();
 
@@ -40,13 +45,12 @@ public class RoomManager {
         }
 	}
 	
-	public static void manageQueue() {
+	private static void manageQueue() {
         if(!m.getDisplay().isDisposed()){
             m.getDisplay().asyncExec (new Runnable () {
                public void run () {
             	   for(Message mes : queue) {
             		   filterMessage(mes);
-            		   queue.remove(mes);
             	   }
                }
             });
@@ -185,12 +189,14 @@ public class RoomManager {
 	
 	public static void filterMessage(Message m){
 		Room r = m.getConnection().getConnection().findRoom(m.getChannel());
-		assert(r!=null);
+		if(r == null) return;
 		
 		String strippedLine = stripControlCodes(m.getContent());
 		
-		r.getOutput().append("<"+m.getSender() + "> "+strippedLine);
-		r.getOutput().setSelection(r.getOutput().getText().length()); //scroll the ouput control down
+		if(r.getOutput()!=null){
+			r.getOutput().append("<"+m.getSender() + "> "+strippedLine);
+			r.getOutput().setSelection(r.getOutput().getText().length()); //scroll the output control down
+		}
 		
 		//START OF KR-CODE
 		
@@ -306,6 +312,7 @@ public class RoomManager {
 				r.getOutput().setStyleRange(styleRange);
 			}
 		}
+		queue.remove(m);
 	}
 	
 }

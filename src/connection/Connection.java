@@ -40,6 +40,7 @@ public class Connection extends Composite {
 			ListenerManager<PircBotX> l = bot.getListenerManager();
 			l.addListener(this);
 			l.addListener(new RoomListener(nc));
+			l.addListener(new ServerListener(nc));
 
 			try {
 				bot.connect(server, 6667);
@@ -65,8 +66,7 @@ public class Connection extends Composite {
 
 		@Override
 		public void onMessage(MessageEvent event) throws Exception {
-			RoomManager.queue.add(new Message(nc, event.getMessage(), event.getUser().getNick(), event.getChannel().getName()));	
-			RoomManager.manageQueue();
+			RoomManager.enQueue(new Message(nc, event.getMessage(), event.getUser().getNick(), event.getChannel().getName()));	
 			//TODO make rooms have a proper connection
 			//findRoom(event.getChannel().getName()).updateLastMessage("<" + event.getUser().getNick() + "> " + event.getMessage());
 			super.onMessage(event);

@@ -31,19 +31,20 @@ import org.pircbotx.Channel;
 import org.pircbotx.User;
 
 import connection.Connection;
-import connection.Connection;
 
 public @Data
 @EqualsAndHashCode(callSuper = false)
 class Room extends Composite {
 
+	//TODO monospaced font
+	
+	// TODO: fake tooltips (http://dev.eclipse.org/viewcvs/viewvc.cgi/org.eclipse.swt.snippets/src/org/eclipse/swt/snippets/Snippet125.java?view=co)
+	
 	// TODO: change to booleans
 	public static final int WHO = 1, TOPIC = 2, IO = 4;
 
 	private CustomChannel cChannel;
-	private @Getter
-	@Setter
-	Connection serverConnection;
+	private @Getter	@Setter Connection serverConnection;
 
 	// make clickable links by changing the style and the data of the individual
 	// messages

@@ -22,11 +22,10 @@ public class KEllyBot extends PircBotX {
         if(target==null || target.getName().equals("Console")){
         	return;
         }
-        RoomManager.queue.add(new Message(this, 
+        RoomManager.enQueue(new Message(this, 
         		message, 
         		getNick(), 
-        		target.getName()));     
-        RoomManager.manageQueue();
+        		target.getName()));  
 		super.sendMessage(target, message);
 	}
 
