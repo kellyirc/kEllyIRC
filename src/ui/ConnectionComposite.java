@@ -359,6 +359,7 @@ public class ConnectionComposite extends Composite {
 		textIdent.setText("");
 		textAutoJoin.setText("");
 	}
+	
 	private void defaultFields()
 	{
 		textConnName.setText("");

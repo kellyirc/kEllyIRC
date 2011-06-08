@@ -25,7 +25,7 @@ public class Settings {
 	//This keeps the list of servers the user has saved.
 	@Getter @Setter ArrayList<ConnectionSettings> connSettings;
 	
-	//Other variables/objects to hold settings/preferences go here
+	//Other variables/objects to hold settings/preferences go here 
 	
 	//creates default settings
 	public Settings()

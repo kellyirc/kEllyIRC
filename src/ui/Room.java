@@ -33,10 +33,8 @@ import connection.Connection;
 public @Data
 @EqualsAndHashCode(callSuper = false)
 class Room extends Composite {
-	
-	// TODO: make maximized window resemble minimized window, sizewise -- all of the components are absurdly large.
 
-	// TODO: monospaced font
+	//TODO monospaced font
 	
 	// TODO: fake tooltips (http://dev.eclipse.org/viewcvs/viewvc.cgi/org.eclipse.swt.snippets/src/org/eclipse/swt/snippets/Snippet125.java?view=co)
 	
@@ -60,12 +58,11 @@ class Room extends Composite {
 	private String channelName;
 
 	public Room(Composite c, int style, int layout, Tree tree,
-			String channelstr, Connection newConnection, Channel channel, String PMUserName) {
+			String channelstr, Connection newConnection, Channel channel) {
 		super(c, style);
 		setServerConnection(newConnection);
 		this.cChannel = new CustomChannel(tree, channelstr, newConnection,
 				channel, this);
-		cChannel.setChannelString(PMUserName);
 		instantiate(layout);
 	}
 
@@ -114,7 +111,7 @@ class Room extends Composite {
 						} else {
 							if (cChannel != null && serverConnection != null) {
 								serverConnection.getBot().sendMessage(
-										cChannel.getChannelString(),
+										cChannel.getChannel(),
 										input.getText().replaceAll("\r\n", ""));
 							}
 						}
@@ -219,8 +216,8 @@ class Room extends Composite {
 		channelName = cChannel.getChannelString();
 	}
 
-	public String updateTopic() {
-		if(topicBox==null)return null;
+	public void updateTopic() {
+		if(topicBox==null)return;
 		final String topic = this.getCChannel().getChannel().getTopic();
 		RoomManager.getMain().getDisplay().asyncExec(new Runnable() {
 			public void run() {
@@ -229,7 +226,6 @@ class Room extends Composite {
 				updateToolTipText();
 			}
 		});
-		return topic;
 	}
 
 	public void updateToolTipText() {

@@ -1,24 +1,26 @@
 package ui;
 
+import java.util.ArrayList;
+
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import connection.Connection;
-
-import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.DisposeEvent;
-
-import org.eclipse.swt.layout.FormLayout;
+import connection.ConnectionSettings;
+import connection.Settings;
 
 public class MainWindow extends ApplicationWindow {
 	
@@ -58,13 +60,20 @@ public class MainWindow extends ApplicationWindow {
 	@Override
 	public void create() {
 		super.create();
-		//TODO: remove this, and make it based on the actual connection settings instead of this.
 
 		CTabItem c = new CTabItem(container, SWT.NONE);
 		c.setText("Options");
 
 		c.setControl(new OptionComposite(container, SWT.NONE));
-		new Connection(container, SWT.NONE, "irc.esper.net", "kellyIRC-Someone");
+		
+		ArrayList<ConnectionSettings> list = Settings.getSettings().getConnSettings();
+		
+		//TODO: Make use of other settings in ConnectionSettings
+		for(ConnectionSettings cs:list)
+		{
+			if(cs.isConnectOnStart())
+				new Connection(container, SWT.NONE, cs);
+		}
 		//RoomManager.colorset = new Customs();
 	}
 

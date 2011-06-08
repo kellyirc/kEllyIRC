@@ -15,7 +15,6 @@ class ConnectionSettings {
 	private String nickname;
 	private String nickPassword;
 	private String ident;
-
 	private ArrayList<String> autoJoin;
 
 	public ConnectionSettings(String connectionName, String server,
