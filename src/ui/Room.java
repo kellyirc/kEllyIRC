@@ -1,7 +1,5 @@
 package ui;
 
-import java.util.Set;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -246,75 +244,78 @@ class Room extends Composite {
 
 	public void updateWho() {
 		if(who==null)return;
-		updateUserCount();
+		final Room c = this;
+		RoomManager.getMain().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				updateUserCount();
+				
+				getWho().removeAll();
 		
-		getWho().removeAll();
-		Room c = this;
-
-		// TODO clone this list
-		Set<User> users = c.getCChannel().getChannel().getUsers();
-		Channel chan = c.getCChannel().getChannel();
-
-		if (users.contains(chan.getFounder())) {
-			TreeItem t = new TreeItem(c.getWho(), SWT.NONE);
-			t.setText("Founder");
-			UserTreeItem i = new UserTreeItem(t, SWT.NONE, chan.getFounder(),
-					c.getCChannel());
-			i.getTree().setText(chan.getFounder().getNick());
-			t.setExpanded(true);
-		}
-		if (chan.getSuperOps().size() > 0) {
-			TreeItem t = new TreeItem(c.getWho(), SWT.NONE);
-			t.setText("Super-Ops");
-			for (User u : c.getCChannel().getChannel().getSuperOps()) {
-				UserTreeItem i = new UserTreeItem(t, SWT.NONE, u,
-						c.getCChannel());
-				i.getTree().setText(u.getNick());
-				// users.remove(u);
+				Channel chan = c.getCChannel().getChannel();
+		
+				if (chan.getOwners().size() > 0) {
+					TreeItem t = new TreeItem(c.getWho(), SWT.NONE);
+					t.setText("Founders/Owners");
+					for (User u : c.getCChannel().getChannel().getOwners()) {
+						UserTreeItem i = new UserTreeItem(t, SWT.NONE, u,
+								c.getCChannel());
+						i.getTree().setText(u.getNick());
+					}
+					t.setExpanded(true);
+				}
+				if (chan.getSuperOps().size() > 0) {
+					TreeItem t = new TreeItem(c.getWho(), SWT.NONE);
+					t.setText("Super-Ops");
+					for (User u : c.getCChannel().getChannel().getSuperOps()) {
+						UserTreeItem i = new UserTreeItem(t, SWT.NONE, u,
+								c.getCChannel());
+						i.getTree().setText(u.getNick());
+					}
+					t.setExpanded(true);
+				}
+				if (chan.getOps().size() > 0) {
+					TreeItem t = new TreeItem(c.getWho(), SWT.NONE);
+					t.setText("Ops");
+					for (User u : c.getCChannel().getChannel().getOps()) {
+						UserTreeItem i = new UserTreeItem(t, SWT.NONE, u,
+								c.getCChannel());
+						i.getTree().setText(u.getNick());
+						// users.remove(u);
+					}
+					t.setExpanded(true);
+				}
+				if (chan.getHalfOps().size() > 0) {
+					TreeItem t = new TreeItem(c.getWho(), SWT.NONE);
+					t.setText("Half-Ops");
+					for (User u : c.getCChannel().getChannel().getHalfOps()) {
+						UserTreeItem i = new UserTreeItem(t, SWT.NONE, u,
+								c.getCChannel());
+						i.getTree().setText(u.getNick());
+					}
+					t.setExpanded(true);
+				}
+				if (chan.getVoices().size() > 0) {
+					TreeItem t = new TreeItem(c.getWho(), SWT.NONE);
+					t.setText("Voices");
+					for (User u : c.getCChannel().getChannel().getVoices()) {
+						UserTreeItem i = new UserTreeItem(t, SWT.NONE, u,
+								c.getCChannel());
+						i.getTree().setText(u.getNick());
+					}
+					t.setExpanded(true);
+				}
+				
+				if (chan.getNormalUsers().size() > 0) {
+					TreeItem t = new TreeItem(c.getWho(), SWT.NONE);
+					t.setText("Normal");
+					for (User u : chan.getNormalUsers()) {
+						UserTreeItem i = new UserTreeItem(t, SWT.NONE, u,
+								c.getCChannel());
+						i.getTree().setText(u.getNick());
+					}
+					t.setExpanded(true);
+				}
 			}
-			t.setExpanded(true);
-		}
-		if (chan.getOps().size() > 0) {
-			TreeItem t = new TreeItem(c.getWho(), SWT.NONE);
-			t.setText("Ops");
-			for (User u : c.getCChannel().getChannel().getOps()) {
-				UserTreeItem i = new UserTreeItem(t, SWT.NONE, u,
-						c.getCChannel());
-				i.getTree().setText(u.getNick());
-				// users.remove(u);
-			}
-			t.setExpanded(true);
-		}
-		if (chan.getHalfOps().size() > 0) {
-			TreeItem t = new TreeItem(c.getWho(), SWT.NONE);
-			t.setText("Half-Ops");
-			for (User u : c.getCChannel().getChannel().getHalfOps()) {
-				UserTreeItem i = new UserTreeItem(t, SWT.NONE, u,
-						c.getCChannel());
-				i.getTree().setText(u.getNick());
-				// users.remove(u);
-			}
-			t.setExpanded(true);
-		}
-		if (chan.getVoices().size() > 0) {
-			TreeItem t = new TreeItem(c.getWho(), SWT.NONE);
-			t.setText("Voices");
-			for (User u : c.getCChannel().getChannel().getVoices()) {
-				UserTreeItem i = new UserTreeItem(t, SWT.NONE, u,
-						c.getCChannel());
-				i.getTree().setText(u.getNick());
-			}
-			t.setExpanded(true);
-		}
-		if (users.size() > 0) {
-			TreeItem t = new TreeItem(c.getWho(), SWT.NONE);
-			t.setText("Normal");
-			for (User u : users) {
-				UserTreeItem i = new UserTreeItem(t, SWT.NONE, u,
-						c.getCChannel());
-				i.getTree().setText(u.getNick());
-			}
-			t.setExpanded(true);
-		}
+		});
 	}
 }

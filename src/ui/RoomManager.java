@@ -1,16 +1,13 @@
 package ui;
 
-import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Tree;
 import org.pircbotx.Channel;
-import org.pircbotx.User;
 
 import shared.Customs;
 import shared.Message;
@@ -50,82 +47,11 @@ public class RoomManager {
             m.getDisplay().asyncExec (new Runnable () {
                public void run () {
             	   for(Message mes : queue) {
+            		   if(mes.getBot() == null || mes.getChannel() == null || mes.getContent() == null || mes.getSender() == null) {
+            			   queue.remove(mes);
+            			   continue;
+            		   }
             		   filterMessage(mes);
-            	   }
-               }
-            });
-        }
-	}
-	
-	public static void updateWho(final Room c) {
-		if(c == null){return;}
-        if(!m.getDisplay().isDisposed()){
-            m.getDisplay().asyncExec (new Runnable () {
-               public void run () {
-            	   if(c.getWho()==null || 
-            			   c.getCChannel()==null || 
-            			   c.getCChannel().getChannel().getName()==null)return;
-
-            	   c.getWho().removeAll();
-            	   
-            	   //TODO clone this list
-            	   Set<User> users = c.getCChannel().getChannel().getUsers();
-            	   Channel chan = c.getCChannel().getChannel();
-
-            	   if(users.contains(chan.getFounder())){
-                	   TreeItem t = new TreeItem(c.getWho(), SWT.NONE);
-                	   t.setText("Founder");
-        			   UserTreeItem i = new UserTreeItem(t, SWT.NONE, chan.getFounder(), c.getCChannel());
-        			   i.getTree().setText(chan.getFounder().getNick());
-                	   t.setExpanded(true);
-            	   }
-            	   if(chan.getSuperOps().size()>0) {
-                	   TreeItem t = new TreeItem(c.getWho(), SWT.NONE);
-                	   t.setText("Super-Ops");
-                	   for(User u : c.getCChannel().getChannel().getSuperOps()){
-		    			   UserTreeItem i = new UserTreeItem(t, SWT.NONE, u, c.getCChannel());
-		    			   i.getTree().setText(u.getNick());
-		    			   //users.remove(u);
-                	   }
-                	   t.setExpanded(true);
-            	   }
-            	   if(chan.getOps().size()>0) {
-                	   TreeItem t = new TreeItem(c.getWho(), SWT.NONE);
-                	   t.setText("Ops");
-                	   for(User u : c.getCChannel().getChannel().getOps()){
-		    			   UserTreeItem i = new UserTreeItem(t, SWT.NONE, u, c.getCChannel());
-		    			   i.getTree().setText(u.getNick());
-		    			   //users.remove(u);
-                	   }
-                	   t.setExpanded(true);
-            	   }
-            	   if(chan.getHalfOps().size()>0) {
-                	   TreeItem t = new TreeItem(c.getWho(), SWT.NONE);
-                	   t.setText("Half-Ops");
-                	   for(User u : c.getCChannel().getChannel().getHalfOps()){
-		    			   UserTreeItem i = new UserTreeItem(t, SWT.NONE, u, c.getCChannel());
-		    			   i.getTree().setText(u.getNick());
-		    			   //users.remove(u);
-                	   }
-                	   t.setExpanded(true);
-            	   }
-            	   if(chan.getVoices().size()>0) {
-                	   TreeItem t = new TreeItem(c.getWho(), SWT.NONE);
-                	   t.setText("Voices");
-                	   for(User u : c.getCChannel().getChannel().getVoices()){
-		    			   UserTreeItem i = new UserTreeItem(t, SWT.NONE, u, c.getCChannel());
-		    			   i.getTree().setText(u.getNick());
-                	   }
-                	   t.setExpanded(true);
-            	   }
-            	   if(users.size()>0){
-                	   TreeItem t = new TreeItem(c.getWho(), SWT.NONE);
-                	   t.setText("Normal");
-                	   for(User u : users){
-		    			   UserTreeItem i = new UserTreeItem(t, SWT.NONE, u, c.getCChannel());
-		    			   i.getTree().setText(u.getNick());
-                	   }
-                	   t.setExpanded(true);
             	   }
                }
             });
@@ -188,7 +114,7 @@ public class RoomManager {
 	}
 	
 	public static void filterMessage(Message m){
-		Room r = m.getConnection().getConnection().findRoom(m.getChannel());
+		Room r = m.getBot().getConnection().findRoom(m.getChannel());
 		if(r == null) return;
 		
 		String strippedLine = stripControlCodes(m.getContent());

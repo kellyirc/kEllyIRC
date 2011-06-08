@@ -12,7 +12,7 @@ public class ServerListener extends ConnectionListener {
 	}
 
 	@Override
-	public void onServerResponse(ServerResponseEvent event) throws Exception {
+	public void onServerResponse(ServerResponseEvent<KEllyBot> event) throws Exception {
 		switch(event.getCode()){
 		case 5:
 		case 332:

@@ -52,11 +52,9 @@ public class Settings {
 				return (Settings)xstream.fromXML(new FileInputStream(filename));
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
-				return new Settings();
 			}
 		}
-		else //TODO: Is this redundant?
-			return new Settings();
+		return new Settings();
 	}
 
 }

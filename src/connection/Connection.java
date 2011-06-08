@@ -18,29 +18,34 @@ import org.eclipse.swt.graphics.Point;
 import org.pircbotx.Channel;
 import org.pircbotx.PircBotX;
 import org.pircbotx.hooks.ListenerAdapter;
-import org.pircbotx.hooks.events.JoinEvent;
-import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.managers.ListenerManager;
 
-import shared.Message;
 import ui.Room;
 import ui.RoomManager;
 
 public class Connection extends Composite {
 	
-	private class ConnectionData extends ListenerAdapter{
+	private class ConnectionData extends ListenerAdapter<KEllyBot> {
 		
 		private @Getter KEllyBot bot;
-		private Connection nc;
 		
 		@SuppressWarnings("unchecked")
-		public ConnectionData(KEllyBot bot, String server, String nick, Connection nc){
+		public ConnectionData(KEllyBot bot, String server, String nick, Connection nc) {
+
 			this.bot = bot;
-			this.nc = nc;
+			
+			bot.setVerbose(true);
+			bot.changeNick(nick);
+			bot.setVersion(KEllyBot.VERSION);
+			bot.setAutoNickChange(true);
+			bot.setName(nick);
+			
 			ListenerManager<PircBotX> l = bot.getListenerManager();
 			l.addListener(this);
 			l.addListener(new RoomListener(nc));
 			l.addListener(new ServerListener(nc));
+			l.addListener(new UserListener(nc));
+			l.addListener(new MessageListener(nc));
 
 			try {
 				bot.connect(server, 6667);
@@ -48,39 +53,16 @@ public class Connection extends Composite {
 				e.printStackTrace();
 			}
 
-			bot.setVersion(KEllyBot.VERSION);
-			
-			bot.setAutoNickChange(true);
-			bot.setName(nick);
-			bot.setVerbose(true);
-			bot.changeNick(nick);
-			
 			//TODO: remove this -- it is temporary
 			bot.joinChannel("#idlebot");
 		}
-		
-		@Override
-		public void onJoin(JoinEvent event) throws Exception {
-			super.onJoin(event);
-		} 
-
-		@Override
-		public void onMessage(MessageEvent event) throws Exception {
-			RoomManager.enQueue(new Message(nc, event.getMessage(), event.getUser().getNick(), event.getChannel().getName()));	
-			//TODO make rooms have a proper connection
-			//findRoom(event.getChannel().getName()).updateLastMessage("<" + event.getUser().getNick() + "> " + event.getMessage());
-			super.onMessage(event);
-		} 
 	}
 	
 	private @Getter ScrolledComposite scrolledComposite;
+	private @Getter KEllyBot bot;
 	private @Getter ConnectionData data;
 	private Tree chanList;
 	private LinkedList<Room> rooms = new LinkedList<Room>();
-
-	public KEllyBot getBot() {
-		return data.getBot();
-	}
 	
 	/**
 	 * Create the composite.
@@ -94,7 +76,9 @@ public class Connection extends Composite {
 		c.setText(server);
 		c.setControl(this);
 		
-		this.data = new ConnectionData(new KEllyBot(this), server, nick, this);
+		this.bot = new KEllyBot(this);
+		
+		this.data = new ConnectionData(this.bot, server, nick, this);
 		
 		chanList = new Tree(this, SWT.BORDER);
 		
