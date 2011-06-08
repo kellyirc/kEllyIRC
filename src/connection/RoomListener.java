@@ -19,7 +19,6 @@ public class RoomListener extends ConnectionListener{
 	public void onJoin(JoinEvent<KEllyBot> event) throws Exception {
 		if(botEqualsUser(event.getUser())){
 			nc.createRoom(event.getChannel().getName(), Room.IO | Room.TOPIC | Room.WHO, event.getChannel());
-			queueMessage(new Message(nc, event.getChannel().getTopic(), event.getChannel().getName(), event.getChannel().getName()));
 		}
 		super.onJoin(event);
 		queueMessage(new Message(nc, event.getUser().getNick()+" has joined.", event.getChannel().getName(), event.getChannel().getName()));
@@ -29,8 +28,8 @@ public class RoomListener extends ConnectionListener{
 	@Override
 	public void onMode(ModeEvent<KEllyBot> event) throws Exception {
 		super.onMode(event);
-		//updateWho(event.getChannel());
-		//queueMessage(new Message(nc, event.getMode()+" by "+event.getUser().getNick(), event.getChannel().getName(), event.getChannel().getName()));
+		updateWho(event.getChannel());
+		queueMessage(new Message(nc, event.getMode()+" by "+event.getUser().getNick(), event.getChannel().getName(), event.getChannel().getName()));
 	}
 
 	@Override
@@ -50,8 +49,15 @@ public class RoomListener extends ConnectionListener{
 	@Override
 	public void onTopic(TopicEvent<KEllyBot> event) throws Exception {
 		super.onTopic(event);
-		//queueMessage(new Message(nc, event.getUser().getNick()+" changed the topic.", event.getChannel().getName(), event.getChannel().getName()));
 		nc.updateTopic(event.getChannel().getName());
+		if(event.getDate() < System.currentTimeMillis()){
+			//topic was set already
+			queueMessage(new Message(nc, event.getTopic(), event.getChannel().getName(), event.getChannel().getName()));
+			queueMessage(new Message(nc, "Topic set by: "+event.getUser().getNick(), event.getChannel().getName(), event.getChannel().getName()));
+		} else {
+			//topic was changed
+			queueMessage(new Message(nc, event.getUser().getNick()+" changed the topic.", event.getChannel().getName(), event.getChannel().getName()));
+		}
 	}
 
 }

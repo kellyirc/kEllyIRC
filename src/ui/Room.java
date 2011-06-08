@@ -33,8 +33,10 @@ import connection.Connection;
 public @Data
 @EqualsAndHashCode(callSuper = false)
 class Room extends Composite {
+	
+	// TODO: make maximized window resemble minimized window, sizewise -- all of the components are absurdly large.
 
-	//TODO monospaced font
+	// TODO: monospaced font
 	
 	// TODO: fake tooltips (http://dev.eclipse.org/viewcvs/viewvc.cgi/org.eclipse.swt.snippets/src/org/eclipse/swt/snippets/Snippet125.java?view=co)
 	
@@ -216,8 +218,8 @@ class Room extends Composite {
 		channelName = cChannel.getChannelString();
 	}
 
-	public void updateTopic() {
-		if(topicBox==null)return;
+	public String updateTopic() {
+		if(topicBox==null)return null;
 		final String topic = this.getCChannel().getChannel().getTopic();
 		RoomManager.getMain().getDisplay().asyncExec(new Runnable() {
 			public void run() {
@@ -226,6 +228,7 @@ class Room extends Composite {
 				updateToolTipText();
 			}
 		});
+		return topic;
 	}
 
 	public void updateToolTipText() {
