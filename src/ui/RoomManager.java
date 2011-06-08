@@ -34,7 +34,7 @@ public class RoomManager {
         	if(canAddRoom(newConnection, channelstr)){
         		getMain().getDisplay().asyncExec(new Runnable() {
         			public void run() {
-                		Room r = new Room(c, style, layout, tree, channelstr, newConnection, channel);
+                		Room r = new Room(c, style, layout, tree, channelstr, newConnection, channel, channelstr);
                 		newConnection.addRoom(r);
         			}
         		});

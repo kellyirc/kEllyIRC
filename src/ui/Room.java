@@ -60,11 +60,12 @@ class Room extends Composite {
 	private String channelName;
 
 	public Room(Composite c, int style, int layout, Tree tree,
-			String channelstr, Connection newConnection, Channel channel) {
+			String channelstr, Connection newConnection, Channel channel, String PMUserName) {
 		super(c, style);
 		setServerConnection(newConnection);
 		this.cChannel = new CustomChannel(tree, channelstr, newConnection,
 				channel, this);
+		cChannel.setChannelString(PMUserName);
 		instantiate(layout);
 	}
 
@@ -113,7 +114,7 @@ class Room extends Composite {
 						} else {
 							if (cChannel != null && serverConnection != null) {
 								serverConnection.getBot().sendMessage(
-										cChannel.getChannel(),
+										cChannel.getChannelString(),
 										input.getText().replaceAll("\r\n", ""));
 							}
 						}

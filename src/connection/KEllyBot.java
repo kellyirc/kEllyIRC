@@ -3,7 +3,6 @@ package connection;
 import lombok.Getter;
 import lombok.Setter;
 
-import org.pircbotx.Channel;
 import org.pircbotx.PircBotX;
 
 import shared.Message;
@@ -20,15 +19,27 @@ public class KEllyBot extends PircBotX {
 	}
 	
 	@Override
-	public void sendMessage(Channel target, String message) {
-        if(target==null || target.getName().equals("Console")){
+	public void sendMessage(String target, String message) {
+        if(target==null || target.equals("Console")){
         	return;
         }
         RoomManager.enQueue(new Message(this, 
         		message, 
         		getNick(), 
-        		target.getName()));  
+        		target));  
 		super.sendMessage(target, message);
+	}
+	
+	@Override
+	public void sendNotice(String target, String notice) {
+        if(target==null || target.equals("Console")){
+        	return;
+        }
+        RoomManager.enQueue(new Message(this, 
+        		"NOTICE: "+notice,
+        		getNick(), 
+        		target));
+		super.sendNotice(target, notice);
 	}
 
 	public void doCommand(String command) {
