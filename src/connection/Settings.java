@@ -10,12 +10,14 @@ import lombok.Getter;
 import lombok.Setter;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.converters.reflection.Sun14ReflectionProvider;
+import com.thoughtworks.xstream.io.xml.DomDriver;
 
 public class Settings {
 	
 	//stuff to read and write files with
 	static String filename = "settings.xml";
-	static XStream xstream = new XStream();
+	static XStream xstream = new XStream(new Sun14ReflectionProvider( ), new DomDriver( ));
 	
 	//the sole Settings instance
 	static @Getter Settings settings = Settings.readFromFile();
@@ -50,7 +52,7 @@ public class Settings {
 		{
 			try {
 				return (Settings)xstream.fromXML(new FileInputStream(filename));
-			} catch (FileNotFoundException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}

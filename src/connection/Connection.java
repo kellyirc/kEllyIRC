@@ -1,22 +1,27 @@
 package connection;
 
+import java.io.IOException;
 import java.util.LinkedList;
+
+import javax.net.ssl.SSLSocketFactory;
 
 import lombok.Getter;
 
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.wb.swt.layout.grouplayout.GroupLayout;
-import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.SWT;
-import org.eclipse.wb.swt.layout.grouplayout.LayoutStyle;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.wb.swt.layout.grouplayout.GroupLayout;
+import org.eclipse.wb.swt.layout.grouplayout.LayoutStyle;
 import org.pircbotx.Channel;
 import org.pircbotx.PircBotX;
+import org.pircbotx.exception.IrcException;
+import org.pircbotx.exception.NickAlreadyInUseException;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.managers.ListenerManager;
 
@@ -30,15 +35,19 @@ public class Connection extends Composite {
 		private @Getter KEllyBot bot;
 		
 		@SuppressWarnings("unchecked")
-		public ConnectionData(KEllyBot bot, String server, String nick, Connection nc) {
+		public ConnectionData(KEllyBot bot, ConnectionSettings cs, Connection nc){
+		
 
 			this.bot = bot;
-			
-			bot.setVerbose(true);
-			bot.changeNick(nick);
+
 			bot.setVersion(KEllyBot.VERSION);
-			bot.setAutoNickChange(true);
-			bot.setName(nick);
+			bot.setVerbose(true);
+			bot.changeNick(cs.getNickname());
+			//bot.setAutoNickChange(true);
+			bot.setName(cs.getNickname());
+			bot.setLogin(cs.getIdent());
+			
+			
 			
 			ListenerManager<PircBotX> l = bot.getListenerManager();
 			l.addListener(this);
@@ -47,20 +56,48 @@ public class Connection extends Composite {
 			l.addListener(new UserListener(nc));
 			l.addListener(new MessageListener(nc));
 
-			try {
-				bot.connect(server, 6667);
-			} catch(Exception e) {
-				e.printStackTrace();
+			//connecting to server
+				try {
+					if(!cs.getServerPassword().equals(""))
+						bot.connect(cs.getServer(), Integer.parseInt(cs.getPort()),cs.getServerPassword());
+					else if(cs.isSsl())
+						bot.connect(cs.getServer(), Integer.parseInt(cs.getPort()),SSLSocketFactory.getDefault());
+					else
+						bot.connect(cs.getServer(), Integer.parseInt(cs.getPort()));
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+			
+			
+			//identify nick
+			if(!cs.getNickPassword().equals(""))
+			{
+				bot.identify(cs.getNickPassword());
 			}
-
-			//TODO: remove this -- it is temporary
-			bot.joinChannel("#idlebot");
+			
+			//auto joining channels
+			for(String channel:cs.getAutoJoin())
+			{
+				bot.joinChannel(channel);
+			}
+			
+		}
+		
+		private void attemptToConnect(ConnectionSettings cs) throws NumberFormatException, NickAlreadyInUseException, IOException, IrcException
+		{
+			if(!cs.getServerPassword().equals(""))
+				bot.connect(cs.getServer(), Integer.parseInt(cs.getPort()),cs.getServerPassword());
+			else if(cs.isSsl())
+				bot.connect(cs.getServer(), Integer.parseInt(cs.getPort()),SSLSocketFactory.getDefault());
+			else
+				bot.connect(cs.getServer(), Integer.parseInt(cs.getPort()));
 		}
 	}
 	
 	private @Getter ScrolledComposite scrolledComposite;
 	private @Getter KEllyBot bot;
 	private @Getter ConnectionData data;
+	private @Getter ConnectionSettings cs;
 	private Tree chanList;
 	private LinkedList<Room> rooms = new LinkedList<Room>();
 	
@@ -69,16 +106,16 @@ public class Connection extends Composite {
 	 * @param parent
 	 * @param style
 	 */
-	public Connection(Composite parent, int style, String server, String nick) {
+	public Connection(Composite parent, int style, ConnectionSettings cs) {
 		super(parent, style);
 
 		CTabItem c = new CTabItem((CTabFolder) parent, SWT.NONE);
-		c.setText(server);
+		c.setText(cs.getConnectionName());
 		c.setControl(this);
 		
 		this.bot = new KEllyBot(this);
-		
-		this.data = new ConnectionData(this.bot, server, nick, this);
+		this.data = new ConnectionData(this.bot, cs, this);
+		this.cs = cs;
 		
 		chanList = new Tree(this, SWT.BORDER);
 		

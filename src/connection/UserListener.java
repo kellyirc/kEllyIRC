@@ -22,7 +22,7 @@ public class UserListener extends ConnectionListener{
 	public void onQuit(QuitEvent<KEllyBot> event) throws Exception {
 		super.onQuit(event);
 		for(Channel c : event.getUser().getChannels()){
-			updateWho(c);
+				updateWho(c);
 		}
 	}
 }
