@@ -3,6 +3,8 @@ package ui;
 import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
@@ -11,12 +13,11 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.wb.swt.SWTResourceManager;
 
+import connection.Connection;
 import connection.ConnectionSettings;
 import connection.Settings;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.wb.swt.SWTResourceManager;
 
 public class ConnectionComposite extends Composite {
 	private Table table;
@@ -24,14 +25,14 @@ public class ConnectionComposite extends Composite {
 	private Text textServer;
 	private Text textServPass;
 	private Text textNick;
-	private Text textAltNick;
 	private Text textNickPass;
 	private Text textPort;
 	private Text textIdent;
 	private Button btnUseSsl;
 	private Button btnConnectOnStartup;
+	private Button btnConnect; 
 	private Label incompleteAlert; 
-	private ConnectionSettings selected;
+	private Text textAutoJoin;
 	
 	/**
 	 * Create the composite.
@@ -43,7 +44,7 @@ public class ConnectionComposite extends Composite {
 		
 		Group grpConnectionInfo = new Group(this, SWT.NONE);
 		grpConnectionInfo.setText("Connection Info");
-		grpConnectionInfo.setBounds(10, 130, 430, 160);
+		grpConnectionInfo.setBounds(10, 130, 430, 211);
 		
 		Label lblName = new Label(grpConnectionInfo, SWT.NONE);
 		lblName.setBounds(10, 22, 95, 19);
@@ -88,28 +89,26 @@ public class ConnectionComposite extends Composite {
 		textNick = new Text(grpConnectionInfo, SWT.BORDER);
 		textNick.setBounds(344, 19, 76, 19);
 		
-		Label lblAltNickname = new Label(grpConnectionInfo, SWT.NONE);
-		lblAltNickname.setText("Alt. Nickname:");
-		lblAltNickname.setBounds(243, 50, 95, 19);
-		
-		textAltNick = new Text(grpConnectionInfo, SWT.BORDER);
-		textAltNick.setBounds(344, 47, 76, 19);
-		
 		Label lblNickservPassword = new Label(grpConnectionInfo, SWT.NONE);
 		lblNickservPassword.setText("Nickserv Password:");
-		lblNickservPassword.setBounds(243, 75, 95, 19);
+		lblNickservPassword.setBounds(243, 47, 95, 19);
 		
 		textNickPass = new Text(grpConnectionInfo, SWT.BORDER);
-		textNickPass.setBounds(344, 72, 76, 19);
+		textNickPass.setBounds(344, 44, 76, 19);
 		
 		Label lblIdent = new Label(grpConnectionInfo, SWT.NONE);
 		lblIdent.setText("Ident:");
-		lblIdent.setBounds(243, 100, 95, 19);
+		lblIdent.setBounds(243, 72, 95, 19);
 		
 		textIdent = new Text(grpConnectionInfo, SWT.BORDER);
-		textIdent.setBounds(344, 97, 76, 19);
+		textIdent.setBounds(344, 69, 76, 19);
 		
+		Label lblAutojoin = new Label(grpConnectionInfo, SWT.NONE);
+		lblAutojoin.setBounds(243, 97, 49, 13);
+		lblAutojoin.setText("Auto-Join:");
 		
+		textAutoJoin = new Text(grpConnectionInfo, SWT.BORDER);
+		textAutoJoin.setBounds(344, 97, 76, 19);
 		
 		Button btnSave = new Button(grpConnectionInfo, SWT.NONE);
 		btnSave.addSelectionListener(new SelectionAdapter() {
@@ -118,28 +117,39 @@ public class ConnectionComposite extends Composite {
 				if(checkIfCompleted())
 				{
 					//save stuff
-					incompleteAlert.setVisible(false);
-					ConnectionSettings newCS = new ConnectionSettings(textConnName.getText(),textServer.getText(),textPort.getText(),textServPass.getText(),btnUseSsl.getSelection(),btnConnectOnStartup.getSelection(),textNick.getText(),textAltNick.getText(),textNickPass.getText(),textIdent.getText());
+					ArrayList<String> autoJoin = new ArrayList<String>();
+					for(String ch:textAutoJoin.getText().split(","))
+						autoJoin.add(ch);
+					ConnectionSettings newCS = new ConnectionSettings(
+							textConnName.getText(), textServer.getText(),
+							textPort.getText(), textServPass.getText(),
+							btnUseSsl.getSelection(), btnConnectOnStartup
+									.getSelection(), textNick.getText(),
+							textNickPass.getText(), textIdent.getText(),
+							autoJoin);
 					table.getItem(table.getSelectionIndex()).setData(newCS);
 					table.getItem(table.getSelectionIndex()).setText(new String[] {newCS.getConnectionName(),newCS.getServer(),newCS.getNickname()});
 					saveTable();
 					Settings.writeToFile();
 				}
-				else
-				{
-					incompleteAlert.setVisible(true);
-				}
 			}
 
 		});
-		btnSave.setBounds(352, 127, 68, 23);
+		btnSave.setBounds(352, 178, 68, 23);
 		btnSave.setText("Save");
 		
 		incompleteAlert = new Label(grpConnectionInfo, SWT.NONE);
 		incompleteAlert.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
-		incompleteAlert.setBounds(243, 137, 95, 13);
+		incompleteAlert.setBounds(243, 137, 150, 13);
 		incompleteAlert.setText("Some fields missing");
 		incompleteAlert.setVisible(false);
+		
+		
+		
+		Label lblSeparateChannelsBy = new Label(grpConnectionInfo, SWT.NONE);
+		lblSeparateChannelsBy.setForeground(SWTResourceManager.getColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
+		lblSeparateChannelsBy.setBounds(275, 116, 145, 13);
+		lblSeparateChannelsBy.setText("Separate channels by commas");
 		
 		table = new Table(this, SWT.BORDER | SWT.FULL_SELECTION);
 		table.addSelectionListener(new SelectionAdapter() {
@@ -154,18 +164,18 @@ public class ConnectionComposite extends Composite {
 		});
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
-		table.setBounds(10, 10, 356, 114);
+		table.setBounds(10, 10, 430, 114);
 		
 		TableColumn tblclmnName = new TableColumn(table, SWT.NONE);
-		tblclmnName.setWidth(100);
+		tblclmnName.setWidth(113);
 		tblclmnName.setText("Name");
 		
 		TableColumn tblclmnServer = new TableColumn(table, SWT.NONE);
-		tblclmnServer.setWidth(146);
+		tblclmnServer.setWidth(176);
 		tblclmnServer.setText("Server");
 		
 		TableColumn tblclmnNickname = new TableColumn(table, SWT.NONE);
-		tblclmnNickname.setWidth(100);
+		tblclmnNickname.setWidth(133);
 		tblclmnNickname.setText("Nickname");
 		
 		Button btnNew = new Button(this, SWT.NONE);
@@ -176,12 +186,12 @@ public class ConnectionComposite extends Composite {
 				TableItem i = new TableItem(table,SWT.NONE);
 				i.setText(new String[] {"[blank]","[blank]","[blank]"});
 				table.setSelection(i);
-				clearFields();
+				defaultFields();
 				enableFields();
 			}
 		});
 		btnNew.setText("New");
-		btnNew.setBounds(372, 10, 68, 23);
+		btnNew.setBounds(451, 10, 68, 23);
 		
 		Button btnDel = new Button(this, SWT.NONE);
 		btnDel.addSelectionListener(new SelectionAdapter() {
@@ -199,16 +209,21 @@ public class ConnectionComposite extends Composite {
 			}
 		});
 		btnDel.setText("Delete");
-		btnDel.setBounds(372, 39, 68, 23);
+		btnDel.setBounds(451, 39, 68, 23);
 		
-		Button btnConnect = new Button(this, SWT.NONE);
+		btnConnect = new Button(this, SWT.NONE);
 		btnConnect.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				//TODO: Connect when button pressed.
+				if(table.getSelectionCount()==1)
+				{
+					ConnectionSettings selected = (ConnectionSettings) table.getItem(table.getSelectionIndex()).getData();
+					
+					Connection c = new Connection(RoomManager.getMain().getContainer(), SWT.NONE, selected);
+				}
 			}
 		});
-		btnConnect.setBounds(372, 68, 68, 23);
+		btnConnect.setBounds(451, 68, 68, 23);
 		btnConnect.setText("Connect");
 
 
@@ -239,7 +254,6 @@ public class ConnectionComposite extends Composite {
 	
 	private void loadForms(ConnectionSettings cs)
 	{
-		selected = cs;
 		textConnName.setText(cs.getConnectionName());
 		textServer.setText(cs.getServer());
 		textPort.setText(cs.getPort());
@@ -247,10 +261,14 @@ public class ConnectionComposite extends Composite {
 		btnUseSsl.setSelection(cs.isSsl());
 		btnConnectOnStartup.setSelection(cs.isConnectOnStart());
 		textNick.setText(cs.getNickname());
-		textAltNick.setText(cs.getAlternateNickname());
 		textNickPass.setText(cs.getNickPassword());
 		textIdent.setText(cs.getIdent());
-		
+		String autoJoin = "";
+		for(String ch:cs.getAutoJoin())
+		{
+			autoJoin+=ch+",";
+		}
+		textAutoJoin.setText(autoJoin.substring(0,autoJoin.length()-1));
 	}
 	
 	@Override
@@ -259,22 +277,31 @@ public class ConnectionComposite extends Composite {
 	}
 	
 	private boolean checkIfCompleted() {
-		if(textConnName.getText().equals(""))
-			return false;
 		if(textServer.getText().equals(""))
+		{
+			incompleteAlert.setText("Missing server.");
+			incompleteAlert.setVisible(true);
 			return false;
+		}
+		if(textConnName.getText().equals(""))
+		{
+			textConnName.setText(textServer.getText());
+		}
 		if(textPort.getText().equals(""))
-			return false;
-		if(textServPass.getText().equals(""))
-			return false;
+		{
+			textPort.setText("6667");
+		}
 		if(textNick.getText().equals(""))
+		{
+			incompleteAlert.setText("Missing nickname.");
+			incompleteAlert.setVisible(true);
 			return false;
-		if(textAltNick.getText().equals(""))
-			return false;
-		if(textNickPass.getText().equals(""))
-			return false;
+		}
 		if(textIdent.getText().equals(""))
-			return false;
+		{
+			textIdent.setText(textNick.getText());
+		}
+		incompleteAlert.setVisible(false);
 		return true;
 	}
 	
@@ -297,11 +324,12 @@ public class ConnectionComposite extends Composite {
 		textPort.setEnabled(true);
 		textServPass.setEnabled(true);
 		textNick.setEnabled(true);
-		textAltNick.setEnabled(true);
 		textNickPass.setEnabled(true);
 		textIdent.setEnabled(true);
+		textAutoJoin.setEnabled(true);
 		btnUseSsl.setEnabled(true);
 		btnConnectOnStartup.setEnabled(true);
+		btnConnect.setEnabled(true);
 	}
 	
 	private void disableFields()
@@ -311,11 +339,12 @@ public class ConnectionComposite extends Composite {
 		textPort.setEnabled(false);
 		textServPass.setEnabled(false);
 		textNick.setEnabled(false);
-		textAltNick.setEnabled(false);
 		textNickPass.setEnabled(false);
 		textIdent.setEnabled(false);
+		textAutoJoin.setEnabled(false);
 		btnUseSsl.setEnabled(false);
 		btnConnectOnStartup.setEnabled(false);
+		btnConnect.setEnabled(false);
 	}
 	private void clearFields()
 	{
@@ -326,8 +355,21 @@ public class ConnectionComposite extends Composite {
 		btnUseSsl.setSelection(false);
 		btnConnectOnStartup.setSelection(false);
 		textNick.setText("");
-		textAltNick.setText("");
 		textNickPass.setText("");
 		textIdent.setText("");
+		textAutoJoin.setText("");
+	}
+	private void defaultFields()
+	{
+		textConnName.setText("");
+		textServer.setText("");
+		textPort.setText("6667");
+		textServPass.setText("");
+		btnUseSsl.setSelection(false);
+		btnConnectOnStartup.setSelection(false);
+		textNick.setText("");
+		textNickPass.setText("");
+		textIdent.setText("");
+		textAutoJoin.setText("");
 	}
 }

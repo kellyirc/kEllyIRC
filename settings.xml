@@ -1,28 +1,18 @@
 <connection.Settings>
   <connSettings>
     <connection.ConnectionSettings>
-      <connectionName>EsperNet</connectionName>
+      <connectionName>es</connectionName>
       <server>irc.esper.net</server>
-      <port>6666</port>
-      <serverPassword>pass</serverPassword>
-      <ssl>true</ssl>
+      <port>6667</port>
+      <serverPassword></serverPassword>
+      <ssl>false</ssl>
       <connectOnStart>true</connectOnStart>
-      <nickname>FireFreek</nickname>
-      <alternateNickname>FireFreeek</alternateNickname>
-      <nickPassword>pass</nickPassword>
-      <ident>NotFreek</ident>
-    </connection.ConnectionSettings>
-    <connection.ConnectionSettings>
-      <connectionName>FakeNet</connectionName>
-      <server>irc.fake.net</server>
-      <port>6666</port>
-      <serverPassword>pass</serverPassword>
-      <ssl>true</ssl>
-      <connectOnStart>true</connectOnStart>
-      <nickname>FireFreek</nickname>
-      <alternateNickname>FireFreek</alternateNickname>
-      <nickPassword>pass</nickPassword>
-      <ident>FireFreek</ident>
+      <nickname>nofuckyoumocuto</nickname>
+      <nickPassword></nickPassword>
+      <ident>kj</ident>
+      <autoJoin>
+        <string>#DGR</string>
+      </autoJoin>
     </connection.ConnectionSettings>
   </connSettings>
 </connection.Settings>
