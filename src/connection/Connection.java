@@ -7,6 +7,7 @@ import javax.net.ssl.SSLSocketFactory;
 
 import listeners.MessageListener;
 import listeners.RoomListener;
+import listeners.ScriptListener;
 import listeners.ServerListener;
 import listeners.UserListener;
 import lombok.Getter;
@@ -57,19 +58,20 @@ public class Connection extends Composite {
 			l.addListener(new ServerListener(nc));
 			l.addListener(new UserListener(nc));
 			l.addListener(new MessageListener(nc));
+			l.addListener(new ScriptListener(nc));
 
 			//connecting to server
-				try {
-					if(!cs.getServerPassword().equals(""))
-						bot.connect(cs.getServer(), Integer.parseInt(cs.getPort()),cs.getServerPassword());
-					else if(cs.isSsl())
-						bot.connect(cs.getServer(), Integer.parseInt(cs.getPort()),SSLSocketFactory.getDefault());
-					else
-						bot.connect(cs.getServer(), Integer.parseInt(cs.getPort()));
-				} catch(Exception e) {
-					e.printStackTrace();
-				}
-			
+			try {
+				attemptToConnect(cs);
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+			} catch (NickAlreadyInUseException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (IrcException e) {
+				e.printStackTrace();
+			}			
 			
 			//identify nick
 			if(!cs.getNickPassword().equals(""))
@@ -96,10 +98,14 @@ public class Connection extends Composite {
 		}
 	}
 	
-	private @Getter ScrolledComposite scrolledComposite;
-	private @Getter KEllyBot bot;
-	private @Getter ConnectionData data;
-	private @Getter ConnectionSettings cs;
+	@Getter 
+	private ScrolledComposite scrolledComposite;
+	@Getter 
+	private KEllyBot bot;
+	@Getter 
+	private ConnectionData data;
+	@Getter 
+	private ConnectionSettings cs;
 	private Tree chanList;
 	private LinkedList<Room> rooms = new LinkedList<Room>();
 	

@@ -221,7 +221,7 @@ public class ConnectionComposite extends Composite {
 				{
 					ConnectionSettings selected = (ConnectionSettings) table.getItem(table.getSelectionIndex()).getData();
 					
-					Connection c = new Connection(RoomManager.getMain().getContainer(), SWT.NONE, selected);
+					new Connection(RoomManager.getMain().getContainer(), SWT.NONE, selected);
 				}
 			}
 		});

@@ -3,12 +3,14 @@ package shared;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
+import java.nio.file.Paths;
 
 import lombok.Cleanup;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 
+import scripting.ScriptWatcher;
 import ui.composites.MainWindow;
 
 public class Initializer {
@@ -26,6 +28,9 @@ public class Initializer {
 		//TODO: load basic UI separate from connection so the UI shows right away
 		//TODO: first time setup stuff if properties file not found
 		setUpStreams();
+		
+		new Thread(new ScriptWatcher()).start();
+		
 		final Display disp = Display.getDefault();
 		MainWindow window = null;
 		try {
