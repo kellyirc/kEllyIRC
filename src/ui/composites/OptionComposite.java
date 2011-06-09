@@ -1,4 +1,4 @@
-package ui;
+package ui.composites;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

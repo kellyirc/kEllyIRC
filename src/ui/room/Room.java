@@ -1,4 +1,4 @@
-package ui;
+package ui.room;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -28,13 +28,17 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.pircbotx.Channel;
 import org.pircbotx.User;
 
+import shared.RoomManager;
+
 import connection.Connection;
 
-public @Data
+@Data
 @EqualsAndHashCode(callSuper = false)
-class Room extends Composite {
+public class Room extends Composite {
+    
+	// TODO: make maximized window resemble minimized window, sizewise -- all of the components are absurdly large.
 
-	//TODO monospaced font
+	// TODO: monospaced font
 	
 	// TODO: fake tooltips (http://dev.eclipse.org/viewcvs/viewvc.cgi/org.eclipse.swt.snippets/src/org/eclipse/swt/snippets/Snippet125.java?view=co)
 	

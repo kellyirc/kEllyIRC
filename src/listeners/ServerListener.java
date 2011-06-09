@@ -1,9 +1,13 @@
-package connection;
+package listeners;
+
 
 import org.pircbotx.hooks.events.ServerResponseEvent;
 
+import connection.Connection;
+import connection.KEllyBot;
+
 import shared.Message;
-import ui.RoomManager;
+import shared.RoomManager;
 
 public class ServerListener extends ConnectionListener {
 

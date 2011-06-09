@@ -9,8 +9,7 @@ import lombok.Cleanup;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 
-import ui.MainWindow;
-import ui.RoomManager;
+import ui.composites.MainWindow;
 
 public class Initializer {
 

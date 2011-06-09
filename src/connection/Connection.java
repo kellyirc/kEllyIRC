@@ -5,6 +5,10 @@ import java.util.LinkedList;
 
 import javax.net.ssl.SSLSocketFactory;
 
+import listeners.MessageListener;
+import listeners.RoomListener;
+import listeners.ServerListener;
+import listeners.UserListener;
 import lombok.Getter;
 
 import org.eclipse.swt.SWT;
@@ -25,19 +29,19 @@ import org.pircbotx.exception.NickAlreadyInUseException;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.managers.ListenerManager;
 
-import ui.Room;
-import ui.RoomManager;
+import shared.RoomManager;
+import ui.room.Room;
 
 public class Connection extends Composite {
 	
 	private class ConnectionData extends ListenerAdapter<KEllyBot> {
 		
-		private @Getter KEllyBot bot;
+		@Getter
+		private KEllyBot bot;
 		
 		@SuppressWarnings("unchecked")
 		public ConnectionData(KEllyBot bot, ConnectionSettings cs, Connection nc){
 		
-
 			this.bot = bot;
 
 			bot.setVersion(KEllyBot.VERSION);
@@ -46,8 +50,6 @@ public class Connection extends Composite {
 			bot.setAutoNickChange(true);
 			bot.setName(cs.getNickname());
 			bot.setLogin(cs.getIdent());
-			
-			
 			
 			ListenerManager<PircBotX> l = bot.getListenerManager();
 			l.addListener(this);

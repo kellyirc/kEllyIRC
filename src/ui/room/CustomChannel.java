@@ -1,4 +1,4 @@
-package ui;
+package ui.room;
 
 import lombok.Data;
 
@@ -7,9 +7,11 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.pircbotx.Channel;
 
+
 import connection.Connection;
 
-public @Data class CustomChannel {
+@Data
+public class CustomChannel {
 	
 	private Channel channel;
 	private TreeItem itemRef;

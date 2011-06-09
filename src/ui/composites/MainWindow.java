@@ -1,4 +1,4 @@
-package ui;
+package ui.composites;
 
 import java.util.ArrayList;
 
@@ -17,6 +17,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+
+import shared.RoomManager;
 
 import connection.Connection;
 import connection.ConnectionSettings;
@@ -65,7 +67,6 @@ public class MainWindow extends ApplicationWindow {
 		c.setText("Options");
 
 		c.setControl(new OptionComposite(container, SWT.NONE));
-		
 		ArrayList<ConnectionSettings> list = Settings.getSettings().getConnSettings();
 		
 		//TODO: Make use of other settings in ConnectionSettings

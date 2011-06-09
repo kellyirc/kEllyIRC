@@ -1,8 +1,12 @@
-package connection;
+package listeners;
+
 
 import org.pircbotx.Channel;
 import org.pircbotx.hooks.events.NickChangeEvent;
 import org.pircbotx.hooks.events.QuitEvent;
+
+import connection.Connection;
+import connection.KEllyBot;
 
 public class UserListener extends ConnectionListener{
 

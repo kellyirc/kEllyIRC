@@ -1,12 +1,15 @@
-package connection;
+package listeners;
 
 import org.pircbotx.hooks.events.ActionEvent;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.events.NoticeEvent;
 import org.pircbotx.hooks.events.PrivateMessageEvent;
 
+import connection.Connection;
+import connection.KEllyBot;
+
 import shared.Message;
-import ui.RoomManager;
+import shared.RoomManager;
 
 public class MessageListener extends ConnectionListener{
 

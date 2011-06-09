@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 import lombok.Data;
 
-public @Data
-class ConnectionSettings {
+@Data
+public class ConnectionSettings {
 	private String connectionName;
 	private String server;
 	private String port;

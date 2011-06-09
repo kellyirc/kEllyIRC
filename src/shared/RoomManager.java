@@ -1,4 +1,4 @@
-package ui;
+package shared;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -9,8 +9,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.pircbotx.Channel;
 
-import shared.Customs;
-import shared.Message;
+import ui.composites.MainWindow;
+import ui.room.Room;
 import connection.Connection;
 
 public class RoomManager {
@@ -103,7 +103,7 @@ public class RoomManager {
 						numStr += curchar;
 					}
 				}
-				System.out.println("BEGONE " + numStr);
+				//System.out.println("BEGONE " + numStr);
 				original = original.replaceFirst("\u0003" + numStr, "");
 			}
 			//TODO: Add bold, underline and italics
@@ -229,7 +229,7 @@ public class RoomManager {
 				//TODO: make this conform to the global list, and make the global list work
 				Color blue = new Color(r.getOutput().getDisplay(),0,0,255);
 				StyleRange styleRange = new StyleRange();
-				styleRange.start = r.getOutput().getCharCount() - m.getContent().length() + m.getContent().indexOf(s)-1;
+				styleRange.start = r.getOutput().getCharCount() - m.getContent().length() + m.getContent().indexOf(s);
 				styleRange.length = s.length();
 				styleRange.foreground = blue;
 				styleRange.data = s;

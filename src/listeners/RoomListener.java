@@ -1,4 +1,4 @@
-package connection;
+package listeners;
 
 import org.pircbotx.hooks.events.JoinEvent;
 import org.pircbotx.hooks.events.KickEvent;
@@ -6,8 +6,11 @@ import org.pircbotx.hooks.events.ModeEvent;
 import org.pircbotx.hooks.events.PartEvent;
 import org.pircbotx.hooks.events.TopicEvent;
 
+import connection.Connection;
+import connection.KEllyBot;
+
 import shared.Message;
-import ui.Room;
+import ui.room.Room;
 
 public class RoomListener extends ConnectionListener{
 

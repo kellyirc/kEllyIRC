@@ -6,13 +6,15 @@ import lombok.Setter;
 import org.pircbotx.PircBotX;
 
 import shared.Message;
-import ui.RoomManager;
+import shared.RoomManager;
 
 public class KEllyBot extends PircBotX {
 	
 	public static final String VERSION = "kEllyIRC 0.1.0 alpha";
 	
-	private @Getter @Setter Connection connection;
+	@Getter 
+	@Setter 
+	private Connection connection;
 
 	public KEllyBot(Connection c){
 		this.connection = c;
