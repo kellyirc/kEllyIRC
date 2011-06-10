@@ -36,7 +36,8 @@ public class Script {
 	private Invocable engine = (Invocable) jsEngine;
 	private Bindings bindings = jsEngine.getBindings(ScriptContext.ENGINE_SCOPE);
 	
-	private String base = "importClass(org.eclipse.swt.SWT);\n";
+	private String base = 	"importClass(org.eclipse.swt.SWT);\n" +
+							"importClass(Packages.hexapixel.notifier.NotificationType);\n";
 	
 	public Script(File f) {
 		
@@ -60,7 +61,6 @@ public class Script {
 	private void initBindings() {
 		bindings.put("util", new ScriptFunctions());
 		bindings.put("gui", new ScriptGUI());
-		//bindings.put("con", new ScriptFunctions());
 		//TODO more bindings
 	}
 

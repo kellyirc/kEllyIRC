@@ -48,7 +48,7 @@ public class Room extends Composite {
 	public static final int WHO = 1, TOPIC = 2, IO = 4;
 
 	private CustomChannel cChannel;
-	private @Getter	@Setter Connection serverConnection;
+	private Connection serverConnection;
 
 	// make clickable links by changing the style and the data of the individual
 	// messages

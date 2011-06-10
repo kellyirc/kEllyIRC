@@ -1,12 +1,63 @@
 package scripting;
 
+import org.eclipse.swt.graphics.Color;
+
+import hexapixel.notifier.NotificationType;
+import hexapixel.notifier.NotifierDialog;
+import hexapixel.notifier.NotifierSettings;
 import shared.AlertBox;
 
 public class ScriptGUI {
 	
-	//wrapping the thing. no biggie.
+	//wrapping Alertbox.alert()
 	public static int alert(String title, String message, int icon, int type) {
 		return AlertBox.alert(title, message, icon, type);
+	}
+	
+	//wrapping NotiferDialog.notify()
+	public static void window(String title, String message) {
+		NotifierDialog.window(title, message, null, NotifierSettings.getTextColor(),
+				NotifierSettings.getTitleColor(),
+				NotifierSettings.getBorderColor(),
+				NotifierSettings.getBackgroundTopGradient(),
+				NotifierSettings.getBackgroundBottomGradient());
+	}
+	public static void window(String title, String message,
+			NotificationType type) {
+		NotifierDialog.window(title, message, type, NotifierSettings.getTextColor(),
+				NotifierSettings.getTitleColor(),
+				NotifierSettings.getBorderColor(),
+				NotifierSettings.getBackgroundTopGradient(),
+				NotifierSettings.getBackgroundBottomGradient());
+	}
+	
+	public static void window(String title, String message,
+			NotificationType type, Color textColor) {
+		NotifierDialog.window(title, message, type, textColor,
+				NotifierSettings.getTitleColor(),
+				NotifierSettings.getBorderColor(),
+				NotifierSettings.getBackgroundTopGradient(),
+				NotifierSettings.getBackgroundBottomGradient());
+	}
+	
+	public static void window(String title, String message,
+			NotificationType type, Color textColor, Color titleColor) {
+		NotifierDialog.window(title, message, type, textColor, titleColor,
+				NotifierSettings.getBorderColor(),
+				NotifierSettings.getBackgroundTopGradient(),
+				NotifierSettings.getBackgroundBottomGradient());
+	}
+	
+	public static void window(String title, String message,
+			NotificationType type, Color textColor, Color titleColor, Color borderColor) {
+		NotifierDialog.window(title, message, type, textColor, titleColor, borderColor, 
+				NotifierSettings.getBackgroundTopGradient(),
+				NotifierSettings.getBackgroundBottomGradient());
+	}
+	
+	public static void window(String title, String message,
+			NotificationType type, Color textColor, Color titleColor, Color borderColor, Color topGrad, Color btmGrad) {
+		NotifierDialog.window(title, message, type, textColor, titleColor, borderColor, topGrad, btmGrad);
 	}
 	
 }

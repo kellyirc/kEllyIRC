@@ -14,6 +14,7 @@ public class AlertBox {
 
 		messageBox.setText(title);
 		messageBox.setMessage(message);
+		
 		return messageBox.open();
 	}
 
