@@ -4,8 +4,6 @@ import java.util.TreeSet;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.MovementEvent;
