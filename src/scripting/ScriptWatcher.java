@@ -43,7 +43,6 @@ public class ScriptWatcher implements Runnable{
 
 	void updateFile(WatchEvent<?> event, File file) {
 		String eventType = event.kind().name();
-		System.out.println(eventType);
 		if (eventType.equals("ENTRY_MODIFY")) {
 			ScriptManager.modifyScript(file);
 

@@ -27,4 +27,9 @@ public abstract class ConnectionListener extends ListenerAdapter<KEllyBot> {
 	protected void queueMessage(Message m){
 		RoomManager.enQueue(m);
 	}
+	
+	protected void manageMessage(Message m){
+		RoomManager.enQueue(m);
+	}
+
 }

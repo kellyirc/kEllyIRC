@@ -10,7 +10,7 @@ import shared.RoomManager;
 
 public class KEllyBot extends PircBotX {
 	
-	public static final String VERSION = "kEllyIRC 0.1.0 alpha";
+	public static final String VERSION = "kEllyIRC 0.1.1 alpha";
 	
 	@Getter 
 	@Setter 

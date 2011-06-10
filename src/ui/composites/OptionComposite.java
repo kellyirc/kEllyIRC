@@ -50,7 +50,7 @@ public class OptionComposite extends Composite {
 		
 		TreeItem treeItem = new TreeItem(tree, SWT.NONE);
 		treeItem.setText("Connections");
-		treeItem.setData("ui.ConnectionComposite");
+		treeItem.setData("ui.composites.ConnectionComposite");
 
 		tree.addListener(SWT.MouseDown, new Listener () {
 			@Override

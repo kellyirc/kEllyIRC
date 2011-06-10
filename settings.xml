@@ -1,17 +1,19 @@
 <connection.Settings>
   <connSettings>
     <connection.ConnectionSettings>
-      <connectionName>es</connectionName>
+      <connectionName>Esper</connectionName>
       <server>irc.esper.net</server>
       <port>6667</port>
       <serverPassword></serverPassword>
       <ssl>false</ssl>
       <connectOnStart>true</connectOnStart>
-      <nickname>nofuckyoumocuto</nickname>
+      <nickname>Mentos</nickname>
       <nickPassword></nickPassword>
-      <ident>kj</ident>
+      <ident>CakeGuy</ident>
       <autoJoin>
-        <string>#DGR</string>
+        <string>#dgr</string>
+        <string>#rpgbot</string>
+        <string>#idlebot</string>
       </autoJoin>
     </connection.ConnectionSettings>
   </connSettings>

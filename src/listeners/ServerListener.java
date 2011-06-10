@@ -25,6 +25,8 @@ public class ServerListener extends ConnectionListener {
 		case 315:
 		case 324:
 		case 329:
+		case 353:
+		case 333:
 			break;	
 			
 		default: 

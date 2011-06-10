@@ -14,19 +14,29 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
+import org.pircbotx.hooks.Event;
+
+import connection.KEllyBot;
+
 import lombok.Cleanup;
+import lombok.Getter;
 
 public class Script {
 	
+	private boolean inUse = true;
 	String language;
 	private String script;
+	@Getter
 	private File reference;
+	@Getter
 	private ArrayList<String> functions = new ArrayList<String>();
 	
 	private ScriptEngineManager manager = new ScriptEngineManager();
 	private ScriptEngine jsEngine = manager.getEngineByName("JavaScript");
 	private Invocable engine = (Invocable) jsEngine;
 	private Bindings bindings = jsEngine.getBindings(ScriptContext.ENGINE_SCOPE);
+	
+	private String base = "importClass(org.eclipse.swt.SWT);\n";
 	
 	public Script(File f) {
 		
@@ -41,7 +51,7 @@ public class Script {
 
 	private void initialize() {
 		try {
-			jsEngine.eval(script);
+			jsEngine.eval(base+script);
 		} catch (ScriptException e) {
 			e.printStackTrace();
 		}
@@ -49,6 +59,7 @@ public class Script {
 
 	private void initBindings() {
 		bindings.put("util", new ScriptFunctions());
+		bindings.put("gui", new ScriptGUI());
 		//bindings.put("con", new ScriptFunctions());
 		//TODO more bindings
 	}
@@ -81,9 +92,18 @@ public class Script {
 	private void parseFunction(String text) {
 		if(!text.contains("function")) return;
 		String[] array = text.replaceAll("[(]", " ").split(" ");
-		for(String s : array){
-			//TODO test this
-			System.out.println(s);
+		//function, onFunctionName, event), {
+		functions.add(array[1].trim());
+	}
+	
+	public void invoke(String function, Event<KEllyBot> e){
+		if(!inUse)return;
+		try {
+			engine.invokeFunction(function, e);
+		} catch (NoSuchMethodException e1) {
+			e1.printStackTrace();
+		} catch (ScriptException e1) {
+			e1.printStackTrace();
 		}
 	}
 }

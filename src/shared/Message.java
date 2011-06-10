@@ -23,7 +23,6 @@ public class Message {
 	//TODO: pass in the actual IrcUser object instead of a string
 	public Message(Connection nc, String content, String sender, String channel){
 		this(nc.getBot(), content, sender, channel);
-		System.err.println(nc);
 	}
 	public Message(Connection nc, String message, String nick, Channel channel) {
 		this(nc, message, nick, channel == null ? "Console" : channel.getName());
