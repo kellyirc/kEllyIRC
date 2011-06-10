@@ -92,7 +92,7 @@ public class RoomManager {
 						numStr += curchar;
 					}
 				}
-				// System.out.println("BEGONE " + numStr);
+				System.out.println("BEGONE " + numStr);
 				original = original.replaceFirst("\u0003" + numStr, "");
 			}
 			// TODO: Add bold, underline and italics

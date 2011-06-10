@@ -52,10 +52,12 @@ public class NotifierDialog {
 			final NotificationType type, final Color textColor,
 			final Color titleColor, final Color borderColor,
 			final Color topGradient, final Color btmGradient) {
+		
 		final Display d = RoomManager.getMain().getDisplay();
+		
 		d.asyncExec(new Runnable() {
 			public void run() {
-				_shell = new Shell(d, SWT.NO_FOCUS | SWT.NO_TRIM | SWT.ON_TOP);
+				_shell = new Shell(d.getActiveShell(), SWT.NO_FOCUS | SWT.NO_TRIM | SWT.ON_TOP);
 				_shell.setLayout(new FillLayout());
 				_shell.setForeground(textColor);
 				_shell.setBackgroundMode(SWT.INHERIT_DEFAULT);
@@ -83,7 +85,7 @@ public class NotifierDialog {
 							// get the size of the drawing area
 							Rectangle rect = _shell.getClientArea();
 							// create a new image with that size
-							Image newImage = new Image(Display.getDefault(),
+							Image newImage = new Image(d,
 									Math.max(1, rect.width), rect.height);
 							// create a GC object we can use to draw with
 							GC gc = new GC(newImage);
@@ -168,12 +170,12 @@ public class NotifierDialog {
 
 				_shell.setSize(350, minHeight);
 
-				if (Display.getDefault().getActiveShell() == null
-						|| Display.getDefault().getActiveShell().getMonitor() == null) {
+				if (d.getActiveShell() == null
+						|| d.getActiveShell().getMonitor() == null) {
 					return;
 				}
 
-				Rectangle clientArea = Display.getDefault().getActiveShell()
+				Rectangle clientArea = d.getActiveShell()
 						.getMonitor().getClientArea();
 
 				int startX = clientArea.x + clientArea.width - 352;
@@ -224,14 +226,14 @@ public class NotifierDialog {
 					}
 
 					_shell.setAlpha(cur);
-					Display.getDefault().timerExec(FADE_TIMER, this);
+					RoomManager.getMain().getDisplay().timerExec(FADE_TIMER, this);
 				} catch (Exception err) {
 					err.printStackTrace();
 				}
 			}
 
 		};
-		Display.getDefault().timerExec(FADE_TIMER, run);
+		RoomManager.getMain().getDisplay().timerExec(FADE_TIMER, run);
 	}
 
 	private static void startTimer(final Shell _shell) {
@@ -251,7 +253,7 @@ public class NotifierDialog {
 			}
 
 		};
-		Display.getDefault().timerExec(DISPLAY_TIME, run);
+		RoomManager.getMain().getDisplay().timerExec(DISPLAY_TIME, run);
 
 	}
 
@@ -277,7 +279,7 @@ public class NotifierDialog {
 
 					_shell.setAlpha(cur);
 
-					Display.getDefault().timerExec(FADE_TIMER, this);
+					RoomManager.getMain().getDisplay().timerExec(FADE_TIMER, this);
 
 				} catch (Exception err) {
 					err.printStackTrace();
@@ -285,7 +287,7 @@ public class NotifierDialog {
 			}
 
 		};
-		Display.getDefault().timerExec(FADE_TIMER, run);
+		RoomManager.getMain().getDisplay().timerExec(FADE_TIMER, run);
 
 	}
 

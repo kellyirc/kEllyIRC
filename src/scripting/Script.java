@@ -18,7 +18,6 @@ import org.pircbotx.hooks.Event;
 
 import connection.KEllyBot;
 
-import lombok.Cleanup;
 import lombok.Getter;
 
 public class Script {
@@ -43,6 +42,10 @@ public class Script {
 		
 		this.reference = f;
 		
+		reset();
+	}
+
+	public void reset() {
 		readScript();
 		
 		initBindings();
@@ -72,13 +75,15 @@ public class Script {
 		//re-parse the script
 		StringBuffer contents = new StringBuffer();
 		
+		BufferedReader reader = null;
 		try {
-			@Cleanup BufferedReader reader = new BufferedReader(new FileReader(reference));
+			reader = new BufferedReader(new FileReader(reference));
 			String text = null;
 			while((text = reader.readLine())!=null){
 				contents.append(text).append(System.getProperty("line.separator"));
 				parseFunction(text);
 			}
+			reader.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

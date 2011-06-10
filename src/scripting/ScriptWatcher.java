@@ -12,17 +12,16 @@ import java.util.HashMap;
 import java.util.Map;
 import static java.nio.file.StandardWatchEventKinds.*;
 
-public class ScriptWatcher implements Runnable{
+public class ScriptWatcher implements Runnable {
 
 	private WatchService watcher;
-	private Map<WatchKey, Path> keys;
+	private Map<WatchKey, Path> keys  = new HashMap<WatchKey, Path>();
 
 	public ScriptWatcher() {
 		File f = new File("./scripts/");
 		if(!f.isDirectory()) { f.mkdirs(); }
 		try {
 			this.watcher = FileSystems.getDefault().newWatchService();
-			this.keys = new HashMap<WatchKey, Path>();
 			register(Paths.get("./scripts/"));
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -41,29 +40,29 @@ public class ScriptWatcher implements Runnable{
 		}
 	}
 
-	void updateFile(WatchEvent<?> event, File file) {
-		String eventType = event.kind().name();
-		if (eventType.equals("ENTRY_MODIFY")) {
+	private void updateFile(WatchEvent<?> event, File file) {
+		WatchEvent.Kind<?> eventType = event.kind();
+				
+		if (eventType == ENTRY_MODIFY) {
 			ScriptManager.modifyScript(file);
 
-		} else if (eventType.equals("ENTRY_ADD")) {
+		} else if (eventType == ENTRY_CREATE) {
 			ScriptManager.addScript(file);
 
-		} else if (eventType.equals("ENTRY_DELETE")) {
+		} else if (eventType == ENTRY_DELETE) {
 			ScriptManager.removeScript(file);
 
 		}
 	}
-
+	
 	@Override
 	public void run() {
-		while (true) {
-			WatchKey key;
+		while(true) {
+			WatchKey key = null;
 			try {
 				key = watcher.take();
 			} catch (InterruptedException x) {
 				x.printStackTrace();
-				return;
 			}
 
 			Path dir = keys.get(key);
@@ -81,6 +80,12 @@ public class ScriptWatcher implements Runnable{
 				Path child = dir.resolve(name);
 				File f = child.toFile();
 				updateFile(event, f);
+			}
+			key.reset();
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
 		}
 	}

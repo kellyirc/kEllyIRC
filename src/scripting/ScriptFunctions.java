@@ -22,6 +22,17 @@ public class ScriptFunctions {
     	return !(gen.nextInt(100) + 1 > x);
     }
 	
+	public final void writeln(String s){
+		System.out.println(s);
+	}
+	
+	public final void write(String s){
+		System.out.print(s);
+	}
+	
+	public final void format(String s, Object... args){
+		System.out.format(s, args);
+	}
+	
 	//TODO: file to string
-	//TODO: hexapixel
 }

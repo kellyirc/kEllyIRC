@@ -17,15 +17,15 @@ public class MessageListener extends ConnectionListener{
 	}
 
 	@Override
-	public void onMessage(final MessageEvent<KEllyBot> event) throws Exception {
+	public void onMessage(MessageEvent<KEllyBot> event) throws Exception {
 		super.onMessage(event);
 		manageMessage(new Message(nc, event.getMessage(), event.getUser().getNick(), event.getChannel()));
 	}
 
 	@Override
 	public void onAction(ActionEvent<KEllyBot> event) throws Exception {
-		manageMessage(new Message(nc, "***"+event.getAction(), event.getUser().getNick(), event.getChannel()));	
 		super.onAction(event);
+		manageMessage(new Message(nc, "***"+event.getAction(), event.getUser().getNick(), event.getChannel()));	
 	}
 
 	@Override
@@ -36,8 +36,8 @@ public class MessageListener extends ConnectionListener{
 
 	@Override
 	public void onPrivateMessage(PrivateMessageEvent<KEllyBot> event)
-			throws Exception {
-		manageMessage(new Message(nc, event.getMessage(), event.getUser().getNick(), event.getUser().getNick()));	
+			throws Exception {	
 		super.onPrivateMessage(event);
+		manageMessage(new Message(nc, event.getMessage(), event.getUser().getNick(), event.getUser().getNick()));
 	} 
 }

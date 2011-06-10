@@ -22,8 +22,7 @@ public class ScriptManager {
 	public static void modifyScript(File f) {
 		for(Script s : scripts){
 			if(s.getReference().equals(f)){
-				removeScript(f);
-				addScript(f);
+				s.reset();
 			}
 		}
 	}

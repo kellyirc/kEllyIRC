@@ -4,6 +4,7 @@ package listeners;
 import java.util.Collection;
 
 import org.pircbotx.Channel;
+import org.pircbotx.User;
 import org.pircbotx.hooks.events.NickChangeEvent;
 import org.pircbotx.hooks.events.QuitEvent;
 
@@ -30,12 +31,22 @@ public class UserListener extends ConnectionListener{
 		}
 	}
 
+	//FIXME this does not work right at all
+	
 	@Override
 	public void onQuit(QuitEvent<KEllyBot> event) throws Exception {
 		Collection<Channel> channels = event.getBot().getChannels();
+		//System.out.println(event.getUser());
 		super.onQuit(event);
 		for(Channel c : channels){
+			//System.out.println(event.getUser().getNick());
+			for(User u : c.getUsers()){
+				if(u.getNick().equals(event.getUser().getNick())){
+					System.out.println("matched");
+				}
+			}
 			if(c.getUsers().contains(event.getUser())){
+				System.out.println("found user");
 				updateWho(c);
 				manageMessage(new Message(nc, event.getUser().getNick()+" has quit "+(event.getReason()!=null ? event.getReason()  : "."), c.getName(), c));
 			}
