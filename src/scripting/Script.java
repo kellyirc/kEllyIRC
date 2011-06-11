@@ -64,7 +64,6 @@ public class Script {
 	private void initBindings() {
 		bindings.put("util", new ScriptFunctions());
 		bindings.put("gui", new ScriptGUI());
-		//TODO more bindings
 	}
 
 	private void readScript() {
@@ -101,10 +100,22 @@ public class Script {
 		functions.add(array[1].trim());
 	}
 	
+	//event invocation
 	public void invoke(String function, Event<KEllyBot> e){
 		if(!inUse)return;
 		try {
 			engine.invokeFunction(function, e);
+		} catch (NoSuchMethodException e1) {
+			e1.printStackTrace();
+		} catch (ScriptException e1) {
+			e1.printStackTrace();
+		}
+	}
+
+	//open-ended invocation
+	public void invoke(String command, Object... args) {
+		try {
+			engine.invokeFunction(command, args);
 		} catch (NoSuchMethodException e1) {
 			e1.printStackTrace();
 		} catch (ScriptException e1) {

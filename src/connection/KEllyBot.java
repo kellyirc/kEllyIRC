@@ -3,10 +3,15 @@ package connection;
 import lombok.Getter;
 import lombok.Setter;
 
+import org.eclipse.swt.SWT;
 import org.pircbotx.PircBotX;
 
+import scripting.Script;
+import scripting.ScriptManager;
+import shared.AlertBox;
 import shared.Message;
 import shared.RoomManager;
+import ui.room.Room;
 
 public class KEllyBot extends PircBotX {
 	
@@ -22,14 +27,15 @@ public class KEllyBot extends PircBotX {
 	
 	@Override
 	public void sendMessage(String target, String message) {
-        if(target==null || target.equals("Console")){
-        	return;
-        }
-        RoomManager.enQueue(new Message(this, 
-        		message, 
-        		getNick(), 
-        		target));  
-		super.sendMessage(target, message);
+		if (message.startsWith("/")) {
+			doCommand(message.substring(1));
+		} else {
+	        if(target==null || target.equals("Console")){
+	        	return;
+	        }
+	        RoomManager.enQueue(new Message(this, message, getNick(), target));  
+			super.sendMessage(target, message);
+		}
 	}
 	
 	@Override
@@ -37,21 +43,27 @@ public class KEllyBot extends PircBotX {
         if(target==null || target.equals("Console")){
         	return;
         }
-        RoomManager.enQueue(new Message(this, 
-        		"NOTICE: "+notice,
-        		getNick(), 
-        		target));
+        RoomManager.enQueue(new Message(this, "NOTICE: "+notice, getNick(), target));
 		super.sendNotice(target, notice);
 	}
 
-	public void doCommand(String command) {
-		if(command.split(" ")[0].equals("join")){
-			String s = command.split(" ")[1];
-			if(!s.startsWith("#")){
-				s = "#"+s;
+	public void doCommand(String line) {
+		String command = line.split(" ")[0];
+		
+		boolean found=false;
+		
+		for(Script s : ScriptManager.scripts){
+			if(s.getFunctions().contains(command)){
+				s.invoke(command, this, line.substring(line.indexOf(line.split(" ")[1])));
+				found=true;
 			}
-			joinChannel(s);
 		}
+		
+		if(!found){
+			Room r = (Room) connection.getScrolledComposite().getContent();
+			RoomManager.enQueue(new Message(connection, command + " is not a valid alias. Please define it.", "System", r.getChannelName()));
+		}
+		
 	}
 
 }

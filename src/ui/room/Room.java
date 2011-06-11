@@ -91,6 +91,7 @@ public class Room extends Composite {
 							continue;
 						if (s.contains("://")
 								&& arg0.lineText.indexOf(s) + s.length() > arg0.offset) {
+							//FIXME this doesn't work
 							Program.launch(s);
 						}
 					}
@@ -109,15 +110,10 @@ public class Room extends Composite {
 				public void keyPressed(KeyEvent e) {
 					// CR == Carriage Return == Enter
 					if (e.character == SWT.CR) {
-						if (input.getText().startsWith("/")) {
-							serverConnection.getBot().doCommand(
-									input.getText().substring(1));
-						} else {
-							if (cChannel != null && serverConnection != null) {
-								serverConnection.getBot().sendMessage(
-										cChannel.getChannel(),
-										input.getText().replaceAll("\r\n", ""));
-							}
+						if (cChannel != null && serverConnection != null) {
+							serverConnection.getBot().sendMessage(
+									cChannel.getChannel(),
+									input.getText().replaceAll("\r\n", ""));
 						}
 						input.setText("");
 					}
