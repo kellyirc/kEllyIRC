@@ -20,6 +20,8 @@ import connection.KEllyBot;
 
 import lombok.Getter;
 
+import sun.org.mozilla.javascript.internal.NativeArray;
+
 public class Script {
 	
 	private boolean inUse = true;
@@ -121,5 +123,24 @@ public class Script {
 		} catch (ScriptException e1) {
 			e1.printStackTrace();
 		}
+	}
+	
+	public Object[] invoke(String command) {
+		Object[] rv = null;
+		try {
+			NativeArray arr = (NativeArray) engine.invokeFunction(command);
+			rv = new Object[(int)arr.getLength()];
+			
+			//get as object
+			for(Object o : arr.getIds()) {
+				int index = (Integer) o;
+				rv[index] = arr.get(index, null);
+			}
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+		} catch (ScriptException e) {
+			e.printStackTrace();
+		}
+		return rv;
 	}
 }

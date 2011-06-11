@@ -28,14 +28,161 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.pircbotx.Channel;
 import org.pircbotx.User;
 
+import scripting.Script;
+import scripting.ScriptManager;
 import shared.RoomManager;
 
 import connection.Connection;
+import connection.KEllyBot;
+
 
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class Room extends Composite {
-    
+
+	private WhoListener curListener;
+	
+	private class WhoListener implements Listener {
+			public void handleEvent(Event event) {
+				Point point = new Point(event.x, event.y);
+				final TreeItem item = who.getItem(point);
+	
+				if (item != null && item.getData() != null
+						&& item.getData() instanceof User) {
+					Menu m = new Menu(item.getParent().getShell(),
+							SWT.POP_UP);
+					basicItems(item, m);
+					ctcpItems(item, m);
+					operatorItems(item, m);
+					customItems(item, m);
+					item.getParent().setMenu(m);
+				}
+			}
+
+			private void customItems(final TreeItem item, Menu m) {
+				final Script contextScript = findContextScript();
+				if(contextScript == null) return;
+				Object[] arr = contextScript.invoke("getContextCommands");
+				for(final Object s : arr){
+					MenuItem mitem = new MenuItem(m, SWT.PUSH);
+					mitem.setText((String)s);
+					mitem.addSelectionListener(new SelectionListener() {
+
+						@Override
+						public void widgetDefaultSelected(
+								SelectionEvent arg0) {
+						}
+
+						@Override
+						public void widgetSelected(SelectionEvent arg0) {
+							contextScript.invoke((String)s, getBot(), item.getData(), cChannel.getChannel());
+						}
+					});
+				}
+			}
+
+			private Script findContextScript() {
+				for(Script s : ScriptManager.scripts){
+					if(s.getFunctions().contains("getContextCommands")){
+						return s;
+					}
+				}
+				return null;
+			}
+
+			private void ctcpItems(TreeItem item, Menu m) {
+				final User tUser = (User) item.getData();
+				
+				Menu parent = new Menu(m);
+				MenuItem mitem = new MenuItem(m, SWT.CASCADE);
+				mitem.setText("CTCP");
+				mitem.setMenu(parent);
+				//TODO: make this a smarter list per person based on CLIENTINFO
+				createCTCP(tUser, parent, "CLIENTINFO");
+				createCTCP(tUser, parent, "FINGER");
+				createCTCP(tUser, parent, "PING");
+				createCTCP(tUser, parent, "TIME");
+				createCTCP(tUser, parent, "USERINFO");
+				createCTCP(tUser, parent, "VERSION");
+			}
+
+			private void createCTCP(final User tUser, Menu parent, final String command) {
+				MenuItem mitem = new MenuItem(parent, SWT.PUSH);
+				mitem.setText(command);
+				mitem.addSelectionListener(new SelectionListener() {
+
+					@Override
+					public void widgetDefaultSelected(
+							SelectionEvent arg0) {
+					}
+
+					@Override
+					public void widgetSelected(SelectionEvent arg0) {
+						bot.sendCTCPCommand(tUser, command);
+					}
+				});
+			}
+
+			private void basicItems(final TreeItem item, Menu m) {
+				MenuItem mitem = new MenuItem(m, SWT.PUSH);
+				mitem.setText("Query");
+				mitem.addSelectionListener(new SelectionListener() {
+
+					@Override
+					public void widgetDefaultSelected(
+							SelectionEvent arg0) {
+					}
+
+					@Override
+					public void widgetSelected(SelectionEvent arg0) {
+						serverConnection.createRoom(item.getText(), IO);
+
+					}
+				});
+			}
+			
+			private void operatorItems(final TreeItem item, Menu m) {
+				final Channel thisChan = cChannel.getChannel();
+				final User tUser = (User) item.getData();
+				if(bot.getUserBot().isOp(thisChan)){
+					if(!tUser.isOp(thisChan)){
+						MenuItem mitem = new MenuItem(m, SWT.PUSH);
+						mitem.setText("Op");
+						mitem.addSelectionListener(new SelectionListener() {
+
+							@Override
+							public void widgetDefaultSelected(
+									SelectionEvent arg0) {
+							}
+
+							@Override
+							public void widgetSelected(SelectionEvent arg0) {
+								bot.op(thisChan, tUser);
+
+							}
+						});
+					}
+					if(!tUser.hasVoice(thisChan)){
+						MenuItem mitem = new MenuItem(m, SWT.PUSH);
+						mitem.setText("Voice");
+						mitem.addSelectionListener(new SelectionListener() {
+
+							@Override
+							public void widgetDefaultSelected(
+									SelectionEvent arg0) {
+							}
+
+							@Override
+							public void widgetSelected(SelectionEvent arg0) {
+								bot.voice(thisChan, tUser);
+
+							}
+						});
+					}
+				}
+			}
+		}
+
 	// TODO: make maximized window resemble minimized window, sizewise -- all of the components are absurdly large.
 
 	// TODO: monospaced font
@@ -47,6 +194,7 @@ public class Room extends Composite {
 
 	private CustomChannel cChannel;
 	private Connection serverConnection;
+	private KEllyBot bot;
 
 	// make clickable links by changing the style and the data of the individual
 	// messages
@@ -65,6 +213,7 @@ public class Room extends Composite {
 			String channelstr, Connection newConnection, Channel channel) {
 		super(c, style);
 		setServerConnection(newConnection);
+		this.setBot(newConnection.getBot());
 		this.cChannel = new CustomChannel(tree, channelstr, newConnection,
 				channel, this);
 		instantiate(layout);
@@ -124,34 +273,7 @@ public class Room extends Composite {
 
 		if ((layout & WHO) != 0) {
 			who = new Tree(this, SWT.BORDER);
-			who.addListener(SWT.MouseDown, new Listener() {
-				public void handleEvent(Event event) {
-					Point point = new Point(event.x, event.y);
-					final TreeItem item = who.getItem(point);
-
-					if (item != null && item.getData() != null
-							&& item.getData().equals(true)) {
-						Menu m = new Menu(item.getParent().getShell(),
-								SWT.POP_UP);
-						MenuItem mitem = new MenuItem(m, SWT.PUSH);
-						mitem.setText("Query");
-						mitem.addSelectionListener(new SelectionListener() {
-
-							@Override
-							public void widgetDefaultSelected(
-									SelectionEvent arg0) {
-							}
-
-							@Override
-							public void widgetSelected(SelectionEvent arg0) {
-								serverConnection.createRoom(item.getText(), IO);
-
-							}
-						});
-						item.getParent().setMenu(m);
-					}
-				}
-			});
+			updateWhoListener();
 			who.addListener(SWT.MouseDoubleClick, new Listener() {
 
 				@Override
@@ -214,6 +336,14 @@ public class Room extends Composite {
 				.getUsers().size() : 0;
 		lastMessage = "N/A";
 		channelName = cChannel.getChannelString();
+	}
+	
+	private void updateWhoListener() {
+		if(curListener!=null){
+			who.removeListener(SWT.MouseDown, curListener);
+		}
+		curListener = new WhoListener();
+		who.addListener(SWT.MouseDown, curListener);
 	}
 
 	public void updateTopic() {

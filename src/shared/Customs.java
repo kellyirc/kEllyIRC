@@ -5,7 +5,6 @@ import java.util.HashMap;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Display;
 
 public class Customs{
@@ -23,13 +22,14 @@ public class Customs{
 		initColors();
 	}
 	
+	/*
 	private void initFonts(){
 		FontData[] fonts = Display.getDefault().getFontList(null, true);
 		for(FontData f : fonts){
 			//TODO: set a font size here (in Font constructor)
 			this.fonts.put(f.getName(), new Font(null, f));
 		}
-	}
+	}*/
 	
 	private void initColors(){
 		ircColorsStr = new HashMap<String, String>();
