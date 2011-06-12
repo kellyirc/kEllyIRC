@@ -1,14 +1,17 @@
 package shared;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
+import java.nio.file.Paths;
 
 import lombok.Cleanup;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 
+import scripting.ScriptManager;
 import scripting.ScriptWatcher;
 import ui.composites.MainWindow;
 
@@ -23,13 +26,12 @@ public class Initializer {
 	public static void main(String args[]) {
 		
 		checkVersion();
-		
 		//TODO: load basic UI separate from connection so the UI shows right away
 		//TODO: first time setup stuff if properties file not found
 		setUpStreams();
 		
-		new Thread(new ScriptWatcher()).start();
-		
+		//new Thread(new ScriptWatcher()).start();
+		setUpScripts();
 		final Display disp = Display.getDefault();
 		MainWindow window = null;
 		try {
@@ -43,6 +45,15 @@ public class Initializer {
 		}
 	}
 	
+	private static void setUpScripts() {
+		for (File f : Paths.get("./scripts/").toFile().listFiles()) {
+			if (f.isDirectory() || !f.toString().contains(".js"))
+				continue;
+			ScriptManager.addScript(f);
+		}
+		
+	}
+
 	private static void checkVersion() {
 		String s = System.getProperty("java.version");
 		int version = Integer.parseInt(s.split("[.]")[1]);

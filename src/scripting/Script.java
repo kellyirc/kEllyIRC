@@ -19,18 +19,23 @@ import org.pircbotx.hooks.Event;
 import connection.KEllyBot;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import sun.org.mozilla.javascript.internal.NativeArray;
 
 public class Script {
 	
+	@Getter @Setter
 	private boolean inUse = true;
 	String language;
+	@Getter
 	private String script;
 	@Getter
 	private File reference;
 	@Getter
 	private ArrayList<String> functions = new ArrayList<String>();
+	@Getter
+	private ArrayList<String> descriptFunctions = new ArrayList<String>();
 	
 	private ScriptEngineManager manager = new ScriptEngineManager();
 	private ScriptEngine jsEngine = manager.getEngineByName("JavaScript");
@@ -97,6 +102,8 @@ public class Script {
 	//check line-by-line for a function name
 	private void parseFunction(String text) {
 		if(!text.contains("function")) return;
+		String elFunction = text.substring(9).split("[{]")[0].trim();
+		descriptFunctions.add(elFunction);
 		String[] array = text.replaceAll("[(]", " ").split(" ");
 		//function, onFunctionName, event), {
 		functions.add(array[1].trim());

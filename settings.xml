@@ -6,7 +6,7 @@
       <port>6667</port>
       <serverPassword></serverPassword>
       <ssl>false</ssl>
-      <connectOnStart>true</connectOnStart>
+      <connectOnStart>false</connectOnStart>
       <nickname>Mentos</nickname>
       <nickPassword></nickPassword>
       <ident>CakeGuy</ident>

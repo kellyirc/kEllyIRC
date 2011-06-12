@@ -3,19 +3,17 @@ package connection;
 import lombok.Getter;
 import lombok.Setter;
 
-import org.eclipse.swt.SWT;
 import org.pircbotx.PircBotX;
 
 import scripting.Script;
 import scripting.ScriptManager;
-import shared.AlertBox;
 import shared.Message;
 import shared.RoomManager;
 import ui.room.Room;
 
 public class KEllyBot extends PircBotX {
 	
-	public static final String VERSION = "kEllyIRC 0.1.1 alpha";
+	public static final String VERSION = "kEllyIRC 0.2.1 alpha";
 	
 	@Getter 
 	@Setter 
@@ -35,6 +33,19 @@ public class KEllyBot extends PircBotX {
 	        }
 	        RoomManager.enQueue(new Message(this, message, getNick(), target));  
 			super.sendMessage(target, message);
+		}
+	}
+	
+	@Override
+	public void sendAction(String target, String message) {
+		if (message.startsWith("/")) {
+			doCommand(message.substring(1));
+		} else {
+	        if(target==null || target.equals("Console")){
+	        	return;
+	        }
+	        RoomManager.enQueue(new Message(this, "***"+message, getNick(), target));  
+			super.sendAction(target, message);
 		}
 	}
 	

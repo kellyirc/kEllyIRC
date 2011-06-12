@@ -59,6 +59,7 @@ public class Room extends Composite {
 				}
 			}
 
+			//TODO: make this support multiple context scripts
 			private void customItems(final TreeItem item, Menu m) {
 				final Script contextScript = findContextScript();
 				if(contextScript == null) return;

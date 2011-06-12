@@ -51,6 +51,10 @@ public class OptionComposite extends Composite {
 		TreeItem treeItem = new TreeItem(tree, SWT.NONE);
 		treeItem.setText("Connections");
 		treeItem.setData("ui.composites.ConnectionComposite");
+		
+		treeItem = new TreeItem(tree, SWT.NONE);
+		treeItem.setText("Scripting");
+		treeItem.setData("ui.composites.ScriptComposite");
 
 		tree.addListener(SWT.MouseDown, new Listener () {
 			@Override
@@ -84,7 +88,6 @@ public class OptionComposite extends Composite {
 		});			
 
 	}
-
 
 	public void switchComposite(Composite c){
 		if(currentComposite!=null){

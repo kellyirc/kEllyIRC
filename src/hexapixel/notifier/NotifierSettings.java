@@ -1,11 +1,13 @@
 package hexapixel.notifier;
 
+import lombok.Data;
 import lombok.Getter;
 
 import org.eclipse.swt.graphics.Color;
 
 import hexapixel.cache.ColorCache;
 
+@Data
 public class NotifierSettings {
 
 	// title foreground color

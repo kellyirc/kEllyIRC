@@ -22,6 +22,7 @@ public class ScriptGUI {
 				NotifierSettings.getBackgroundTopGradient(),
 				NotifierSettings.getBackgroundBottomGradient());
 	}
+	
 	public static void window(String title, String message,
 			NotificationType type) {
 		NotifierDialog.window(title, message, type, NotifierSettings.getTextColor(),
