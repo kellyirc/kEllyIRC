@@ -14,6 +14,8 @@ import static java.nio.file.StandardWatchEventKinds.*;
 
 public class ScriptWatcher implements Runnable {
 
+	//TODO: refresh script tree in script composite when a script is added or deleted
+	
 	private WatchService watcher;
 	private Map<WatchKey, Path> keys  = new HashMap<WatchKey, Path>();
 

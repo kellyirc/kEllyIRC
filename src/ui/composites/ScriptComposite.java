@@ -1,5 +1,10 @@
 package ui.composites;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
@@ -28,11 +33,14 @@ import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 
 
 public class ScriptComposite extends Composite {
 
 	StyledText curTextBox;
+	Script curScript;
 	CTabFolder tabs;
 	JavaLineStyler lineStyler = new JavaLineStyler();
 	private Combo combo;
@@ -58,11 +66,6 @@ public class ScriptComposite extends Composite {
 			}
 		});
 
-		Button btnSave = new Button(this, SWT.NONE);
-		btnSave.setEnabled(false);
-		btnSave.setBounds(573, 7, 75, 25);
-		btnSave.setText("Save");
-
 		final CheckboxTreeViewer checkboxTreeViewer = new CheckboxTreeViewer(
 				this, SWT.BORDER);
 		Tree tree = checkboxTreeViewer.getTree();
@@ -74,6 +77,35 @@ public class ScriptComposite extends Composite {
 		tabs.setSimple(false);
 		tabs.setBounds(140, 38, 508, 340);
 		tabs.setSelectionBackground(Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
+		
+		ToolBar toolBar = new ToolBar(this, SWT.FLAT | SWT.RIGHT);
+		toolBar.setBounds(342, 9, 306, 23);
+		
+		ToolItem tltmNew = new ToolItem(toolBar, SWT.NONE);
+		tltmNew.setText("New");
+		
+		ToolItem tltmSave = new ToolItem(toolBar, SWT.NONE);
+		tltmSave.setText("Save");
+		tltmSave.addSelectionListener(new SelectionListener(){
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					BufferedWriter bw = new BufferedWriter(new FileWriter(curScript.getReference()));
+					bw.write(curTextBox.getText());
+					bw.close();
+				} catch (IOException ex) {
+					ex.printStackTrace();
+				}
+				
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				
+			}});
+		
+		
 		tabs.addSelectionListener(new SelectionListener(){
 
 			@Override
@@ -85,9 +117,11 @@ public class ScriptComposite extends Composite {
 				curTextBox = (StyledText) tabs.getSelection().getControl();
 				combo.setEnabled(true);
 				combo.removeAll();
-				for (String tag : ((Script)tabs.getSelection().getData()).getDescriptFunctions()) {
+				Script s = (Script)tabs.getSelection().getData();
+				for (String tag : s.getDescriptFunctions()) {
 					combo.add(tag);
 				}
+				curScript = s;
 				//TODO enable buttons
 				
 			}
