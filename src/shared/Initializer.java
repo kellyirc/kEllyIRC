@@ -64,4 +64,9 @@ public class Initializer {
 		}
 		
 	}
+
+	// called when the program exits
+	public static void quit(){
+		System.exit(0);
+	}
 }

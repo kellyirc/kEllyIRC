@@ -30,6 +30,7 @@ import org.pircbotx.exception.NickAlreadyInUseException;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.managers.ListenerManager;
 
+import scripting.ScriptVars;
 import shared.RoomManager;
 import ui.room.Room;
 
@@ -168,6 +169,7 @@ public class Connection extends Composite {
 
 	public void switchComposite(Room c){
 		scrolledComposite.setContent(c);
+		ScriptVars.curChannel = c.getCChannel().getChannel();
 		c.updateTopic();
 		c.updateWho();
 	}

@@ -14,6 +14,9 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
+
+import scripting.ScriptManager;
+
 import java.util.*;
 import java.io.*;
 
@@ -238,10 +241,7 @@ class JavaLineStyler implements LineStyleListener {
 				"transient", "true", "try", "void", "volatile", "while", "function",
 				"var","gui","util"};*/
 		
-		private String[] fgKeywords = {"break","case","catch","continue","default","do",
-						"else","false","finally","for","if","new","null","return","switch",
-						"true","try","while","function","var","gui","util","in"
-		};
+		
 		
 		public JavaScanner() {
 			initialize();
@@ -260,8 +260,8 @@ class JavaLineStyler implements LineStyleListener {
 		void initialize() {
 			fgKeys = new Hashtable<String, Integer>();
 			Integer k = new Integer(KEY);
-			for (int i = 0; i < fgKeywords.length; i++)
-				fgKeys.put(fgKeywords[i], k);
+			for (int i = 0; i < ScriptManager.validKeywords.length; i++)
+				fgKeys.put(ScriptManager.validKeywords[i], k);
 		}
 
 		/**

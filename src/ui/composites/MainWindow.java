@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+import shared.Initializer;
 import shared.RoomManager;
 
 import connection.Connection;
@@ -148,8 +149,7 @@ public class MainWindow extends ApplicationWindow {
 	protected void configureShell(Shell newShell) {
 		newShell.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent arg0) {
-				//TODO: do quitting stuff here, and quit more gracefully
-				System.exit(0);
+				Initializer.quit();
 			}
 		});
 		super.configureShell(newShell);

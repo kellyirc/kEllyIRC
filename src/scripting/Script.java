@@ -69,6 +69,7 @@ public class Script implements Comparable<Script> {
 	}
 
 	private void initBindings() {
+		bindings.put("global", new ScriptVars());
 		bindings.put("util", new ScriptFunctions());
 		bindings.put("gui", new ScriptGUI());
 	}

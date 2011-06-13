@@ -25,7 +25,6 @@ import org.eclipse.swt.graphics.Point;
 
 import scripting.Script;
 import scripting.ScriptManager;
-import shared.AlertBox;
 import shared.NSAlertBox;
 import shared.RoomManager;
 
