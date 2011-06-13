@@ -25,6 +25,9 @@ import org.eclipse.swt.graphics.Point;
 
 import scripting.Script;
 import scripting.ScriptManager;
+import shared.AlertBox;
+import shared.NSAlertBox;
+import shared.RoomManager;
 
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.eclipse.jface.dialogs.IInputValidator;
@@ -39,6 +42,34 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
 public class ScriptComposite extends Composite {
+
+	private final class ValidFileName implements IInputValidator {
+		@Override
+		public String isValid(String newText) {
+			if(newText == null){return "Needs a file name.";}
+			
+			if(!newText.replaceAll("[^a-zA-Z0-9\\_\\-\\.]", "").equals(newText)){
+				return "Invalid file name.";
+			}
+			
+			boolean isValid=false;
+			for(String s : ScriptManager.validExt){
+				if(newText.endsWith(s)){
+					isValid=true;
+					break;
+				}
+			}
+			for(Script s : ScriptManager.scripts){
+				if(s.getReference().getName().equals(newText)){
+					return "File name already exists.";
+				}
+			}
+			if(!isValid){
+				return "Needs to have a valid file extension (.js, .rb, .py).";
+			}
+			return null;
+		}
+	}
 
 	StyledText curTextBox;
 	Script curScript;
@@ -87,6 +118,9 @@ public class ScriptComposite extends Composite {
 		ToolItem tltmNew = new ToolItem(toolBar, SWT.NONE);
 		tltmNew.setText("New");
 		
+		ToolItem tltmRename = new ToolItem(toolBar, SWT.NONE);
+		tltmRename.setText("Rename");
+		
 		ToolItem tltmDelete = new ToolItem(toolBar, SWT.NONE);
 		tltmDelete.setText("Delete");
 		
@@ -108,7 +142,7 @@ public class ScriptComposite extends Composite {
 		tltmPaste.setEnabled(false);
 		tltmPaste.setText("Paste");
 
-		buttonListeners(parent, tltmNew, tltmSave, tltmCut, tltmCopy, tltmPaste, tltmDelete);
+		buttonListeners(parent, tltmNew, tltmSave, tltmCut, tltmCopy, tltmPaste, tltmDelete, tltmRename);
 		
 		tabs.addSelectionListener(new SelectionListener(){
 
@@ -230,20 +264,52 @@ public class ScriptComposite extends Composite {
 
 	private void buttonListeners(final Composite parent, ToolItem tltmNew,
 			final ToolItem tltmSave, final ToolItem tltmCut,
-			final ToolItem tltmCopy, final ToolItem tltmPaste, ToolItem tltmDelete) {
+			final ToolItem tltmCopy, final ToolItem tltmPaste, ToolItem tltmDelete, ToolItem tltmRename) {
+		
+		tltmRename.addSelectionListener(new SelectionListener(){
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				
+				if(tree.getSelectionCount() != 1) return;
+				InputDialog d = new InputDialog(parent.getShell(),
+						"Rename Script File",
+						"Choose the new name of the script file.",
+						"modified_script_name.js",
+						new ValidFileName());
+				if(d.open() == Window.OK){
+					for(TreeItem t : tree.getSelection()){
+						for(Script s : ScriptManager.scripts){
+							Script fScript = (Script)t.getData();
+							if(s.getReference().equals(fScript.getReference())){
+								fScript.getReference().renameTo(new File("./scripts/"+d.getValue()));
+							}
+						}
+					}
+				}
+			}
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				
+			}});
 		
 		tltmDelete.addSelectionListener(new SelectionListener(){
 			
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if(tree.getSelection().length==0){return;}
-				//TODO make this confirmation dialog work
-				//if(AlertBox.alert("Delete Scripts", "Are you sure you want to delete the selected files? You can always uncheck them to not use them!", SWT.ICON_QUESTION, SWT.YES|SWT.NO) == SWT.YES){
-				for(TreeItem s : tree.getSelection()){
-					((Script)s.getData()).getReference().delete();
-				}
-				//}
-				
+				RoomManager.getMain().getDisplay().asyncExec(new Runnable(){
+
+					@Override
+					public void run() {
+						NSAlertBox a = new NSAlertBox("Delete Scripts", "Are you sure you want to delete the selected files? You can always uncheck them to not use them!", SWT.ICON_QUESTION, SWT.YES|SWT.NO);
+						if(a.go() == Window.OK){
+							for(TreeItem s : tree.getSelection()){
+								((Script)s.getData()).getReference().delete();
+							}
+						}
+							
+					}});				
 			}
 
 			@Override
@@ -258,38 +324,12 @@ public class ScriptComposite extends Composite {
 						"Create New Script File",
 						"Choose the name of the new script file.",
 						"newscript.js",
-						new IInputValidator() {
-
-					@Override
-					public String isValid(String newText) {
-						if(newText == null){return "Needs a file name.";}
-						
-						if(!newText.replaceAll("[^a-zA-Z0-9\\_\\-\\.]", "").equals(newText)){
-							return "Invalid file name.";
-						}
-						
-						boolean isValid=false;
-						for(String s : ScriptManager.validExt){
-							if(newText.endsWith(s)){
-								isValid=true;
-								break;
-							}
-						}
-						for(Script s : ScriptManager.scripts){
-							if(s.getReference().getName().equals(newText)){
-								return "File name already exists.";
-							}
-						}
-						if(!isValid){
-							return "Needs to have a valid file extension (.js, .rb, .py).";
-						}
-						return null;
-					}});
+						new ValidFileName());
 				if(d.open() == Window.OK){
 					File f = new File("./scripts/"+d.getValue());
 					try {
-						if(f.createNewFile()){
-							ScriptManager.addScript(f);
+						if(!f.createNewFile()){
+							System.err.println("Could not create file: "+f.getName());
 						}
 					} catch (IOException e1) {
 						e1.printStackTrace();
@@ -349,14 +389,19 @@ public class ScriptComposite extends Composite {
 
 	public void updateTreeItems() {
 		
-		tree.clearAll(true);
-		
-		for (final Script s : ScriptManager.scripts) {
-			TreeItem t = new TreeItem(tree, SWT.NONE);
-			t.setChecked(s.isInUse());
-			t.setText(s.getReference().getName());
-			t.setData(s);
-		}
+		RoomManager.getMain().getDisplay().asyncExec(new Runnable(){
+
+			@Override
+			public void run() {
+				tree.clearAll(true);
+				tree.removeAll();
+				for (final Script s : ScriptManager.scripts) {
+					TreeItem t = new TreeItem(tree, SWT.NONE);
+					t.setChecked(s.isInUse());
+					t.setText(s.getReference().getName());
+					t.setData(s);
+				}
+			}});
 	}
 
 	@Override

@@ -23,7 +23,7 @@ import lombok.Setter;
 
 import sun.org.mozilla.javascript.internal.NativeArray;
 
-public class Script {
+public class Script implements Comparable<Script> {
 	
 	@Getter @Setter
 	private boolean inUse = true;
@@ -82,6 +82,7 @@ public class Script {
 		StringBuffer contents = new StringBuffer();
 		
 		BufferedReader reader = null;
+		if(!reference.exists()) return;
 		try {
 			reader = new BufferedReader(new FileReader(reference));
 			String text = null;
@@ -149,5 +150,10 @@ public class Script {
 			e.printStackTrace();
 		}
 		return rv;
+	}
+	
+	@Override
+	public int compareTo(Script o) {
+		return reference.getName().compareTo(o.reference.getName());
 	}
 }

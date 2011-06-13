@@ -5,6 +5,11 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
+
+/**
+ * THIS CLASS IS NOT MEANT FOR INTERNAL USE.
+ * USE NSAlertBox INSTEAD!
+ */
 public class AlertBox {
 	private static Display display = new Display();
 	private static Shell shell = new Shell(display);

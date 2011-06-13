@@ -4,7 +4,6 @@ package listeners;
 import java.util.Collection;
 
 import org.pircbotx.Channel;
-import org.pircbotx.User;
 import org.pircbotx.hooks.events.NickChangeEvent;
 import org.pircbotx.hooks.events.QuitEvent;
 

@@ -1,10 +1,10 @@
 package scripting;
 
 import java.io.File;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 public class ScriptManager {
-	public static final ConcurrentLinkedQueue<Script> scripts = new ConcurrentLinkedQueue<Script>();
+	public static final ConcurrentSkipListSet<Script> scripts = new ConcurrentSkipListSet<Script>();
 
 	public static void addScript(File f) {
 		scripts.add(new Script(f));
@@ -13,7 +13,7 @@ public class ScriptManager {
 	public static void removeScript(File f) {
 		for(Script s : scripts){
 			if(s.getReference().equals(f)){
-				scripts.remove(f);
+				scripts.remove(s);
 				s.getFunctions().clear();
 			}
 		}

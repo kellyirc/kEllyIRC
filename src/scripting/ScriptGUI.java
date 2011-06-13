@@ -10,6 +10,7 @@ import hexapixel.notifier.NotificationType;
 import hexapixel.notifier.NotifierDialog;
 import hexapixel.notifier.NotifierSettings;
 import shared.AlertBox;
+import shared.RoomManager;
 
 public class ScriptGUI {
 	
@@ -66,9 +67,9 @@ public class ScriptGUI {
 	}
 
 	//wrapping jface.InputDialog()
-	//TODO: fuck those fucking invalid thread accesses. this and another function need to work and return values but can't because the thread is being accessed incorrectly :(
-	public static String input(String title, String desc, String def, IInputValidator validator){
-		InputDialog d = new InputDialog(Display.getDefault().getActiveShell(), title, desc, def, validator);
+	//TODO: fuck those fucking invalid thread accesses. find a way to make this work out
+	public static String _input(String title, String desc, String def, IInputValidator validator){
+		InputDialog d = new InputDialog(RoomManager.getMain().getDisplay().getActiveShell(), title, desc, def, validator);
 		if(d.open() == Window.OK){
 			return d.getValue();
 		}
