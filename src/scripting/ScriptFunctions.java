@@ -11,6 +11,9 @@ import java.util.Random;
 
 import org.pircbotx.Channel;
 
+import shared.Message;
+import shared.RoomManager;
+
 import connection.KEllyBot;
 
 public final class ScriptFunctions {
@@ -105,5 +108,12 @@ public final class ScriptFunctions {
 		return s.split(" ").length >= args;
     }
     
+    public final void error(String err){
+    	error(err, "System");
+    }
+    
+    public final void error(String err, String sender){
+		RoomManager.enQueue(new Message(ScriptVars.curConnection, err, "System", ScriptVars.curChannel.getName()));
+    }
 	//TODO: sounds
 }

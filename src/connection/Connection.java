@@ -170,6 +170,7 @@ public class Connection extends Composite {
 	public void switchComposite(Room c){
 		scrolledComposite.setContent(c);
 		ScriptVars.curChannel = c.getCChannel().getChannel();
+		ScriptVars.curConnection = c.getBot();
 		c.updateTopic();
 		c.updateWho();
 	}
