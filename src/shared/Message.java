@@ -19,8 +19,7 @@ public class Message {
 		this.setSender(nick);
 		this.setChannel(target);
 	}
-	//other things like author, timestamp, etc
-	//TODO: pass in the actual IrcUser object instead of a string
+	//TODO: pass in the actual User object instead of a string
 	public Message(Connection nc, String content, String sender, String channel){
 		this(nc.getBot(), content, sender, channel);
 	}

@@ -16,7 +16,6 @@ public class ScriptListener extends ConnectionListener {
 	
 	@Override
 	public void onEvent(Event<KEllyBot> arg0) throws Exception {
-		//TODO check the class name, get rid of the excess, and add on to the beginning
 		
 		//org.pircbotx.hooks.events.eventtype
 		String s = arg0.getClass().getName().split("[.]")[4];

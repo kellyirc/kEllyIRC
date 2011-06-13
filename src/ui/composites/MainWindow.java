@@ -148,7 +148,7 @@ public class MainWindow extends ApplicationWindow {
 	protected void configureShell(Shell newShell) {
 		newShell.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent arg0) {
-				//TODO: do quitting stuff here
+				//TODO: do quitting stuff here, and quit more gracefully
 				System.exit(0);
 			}
 		});

@@ -183,10 +183,6 @@ public class Room extends Composite {
 				}
 			}
 		}
-
-	// TODO: make maximized window resemble minimized window, sizewise -- all of the components are absurdly large.
-
-	// TODO: monospaced font
 	
 	// TODO: fake tooltips (http://dev.eclipse.org/viewcvs/viewvc.cgi/org.eclipse.swt.snippets/src/org/eclipse/swt/snippets/Snippet125.java?view=co)
 	

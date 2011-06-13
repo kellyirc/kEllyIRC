@@ -3,6 +3,8 @@ package ui.composites;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
+import lombok.Getter;
+
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -16,7 +18,8 @@ import org.eclipse.wb.swt.layout.grouplayout.LayoutStyle;
 
 public class OptionComposite extends Composite {
 
-	private Composite currentComposite;
+	@Getter
+	private static Composite currentComposite;
 	private final ScrolledComposite scrolledComposite;
 	
 	/**

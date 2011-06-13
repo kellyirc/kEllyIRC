@@ -6,8 +6,8 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
 public class AlertBox {
-	static Display display = new Display();
-	static Shell shell = new Shell(display);
+	private static Display display = new Display();
+	private static Shell shell = new Shell(display);
 	
 	public static int alert(String title, String message, int icon, int type) {
 		MessageBox messageBox = new MessageBox(shell, type|icon);

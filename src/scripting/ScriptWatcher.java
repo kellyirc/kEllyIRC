@@ -10,11 +10,12 @@ import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.HashMap;
 import java.util.Map;
+
+import ui.composites.OptionComposite;
+import ui.composites.ScriptComposite;
 import static java.nio.file.StandardWatchEventKinds.*;
 
 public class ScriptWatcher implements Runnable {
-
-	//TODO: refresh script tree in script composite when a script is added or deleted
 	
 	private WatchService watcher;
 	private Map<WatchKey, Path> keys  = new HashMap<WatchKey, Path>();
@@ -54,6 +55,11 @@ public class ScriptWatcher implements Runnable {
 		} else if (eventType == ENTRY_DELETE) {
 			ScriptManager.removeScript(file);
 
+		}
+		
+		if(OptionComposite.getCurrentComposite() instanceof ScriptComposite){
+			ScriptComposite c = (ScriptComposite) OptionComposite.getCurrentComposite();
+			c.updateTreeItems();
 		}
 	}
 	

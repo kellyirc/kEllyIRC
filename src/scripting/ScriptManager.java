@@ -26,4 +26,6 @@ public class ScriptManager {
 			}
 		}
 	}
+
+	public static final String[] validExt = {".js",".rb",".py"};
 }

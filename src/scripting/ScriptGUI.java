@@ -1,6 +1,10 @@
 package scripting;
 
+import org.eclipse.jface.dialogs.IInputValidator;
+import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.widgets.Display;
 
 import hexapixel.notifier.NotificationType;
 import hexapixel.notifier.NotifierDialog;
@@ -60,5 +64,14 @@ public class ScriptGUI {
 			NotificationType type, Color textColor, Color titleColor, Color borderColor, Color topGrad, Color btmGrad) {
 		NotifierDialog.window(title, message, type, textColor, titleColor, borderColor, topGrad, btmGrad);
 	}
-	
+
+	//wrapping jface.InputDialog()
+	//TODO: fuck those fucking invalid thread accesses. this and another function need to work and return values but can't because the thread is being accessed incorrectly :(
+	public static String input(String title, String desc, String def, IInputValidator validator){
+		InputDialog d = new InputDialog(Display.getDefault().getActiveShell(), title, desc, def, validator);
+		if(d.open() == Window.OK){
+			return d.getValue();
+		}
+		return "";
+	}
 }
