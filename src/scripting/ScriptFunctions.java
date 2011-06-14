@@ -7,14 +7,13 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Random;
 
 import org.pircbotx.Channel;
 
 import shared.Message;
 import shared.RoomManager;
-
-import connection.KEllyBot;
 
 public final class ScriptFunctions {
 
@@ -90,8 +89,8 @@ public final class ScriptFunctions {
 		return contents.toString();
 	}
 
-	public final Channel findChannel(KEllyBot bot, String name) {
-		return bot.getChannel(name);
+	public final Channel findChannel(String name) {
+		return ScriptVars.curConnection.getChannel(name);
 	}
 
 	public final String[] getArgs(String s, int args) {
@@ -115,6 +114,10 @@ public final class ScriptFunctions {
 		RoomManager.getMain().getDisplay().beep();
 	}
 
+	public final File[] flist(String path){
+		return Paths.get(path).toFile().listFiles();
+	}
+	
 	public final void error(String err) {
 		error("System",err);
 	}

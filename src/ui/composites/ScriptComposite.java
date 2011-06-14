@@ -217,6 +217,7 @@ public class ScriptComposite extends Composite {
 						StyledText st = new StyledText(tabs, SWT.MULTI|SWT.V_SCROLL);
 						st.setWordWrap(true);
 						curTextBox = st;
+						tabs.setSelection(newItem);
 						newItem.setControl(st);
 						st.setFont(SWTResourceManager.getFont("Courier New", 9,
 								SWT.NORMAL));
