@@ -48,6 +48,7 @@ public class NotifierDialog {
 
 	private static Shell _shell;
 
+	//FIXME this does not pop up when the window is out of focus anymore. WHY
 	public static void window(final String title, final String message,
 			final NotificationType type, final Color textColor,
 			final Color titleColor, final Color borderColor,

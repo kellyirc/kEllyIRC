@@ -15,7 +15,7 @@ import ui.composites.OptionComposite;
 import ui.composites.ScriptComposite;
 import static java.nio.file.StandardWatchEventKinds.*;
 
-public class ScriptWatcher implements Runnable {
+public final class ScriptWatcher implements Runnable {
 	
 	private WatchService watcher;
 	private Map<WatchKey, Path> keys  = new HashMap<WatchKey, Path>();

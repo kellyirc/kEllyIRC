@@ -69,7 +69,7 @@ public class ScriptComposite extends Composite {
 			return null;
 		}
 	}
-
+	//TODO: show when a file is modified by changing the title of the tab to contain an asterisk
 	StyledText curTextBox;
 	Script curScript;
 	CTabFolder tabs;
@@ -153,12 +153,9 @@ public class ScriptComposite extends Composite {
 			private void enableTopBar() {
 				curTextBox = (StyledText) tabs.getSelection().getControl();
 				combo.setEnabled(true);
-				combo.removeAll();
 				Script s = (Script)tabs.getSelection().getData();
-				for (String tag : s.getDescriptFunctions()) {
-					combo.add(tag);
-				}
 				curScript = s;
+				updateFunctionList();
 				tltmSave.setEnabled(true);
 				tltmCut.setEnabled(true);
 				tltmCopy.setEnabled(true);
@@ -218,6 +215,7 @@ public class ScriptComposite extends Composite {
 								
 							}});
 						StyledText st = new StyledText(tabs, SWT.MULTI|SWT.V_SCROLL);
+						st.setWordWrap(true);
 						curTextBox = st;
 						newItem.setControl(st);
 						st.setFont(SWTResourceManager.getFont("Courier New", 9,
@@ -302,7 +300,7 @@ public class ScriptComposite extends Composite {
 					@Override
 					public void run() {
 						NSAlertBox a = new NSAlertBox("Delete Scripts", "Are you sure you want to delete the selected files? You can always uncheck them to not use them!", SWT.ICON_QUESTION, SWT.YES|SWT.NO);
-						if(a.go() == Window.OK){
+						if(a.go() == SWT.YES){
 							for(TreeItem s : tree.getSelection()){
 								((Script)s.getData()).getReference().delete();
 							}
@@ -415,6 +413,15 @@ public class ScriptComposite extends Composite {
 			bw.close();
 		} catch (IOException ex) {
 			ex.printStackTrace();
+		}
+		curScript.readScript();
+		updateFunctionList();
+	}
+
+	private void updateFunctionList() {
+		combo.removeAll();
+		for (String tag : curScript.getDescriptFunctions()) {
+			combo.add(tag);
 		}
 	}
 }

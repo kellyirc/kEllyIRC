@@ -3,7 +3,7 @@ package scripting;
 import java.io.File;
 import java.util.concurrent.ConcurrentSkipListSet;
 
-public class ScriptManager {
+public final class ScriptManager {
 	public static final ConcurrentSkipListSet<Script> scripts = new ConcurrentSkipListSet<Script>();
 
 	public static void addScript(File f) {

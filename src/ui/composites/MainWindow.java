@@ -47,17 +47,6 @@ public class MainWindow extends ApplicationWindow {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.window.Window#open()
-	 */
-	@Override
-	public int open() {
-
-		int i = super.open();
-		
-		return i;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#create()
 	 */
 	@Override
@@ -77,14 +66,6 @@ public class MainWindow extends ApplicationWindow {
 				new Connection(container, SWT.NONE, cs);
 		}
 		//RoomManager.colorset = new Customs();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.window.ApplicationWindow#close()
-	 */
-	@Override
-	public boolean close() {
-		return super.close();
 	}
 
 	/**

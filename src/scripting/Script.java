@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 import javax.script.Bindings;
 import javax.script.Invocable;
@@ -23,7 +23,7 @@ import lombok.Setter;
 
 import sun.org.mozilla.javascript.internal.NativeArray;
 
-public class Script implements Comparable<Script> {
+public final class Script implements Comparable<Script> {
 	
 	@Getter @Setter
 	private boolean inUse = true;
@@ -33,9 +33,9 @@ public class Script implements Comparable<Script> {
 	@Getter
 	private File reference;
 	@Getter
-	private ArrayList<String> functions = new ArrayList<String>();
+	private ConcurrentSkipListSet<String> functions = new ConcurrentSkipListSet<String>();
 	@Getter
-	private ArrayList<String> descriptFunctions = new ArrayList<String>();
+	private ConcurrentSkipListSet<String> descriptFunctions = new ConcurrentSkipListSet<String>();
 	
 	private ScriptEngineManager manager = new ScriptEngineManager();
 	private ScriptEngine jsEngine = manager.getEngineByName("JavaScript");
@@ -64,6 +64,7 @@ public class Script implements Comparable<Script> {
 		try {
 			jsEngine.eval(base+script);
 		} catch (ScriptException e) {
+			//TODO: pop up saying this script failed
 			e.printStackTrace();
 		}
 	}
@@ -74,10 +75,11 @@ public class Script implements Comparable<Script> {
 		bindings.put("gui", new ScriptGUI());
 	}
 
-	private void readScript() {
+	public void readScript() {
 
 		//reset the functions list
 		functions.clear();
+		descriptFunctions.clear();
 		
 		//re-parse the script
 		StringBuffer contents = new StringBuffer();

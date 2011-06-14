@@ -11,7 +11,7 @@ import hexapixel.notifier.NotifierSettings;
 import shared.AlertBox;
 import shared.RoomManager;
 
-public class ScriptGUI {
+public final class ScriptGUI {
 	
 	//wrapping Alertbox.alert()
 	public static int alert(String title, String message, int icon, int type) {
@@ -67,7 +67,7 @@ public class ScriptGUI {
 
 	//wrapping jface.InputDialog()
 	//TODO: fuck those fucking invalid thread accesses. find a way to make this work out
-	public static String _input(String title, String desc, String def, IInputValidator validator){
+	public static String input(String title, String desc, String def, IInputValidator validator){
 		InputDialog d = new InputDialog(RoomManager.getMain().getDisplay().getActiveShell(), title, desc, def, validator);
 		if(d.open() == Window.OK){
 			return d.getValue();

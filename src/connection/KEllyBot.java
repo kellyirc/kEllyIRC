@@ -65,7 +65,11 @@ public class KEllyBot extends PircBotX {
 		
 		for(Script s : ScriptManager.scripts){
 			if(s.getFunctions().contains(command)){
-				s.invoke(command, this, line.substring(line.indexOf(line.split(" ")[1])));
+				if(line.split(" ").length > 1){
+					s.invoke(command, this, line.substring(line.indexOf(line.split(" ")[1])));
+				} else {
+					s.invoke(command, this, "");
+				}
 				found=true;
 			}
 		}
