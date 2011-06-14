@@ -58,7 +58,7 @@ public class NotifierDialog {
 		
 		d.asyncExec(new Runnable() {
 			public void run() {
-				_shell = new Shell(d.getActiveShell(), SWT.NO_FOCUS | SWT.NO_TRIM | SWT.ON_TOP);
+				_shell = new Shell(d.getActiveShell(), SWT.NO_TRIM | SWT.ON_TOP);
 				_shell.setLayout(new FillLayout());
 				_shell.setForeground(textColor);
 				_shell.setBackgroundMode(SWT.INHERIT_DEFAULT);
