@@ -14,7 +14,7 @@ import ui.composites.MainWindow;
 
 public class Initializer {
 
-	public static boolean DEBUG_MODE = true;
+	public static boolean DEBUG_MODE = false;
 	
 	/**
 	 * Launch the application.

@@ -64,7 +64,7 @@ public final class Script implements Comparable<Script> {
 		try {
 			jsEngine.eval(base+script);
 		} catch (ScriptException e) {
-			//TODO: pop up saying this script failed
+			//TODO: underline line that is invalid
 			e.printStackTrace();
 		}
 	}
