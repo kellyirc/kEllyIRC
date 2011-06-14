@@ -55,10 +55,12 @@ public class NotifierDialog {
 			final Color topGradient, final Color btmGradient) {
 		
 		final Display d = RoomManager.getMain().getDisplay();
+		//final Display d = Display.getDefault();
 		
 		d.asyncExec(new Runnable() {
 			public void run() {
-				_shell = new Shell(d.getActiveShell(), SWT.NO_TRIM | SWT.ON_TOP);
+				_shell = new Shell(d.getActiveShell(), SWT.NO_FOCUS | SWT.NO_TRIM | SWT.ON_TOP);
+				_shell.open();
 				_shell.setLayout(new FillLayout());
 				_shell.setForeground(textColor);
 				_shell.setBackgroundMode(SWT.INHERIT_DEFAULT);

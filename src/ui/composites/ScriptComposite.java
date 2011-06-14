@@ -228,6 +228,9 @@ public class ScriptComposite extends Composite {
 							public void keyPressed(KeyEvent e) {
 								if ((e.stateMask & SWT.CTRL) != 0) {
 									switch (e.keyCode) {
+									case 'a':
+										curTextBox.selectAll();
+										break;
 									case 's':
 										save();
 										break;
