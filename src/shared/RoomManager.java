@@ -1,19 +1,26 @@
 package shared;
 
+import lombok.Getter;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Tray;
+import org.eclipse.swt.widgets.TrayItem;
 import org.eclipse.swt.widgets.Tree;
 import org.pircbotx.Channel;
 
 import ui.composites.MainWindow;
 import ui.room.Room;
 import connection.Connection;
+import connection.KEllyBot;
 
 public class RoomManager {
 
-	private static MainWindow m;
+	@Getter
+	private static MainWindow main;
 
 	public static Customs colorset;
 
@@ -25,9 +32,9 @@ public class RoomManager {
 			final int style, final String channelstr,
 			final Connection newConnection, final int layout,
 			final Channel channel) {
-		if (!m.getDisplay().isDisposed()) {
+		if (!main.getDisplay().isDisposed()) {
 			if (canAddRoom(newConnection, channelstr)) {
-				m.getDisplay().asyncExec(new Runnable() {
+				main.getDisplay().asyncExec(new Runnable() {
 					public void run() {
 						Room r = new Room(c, style, layout, tree, channelstr,
 								newConnection, channel);
@@ -39,11 +46,19 @@ public class RoomManager {
 	}
 
 	public static void setMain(MainWindow w) {
-		m = w;
+		main = w;
+		
+		initTray();
 	}
 
-	public static MainWindow getMain() {
-		return m;
+	private static void initTray() {
+		Tray sysTray = main.getDisplay().getSystemTray();
+		if(sysTray != null) {
+			Image image = new Image(main.getDisplay(), "icon.png");
+			TrayItem item = new TrayItem(sysTray, SWT.NONE);
+			item.setToolTipText(KEllyBot.VERSION);
+			item.setImage(image);
+		}
 	}
 
 	public static boolean canAddRoom(Connection newConnection, String s) {
@@ -103,8 +118,8 @@ public class RoomManager {
 	}
 
 	private static void filterMessage(final Message m) {
-		if (!RoomManager.getMain().getDisplay().isDisposed()) {
-			RoomManager.getMain().getDisplay().asyncExec(new Runnable() {
+		if (!main.getDisplay().isDisposed()) {
+			main.getDisplay().asyncExec(new Runnable() {
 				public void run(){
 					Room r = m.getBot().getConnection().findRoom(m.getChannel());
 					if (r == null)

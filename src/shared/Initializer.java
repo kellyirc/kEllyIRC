@@ -69,4 +69,5 @@ public class Initializer {
 	public static void quit(){
 		System.exit(0);
 	}
+
 }
