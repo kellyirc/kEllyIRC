@@ -103,7 +103,6 @@ public final class ScriptFunctions {
 	}
 	
 	public final User findUser(String name) {
-		System.out.println(name);
 		for(User u : ScriptVars.curChannel.getUsers()){
 			if(u.getNick().toLowerCase().equals(name.toLowerCase())){
 				return u;

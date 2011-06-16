@@ -78,8 +78,7 @@ function notice(connection, sargs) {
 //quit with an optional message
 function quit(connection, sargs) {	
 	if(util.checkArgs(sargs, 1)) {
-		var args = util.getArgs(sargs,1);
-		connection.quitServer(cleanChanStr(args[0]));
+		connection.quitServer(sargs);
 	} else {
 		connection.disconnect();
 	}
@@ -130,6 +129,7 @@ function partall(connection) {
 	}
 }
 
+//nickserv alias
 function ns(connection, sargs) {
 	connection.sendMessage("NickServ", sargs);
 }
@@ -281,5 +281,58 @@ function deowner(connection, sargs) {
 		_errNoUser();
 	}
 }
-//TODO: ban, mode, topic, whois, whowas
-//setdcc unban
+
+function ban(connection, sargs) {
+	try {
+		if(util.checkArgs(sargs, 2)) {
+			var args = util.getArgs(sargs, 2);
+			connection.ban(_cleanMakeChan(args[0]), args[1]);
+		} else if(util.checkArgs(sargs, 1)) {
+			connection.ban(global.currentChannel(), args);
+		}
+	} catch(e) {
+		_errNoUser();
+	}
+}
+
+function unban(connection, sargs) {
+	try {
+		if(util.checkArgs(sargs, 2)) {
+			var args = util.getArgs(sargs, 2);
+			connection.unBan(_cleanMakeChan(args[0]), args[1]);
+		} else if(util.checkArgs(sargs, 1)) {
+			connection.unBan(global.currentChannel(), args);
+		}
+	} catch(e) {
+		_errNoUser();
+	}
+}
+
+//set the topic in a given channel
+function topic(connection, sargs) {
+	if(util.checkArgs(sargs, 2)) {
+		var args = util.getArgs(sargs, 2);
+		connection.setTopic(_cleanMakeChan(args[0]), args[1]);
+	} else {
+		util.error(global.currentChannel().getTopic());
+	}
+}
+
+//set a mode on a user
+function mode(connection, sargs) {
+	if(util.checkArgs(sargs, 3)) {
+		var args = util.getArgs(sargs, 3);
+		if(util.findUser(args[2])!=null) {
+			connection.setMode(_cleanMakeChan(args[0]), args[1], util.findUser(args[2]));
+		} else {
+			connection.setMode(_cleanMakeChan(args[0]), args[1], args[2]);
+		}
+		
+	} else if(util.checkArgs(sargs, 2)) {
+		var args = util.getArgs(sargs, 2);
+		connection.setMode(_cleanMakeChan(args[0]), args[1]);
+		
+	} else if(util.checkArgs(sargs, 1)) {
+		connection.setMode(global.currentChannel(), sargs);
+	}
+}
