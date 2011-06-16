@@ -145,8 +145,8 @@ public class Room extends Composite {
 			private void operatorItems(final TreeItem item, Menu m) {
 				final Channel thisChan = cChannel.getChannel();
 				final User tUser = (User) item.getData();
-				if(bot.getUserBot().isOp(thisChan)){
-					if(!tUser.isOp(thisChan)){
+				if(bot.getUserBot().getChannelsOpIn().contains(thisChan)){
+					if(!tUser.getChannelsOpIn().contains(thisChan)){
 						MenuItem mitem = new MenuItem(m, SWT.PUSH);
 						mitem.setText("Op");
 						mitem.addSelectionListener(new SelectionListener() {
@@ -154,6 +154,7 @@ public class Room extends Composite {
 							@Override
 							public void widgetDefaultSelected(
 									SelectionEvent arg0) {
+								//TODO: write this
 							}
 
 							@Override
@@ -163,7 +164,7 @@ public class Room extends Composite {
 							}
 						});
 					}
-					if(!tUser.hasVoice(thisChan)){
+					if(!tUser.getChannelsVoiceIn().contains(thisChan)){
 						MenuItem mitem = new MenuItem(m, SWT.PUSH);
 						mitem.setText("Voice");
 						mitem.addSelectionListener(new SelectionListener() {
@@ -171,6 +172,7 @@ public class Room extends Composite {
 							@Override
 							public void widgetDefaultSelected(
 									SelectionEvent arg0) {
+								//TODO: write this
 							}
 
 							@Override
@@ -404,12 +406,9 @@ public class Room extends Composite {
 					TreeItem t = new TreeItem(c.getWho(), SWT.NONE);
 					t.setText("Ops");
 					for (User u : new TreeSet<User>(chan.getOps())) {
-						if(chan.getSuperOps().contains(u)) continue;
-						if(chan.getOwners().contains(u)) continue;
 						UserTreeItem i = new UserTreeItem(t, SWT.NONE, u,
 								c.getCChannel());
 						i.getTree().setText(u.getNick());
-						// users.remove(u);
 					}
 					t.setExpanded(true);
 				}
@@ -417,8 +416,6 @@ public class Room extends Composite {
 					TreeItem t = new TreeItem(c.getWho(), SWT.NONE);
 					t.setText("Half-Ops");
 					for (User u : new TreeSet<User>(chan.getHalfOps())) {
-						if(chan.getOps().contains(u)) continue;
-						if(chan.getOwners().contains(u)) continue;
 						UserTreeItem i = new UserTreeItem(t, SWT.NONE, u,
 								c.getCChannel());
 						i.getTree().setText(u.getNick());
@@ -429,9 +426,6 @@ public class Room extends Composite {
 					TreeItem t = new TreeItem(c.getWho(), SWT.NONE);
 					t.setText("Voices");
 					for (User u : new TreeSet<User>(chan.getVoices())) {
-						if(chan.getHalfOps().contains(u)) continue;
-						if(chan.getOps().contains(u)) continue;
-						if(chan.getOwners().contains(u)) continue;
 						UserTreeItem i = new UserTreeItem(t, SWT.NONE, u,
 								c.getCChannel());
 						i.getTree().setText(u.getNick());

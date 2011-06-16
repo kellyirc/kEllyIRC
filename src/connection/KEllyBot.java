@@ -7,6 +7,7 @@ import org.pircbotx.PircBotX;
 
 import scripting.Script;
 import scripting.ScriptManager;
+import scripting.ScriptVars;
 import shared.Message;
 import shared.RoomManager;
 import ui.room.Room;
@@ -58,11 +59,16 @@ public class KEllyBot extends PircBotX {
 		super.sendNotice(target, notice);
 	}
 
+	public void changeNick(String nick){
+		super.changeNick(nick);
+		RoomManager.enQueue(new Message(connection, "You are now known as "+nick, "System", ScriptVars.curChannel));
+	}
+
 	public void doCommand(String line) {
 		String command = line.split(" ")[0];
 		
 		boolean found=false;
-		
+
 		for(Script s : ScriptManager.scripts){
 			if(s.getFunctions().contains(command)){
 				if(line.split(" ").length > 1){

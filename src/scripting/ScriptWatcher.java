@@ -45,7 +45,7 @@ public final class ScriptWatcher implements Runnable {
 
 	private void updateFile(WatchEvent<?> event, File file) {
 		WatchEvent.Kind<?> eventType = event.kind();
-				
+
 		if (eventType == ENTRY_MODIFY) {
 			ScriptManager.modifyScript(file);
 

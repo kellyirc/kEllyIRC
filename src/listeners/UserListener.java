@@ -29,16 +29,13 @@ public class UserListener extends ConnectionListener{
 			}
 		}
 	}
-
-	//XXX waiting on pircbotx to update so event.getUser().getChannels() works
 	
 	@Override
 	public void onQuit(QuitEvent<KEllyBot> event) throws Exception {
-		Collection<Channel> channels = event.getBot().getChannels();
-		for(Channel c : channels){
-			if(c.getUsers().contains(event.getUser())){
+		for(Channel c : event.getUser().getChannels()){
+			if(c.getUsers().contains(event.getBot().getUserBot())){
 				updateWho(c);
-				manageMessage(new Message(nc, event.getUser().getNick()+" has quit "+(event.getReason()!=null ? event.getReason()  : "."), c.getName(), c));
+				manageMessage(new Message(nc, event.getUser().getNick()+" has quit IRC. "+(event.getReason()!=null ? "("+event.getReason()+")"  : ""), c.getName(), c));
 			}
 		}
 		super.onQuit(event);

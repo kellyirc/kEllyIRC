@@ -70,6 +70,7 @@ public class ScriptComposite extends Composite {
 		}
 	}
 	//TODO: show when a file is modified by changing the title of the tab to contain an asterisk
+	//TODO: allow options for word wrapping
 	StyledText curTextBox;
 	Script curScript;
 	CTabFolder tabs;
@@ -147,20 +148,7 @@ public class ScriptComposite extends Composite {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				enableTopBar();
-			}
-
-			private void enableTopBar() {
-				curTextBox = (StyledText) tabs.getSelection().getControl();
-				combo.setEnabled(true);
-				Script s = (Script)tabs.getSelection().getData();
-				curScript = s;
-				updateFunctionList();
-				tltmSave.setEnabled(true);
-				tltmCut.setEnabled(true);
-				tltmCopy.setEnabled(true);
-				tltmPaste.setEnabled(true);
-				
+				enableTopBar(tltmSave, tltmCut, tltmCopy, tltmPaste);
 			}
 
 			@Override
@@ -250,6 +238,7 @@ public class ScriptComposite extends Composite {
 
 							}
 						});
+						enableTopBar(tltmSave, tltmCut, tltmCopy, tltmPaste);
 					}
 				});
 		checkboxTreeViewer.addCheckStateListener(new ICheckStateListener() {
@@ -427,5 +416,19 @@ public class ScriptComposite extends Composite {
 		for (String tag : curScript.getDescriptFunctions()) {
 			combo.add(tag);
 		}
+	}
+
+	
+	private void enableTopBar(final ToolItem tltmSave, final ToolItem tltmCut,
+			final ToolItem tltmCopy, final ToolItem tltmPaste) {
+		curTextBox = (StyledText) tabs.getSelection().getControl();
+		combo.setEnabled(true);
+		Script s = (Script)tabs.getSelection().getData();
+		curScript = s;
+		updateFunctionList();
+		tltmSave.setEnabled(true);
+		tltmCut.setEnabled(true);
+		tltmCopy.setEnabled(true);
+		tltmPaste.setEnabled(true);
 	}
 }

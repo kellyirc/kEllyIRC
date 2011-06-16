@@ -14,7 +14,7 @@ import ui.composites.MainWindow;
 
 public class Initializer {
 
-	public static boolean DEBUG_MODE = false;
+	public static boolean DEBUG_MODE = true;
 	
 	/**
 	 * Launch the application.
@@ -66,7 +66,8 @@ public class Initializer {
 	}
 
 	// called when the program exits
-	public static void quit(){
+	public static void quit() {
+		RoomManager.getMain().getDisplay().getSystemTray().dispose();
 		System.exit(0);
 	}
 

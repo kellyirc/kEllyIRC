@@ -2,6 +2,9 @@ package ui.composites;
 
 import java.util.ArrayList;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.ToolBarManager;
@@ -11,6 +14,7 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -27,8 +31,11 @@ import connection.Settings;
 
 public class MainWindow extends ApplicationWindow {
 	
+	@Getter @Setter
 	private Display display;
+	@Getter @Setter
 	private Composite parent;
+	@Getter @Setter
 	private CTabFolder container;
 
 	/**
@@ -43,6 +50,7 @@ public class MainWindow extends ApplicationWindow {
 		addStatusLine();
 		
 		display = d;
+
 		RoomManager.setMain(this);
 	}
 
@@ -135,6 +143,7 @@ public class MainWindow extends ApplicationWindow {
 		});
 		super.configureShell(newShell);
 		newShell.setText("kEllyIRC");
+		newShell.setImage(new Image(getDisplay(), "icon.png"));
 		newShell.setMinimumSize(800, 480); 
 	}
 
@@ -146,23 +155,4 @@ public class MainWindow extends ApplicationWindow {
 		return new Point(800, 480);
 	}
 
-	public void setDisplay(Display display) {
-		this.display = display;
-	}
-
-	public Display getDisplay() {
-		return display;
-	}
-
-	public void setParent(Composite parent) {
-		this.parent = parent;
-	}
-
-	public Composite getParent() {
-		return parent;
-	}
-
-	public Composite getContainer() {
-		return container;
-	}
 }

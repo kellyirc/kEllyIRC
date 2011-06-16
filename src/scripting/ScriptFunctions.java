@@ -11,6 +11,7 @@ import java.nio.file.Paths;
 import java.util.Random;
 
 import org.pircbotx.Channel;
+import org.pircbotx.User;
 
 import shared.Message;
 import shared.RoomManager;
@@ -36,11 +37,19 @@ public final class ScriptFunctions {
 	}
 
 	public final void writeln(String s) {
-		System.out.println(s);
+		write(s+"\n");
 	}
 
 	public final void write(String s) {
 		System.out.print(s);
+	}
+	
+	public final void print(String s){
+		write(s);
+	}
+	
+	public final void println(String s){
+		writeln(s);
 	}
 
 	public final void format(String s, Object... args) {
@@ -92,7 +101,17 @@ public final class ScriptFunctions {
 	public final Channel findChannel(String name) {
 		return ScriptVars.curConnection.getChannel(name);
 	}
-
+	
+	public final User findUser(String name) {
+		System.out.println(name);
+		for(User u : ScriptVars.curChannel.getUsers()){
+			if(u.getNick().toLowerCase().equals(name.toLowerCase())){
+				return u;
+			}
+		}
+		return null;
+	}
+	
 	public final String[] getArgs(String s, int args) {
 		String[] temp = s.split(" ");
 		String[] rVal = new String[args];
@@ -126,5 +145,6 @@ public final class ScriptFunctions {
 		RoomManager.enQueue(new Message(ScriptVars.curConnection, err,
 				sender, ScriptVars.curChannel.getName()));
 	}
+	
 	// TODO: sounds
 }

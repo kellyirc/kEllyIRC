@@ -46,7 +46,7 @@ public class RoomListener extends ConnectionListener{
 	public void onKick(KickEvent<KEllyBot> event) throws Exception {
 		super.onKick(event);
 		updateWho(event.getChannel());
-		queueMessage(new Message(nc, event.getRecipient()+" was kicked by "+event.getSource()+(event.getReason() != null?" ["+event.getReason()+"]" : ""), event.getChannel().getName(), event.getChannel().getName()));
+		queueMessage(new Message(nc, event.getRecipient().getNick()+" was kicked by "+event.getSource().getNick()+(event.getReason() != null?" ["+event.getReason()+"]" : ""), event.getChannel().getName(), event.getChannel().getName()));
 	}
 
 	@Override

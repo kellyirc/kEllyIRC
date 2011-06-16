@@ -5,6 +5,7 @@ import java.util.LinkedList;
 
 import javax.net.ssl.SSLSocketFactory;
 
+import listeners.DisconnectListener;
 import listeners.MessageListener;
 import listeners.RoomListener;
 import listeners.ScriptListener;
@@ -60,6 +61,7 @@ public class Connection extends Composite {
 			l.addListener(new UserListener(nc));
 			l.addListener(new MessageListener(nc));
 			l.addListener(new ScriptListener(nc));
+			l.addListener(new DisconnectListener(nc));
 
 			//connecting to server
 			try {
