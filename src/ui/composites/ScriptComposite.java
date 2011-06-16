@@ -27,8 +27,8 @@ import scripting.Script;
 import scripting.ScriptManager;
 import shared.NSAlertBox;
 import shared.RoomManager;
+import shared.SWTResourceManager;
 
-import org.eclipse.wb.swt.SWTResourceManager;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;

@@ -13,9 +13,9 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.wb.swt.SWTResourceManager;
 
 import shared.RoomManager;
+import shared.SWTResourceManager;
 
 import connection.Connection;
 import connection.ConnectionSettings;
