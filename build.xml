@@ -73,4 +73,10 @@
             <classpath refid="kEllyIRClient.classpath"/>
         </java>
     </target>
+<loadfile property="dist.revision" srcFile="./.svn/entries">
+<filterchain>
+<headfilter lines="1" skip="3"/>
+<deletecharacters chars="\n"/>
+</filterchain>
+</loadfile>
 </project>
