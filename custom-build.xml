@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project>	
+	<loadfile property="dist.revision" srcFile="./.svn/entries">
+		<filterchain>
+			<headfilter lines="1" skip="3"/>
+			<deletecharacters chars="\n"/>
+		</filterchain>
+	</loadfile>
+</project>

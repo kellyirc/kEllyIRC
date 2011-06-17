@@ -41,7 +41,8 @@ public class Settings {
 		try {
 			xstream.toXML(settings,new FileOutputStream(filename));
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			org.apache.log4j.Logger fLog = org.apache.log4j.Logger.getLogger("log.settings");
+			fLog.error("Unable to save settings.", e);
 		}
 		
 	}
@@ -56,7 +57,8 @@ public class Settings {
 			try {
 				return (Settings)xstream.fromXML(new FileInputStream(filename));
 			} catch (Exception e) {
-				e.printStackTrace();
+				org.apache.log4j.Logger fLog = org.apache.log4j.Logger.getLogger("log.settings");
+				fLog.error("Unable to load settings.", e);
 			}
 		}
 		return new Settings();

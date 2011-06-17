@@ -19,6 +19,14 @@ public final class ScriptGUI {
 	}
 	
 	//wrapping NotiferDialog.notify()
+	public static void window(String message) {
+		NotifierDialog.window("", message, null, NotifierSettings.getTextColor(),
+				NotifierSettings.getTitleColor(),
+				NotifierSettings.getBorderColor(),
+				NotifierSettings.getBackgroundTopGradient(),
+				NotifierSettings.getBackgroundBottomGradient());
+	}
+	
 	public static void window(String title, String message) {
 		NotifierDialog.window(title, message, null, NotifierSettings.getTextColor(),
 				NotifierSettings.getTitleColor(),
@@ -66,7 +74,7 @@ public final class ScriptGUI {
 	}
 
 	//wrapping jface.InputDialog()
-	//TODO: fuck those fucking invalid thread accesses. find a way to make this work out
+	//FIXME: fuck those fucking invalid thread accesses. find a way to make this work out
 	public static String input(String title, String desc, String def, IInputValidator validator){
 		InputDialog d = new InputDialog(RoomManager.getMain().getDisplay().getActiveShell(), title, desc, def, validator);
 		if(d.open() == Window.OK){

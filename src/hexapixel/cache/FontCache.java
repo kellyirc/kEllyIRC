@@ -62,7 +62,8 @@ public class FontCache {
 			_existing.add(of);
 			return of.getFont();
 		} catch (Exception err) {
-			err.printStackTrace();
+			org.apache.log4j.Logger fLog = org.apache.log4j.Logger.getLogger("log.fontcache");
+			fLog.error("Font error.", err);
 		}
 
 		return null;
@@ -88,7 +89,8 @@ public class FontCache {
 			return getFont(fd);
 
 		} catch (Exception err) {
-			err.printStackTrace();
+			org.apache.log4j.Logger fLog = org.apache.log4j.Logger.getLogger("log.fontcache");
+			fLog.error("Font error.", err);
 		}
 
 		return null;
@@ -128,7 +130,8 @@ public class FontCache {
 			_existing.add(of);
 			return of.getFont();
 		} catch (Exception err) {
-			err.printStackTrace();
+			org.apache.log4j.Logger fLog = org.apache.log4j.Logger.getLogger("log.fontcache");
+			fLog.error("Font error.", err);
 		}
 
 		return null;

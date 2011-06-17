@@ -27,7 +27,8 @@ public final class ScriptWatcher implements Runnable {
 			this.watcher = FileSystems.getDefault().newWatchService();
 			register(Paths.get("./scripts/"));
 		} catch (IOException e) {
-			e.printStackTrace();
+			org.apache.log4j.Logger fLog = org.apache.log4j.Logger.getLogger("log.script.scriptwatcher");
+			fLog.error("ScriptWatcher was unable to initialize.", e);
 		}
 	}
 	
@@ -66,11 +67,13 @@ public final class ScriptWatcher implements Runnable {
 	@Override
 	public void run() {
 		while(true) {
+
 			WatchKey key = null;
 			try {
 				key = watcher.take();
 			} catch (InterruptedException x) {
-				x.printStackTrace();
+				org.apache.log4j.Logger fLog = org.apache.log4j.Logger.getLogger("log.script.scriptwatcher");
+				fLog.error("Key taking intrrupted.", x);
 			}
 
 			Path dir = keys.get(key);
@@ -79,9 +82,9 @@ public final class ScriptWatcher implements Runnable {
 				System.err.println("Unrecognized key: " + key);
 				continue;
 			}
-
+			
 			for (WatchEvent<?> event : key.pollEvents()) {
-
+				
 				@SuppressWarnings("unchecked")
 				WatchEvent<Path> ev = (WatchEvent<Path>) event;
 				Path name = ev.context();
@@ -89,12 +92,8 @@ public final class ScriptWatcher implements Runnable {
 				File f = child.toFile();
 				updateFile(event, f);
 			}
+			
 			key.reset();
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
 		}
 	}
 

@@ -322,7 +322,8 @@ public class ScriptComposite extends Composite {
 							System.err.println("Could not create file: "+f.getName());
 						}
 					} catch (IOException e1) {
-						e1.printStackTrace();
+						org.apache.log4j.Logger fLog = org.apache.log4j.Logger.getLogger("log.ui.composites.script");
+						fLog.error("IO Error in file creation.", e1);
 					}
 				}
 			}
@@ -405,7 +406,8 @@ public class ScriptComposite extends Composite {
 			bw.write(curTextBox.getText());
 			bw.close();
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			org.apache.log4j.Logger fLog = org.apache.log4j.Logger.getLogger("log.ui.composites.script");
+			fLog.error("IO Error in file saving.", ex);
 		}
 		curScript.readScript();
 		updateFunctionList();

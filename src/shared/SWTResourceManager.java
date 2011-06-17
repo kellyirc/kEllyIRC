@@ -141,6 +141,8 @@ public class SWTResourceManager {
 			} catch (Exception e) {
 				image = getMissingImage();
 				m_imageMap.put(path, image);
+				org.apache.log4j.Logger fLog = org.apache.log4j.Logger.getLogger("log.resourcemanager");
+				fLog.error(e);
 			}
 		}
 		return image;
@@ -164,6 +166,8 @@ public class SWTResourceManager {
 			} catch (Exception e) {
 				image = getMissingImage();
 				m_imageMap.put(key, image);
+				org.apache.log4j.Logger fLog = org.apache.log4j.Logger.getLogger("log.resourcemanager");
+				fLog.error(e);
 			}
 		}
 		return image;
@@ -356,6 +360,8 @@ public class SWTResourceManager {
 					}
 				} catch (Throwable e) {
 					System.err.println("Unable to set underline or strikeout" + " (probably on a non-Windows platform). " + e); //$NON-NLS-1$ //$NON-NLS-2$
+					org.apache.log4j.Logger fLog = org.apache.log4j.Logger.getLogger("log.resourcemanager");
+					fLog.error(e);
 				}
 			}
 			font = new Font(Display.getCurrent(), fontData);

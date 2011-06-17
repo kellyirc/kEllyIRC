@@ -1,7 +1,6 @@
 package ui.composites;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 
 import lombok.Getter;
 
@@ -73,18 +72,11 @@ public class OptionComposite extends Composite {
 						switchComposite(c);
 					} catch (InstantiationException e) {
 						e.printStackTrace();
-					} catch (IllegalAccessException e) {
-						e.printStackTrace();
-					} catch (SecurityException e) {
-						e.printStackTrace();
-					} catch (NoSuchMethodException e) {
-						e.printStackTrace();
-					} catch (IllegalArgumentException e) {
-						e.printStackTrace();
-					} catch (InvocationTargetException e) {
-						e.printStackTrace();
-					} catch (ClassNotFoundException e) {
-						e.printStackTrace();
+						org.apache.log4j.Logger fLog = org.apache.log4j.Logger.getLogger("log.ui.composites.option");
+						fLog.error("Reflection error -- unable to create composite "+item.getData(), e);
+					} catch (Exception e) {
+						org.apache.log4j.Logger fLog = org.apache.log4j.Logger.getLogger("log.ui.composites.option");
+						fLog.error("General error.", e);
 					}
 				}
 			}

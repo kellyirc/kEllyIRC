@@ -2,9 +2,7 @@ package scripting;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 import javax.script.Bindings;
@@ -14,6 +12,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
+import org.eclipse.swt.SWT;
 import org.pircbotx.hooks.Event;
 
 import connection.KEllyBot;
@@ -21,6 +20,7 @@ import connection.KEllyBot;
 import lombok.Getter;
 import lombok.Setter;
 
+import shared.NSAlertBox;
 import sun.org.mozilla.javascript.internal.NativeArray;
 
 public final class Script implements Comparable<Script> {
@@ -64,8 +64,11 @@ public final class Script implements Comparable<Script> {
 		try {
 			jsEngine.eval(base+script);
 		} catch (ScriptException e) {
-			//TODO: underline line that is invalid
-			e.printStackTrace();
+
+			new NSAlertBox("Script Read Error", reference.getName()+" has an error. Due to error reporting methods, I can not help you narrow down the issue.", SWT.ICON_ERROR);
+
+			org.apache.log4j.Logger fLog = org.apache.log4j.Logger.getLogger("log.script.scripts");
+			fLog.error("Script initialization failed: "+reference.getName()+" at line #"+e.getLineNumber());
 		}
 	}
 
@@ -94,10 +97,9 @@ public final class Script implements Comparable<Script> {
 				parseFunction(text);
 			}
 			reader.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			org.apache.log4j.Logger fLog = org.apache.log4j.Logger.getLogger("log.script.scripts");
+			fLog.error("Script reading failed.", e);
 		}
 		
 		script = contents.toString();
@@ -119,20 +121,25 @@ public final class Script implements Comparable<Script> {
 		try {
 			engine.invokeFunction(function, e);
 		} catch (NoSuchMethodException e1) {
-			e1.printStackTrace();
+			org.apache.log4j.Logger fLog = org.apache.log4j.Logger.getLogger("log.script.scripts");
+			fLog.error("Script invocation failed.", e1);
 		} catch (ScriptException e1) {
-			e1.printStackTrace();
+			org.apache.log4j.Logger fLog = org.apache.log4j.Logger.getLogger("log.script.scripts");
+			fLog.error("Script invocation failed.", e1);
 		}
 	}
 
 	//open-ended invocation
-	public void invoke(String command, Object... args) {
+	public void invoke(String command, Object... args) { 
+		if(!inUse)return;
 		try {
 			engine.invokeFunction(command, args);
 		} catch (NoSuchMethodException e1) {
-			e1.printStackTrace();
+			org.apache.log4j.Logger fLog = org.apache.log4j.Logger.getLogger("log.script.scripts");
+			fLog.error("Script invocation failed.", e1);
 		} catch (ScriptException e1) {
-			e1.printStackTrace();
+			org.apache.log4j.Logger fLog = org.apache.log4j.Logger.getLogger("log.script.scripts");
+			fLog.error("Script invocation failed.", e1);
 		}
 	}
 	
@@ -148,9 +155,11 @@ public final class Script implements Comparable<Script> {
 				rv[index] = arr.get(index, null);
 			}
 		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
+			org.apache.log4j.Logger fLog = org.apache.log4j.Logger.getLogger("log.script.scripts");
+			fLog.error("Script invocation failed.", e);
 		} catch (ScriptException e) {
-			e.printStackTrace();
+			org.apache.log4j.Logger fLog = org.apache.log4j.Logger.getLogger("log.script.scripts");
+			fLog.error("Script invocation failed.", e);
 		}
 		return rv;
 	}

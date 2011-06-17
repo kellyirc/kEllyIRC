@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+import scripting.ScriptWatcher;
 import shared.Initializer;
 import shared.RoomManager;
 
@@ -52,6 +53,8 @@ public class MainWindow extends ApplicationWindow {
 		display = d;
 
 		RoomManager.setMain(this);
+		
+		new Thread(new ScriptWatcher(),"Script Management").start();
 	}
 
 	/* (non-Javadoc)

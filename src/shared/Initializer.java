@@ -1,13 +1,13 @@
 package shared;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
-
-import lombok.Cleanup;
-
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.FileAppender;
+import org.apache.log4j.HTMLLayout;
+import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
+
+import connection.KEllyBot;
 
 import scripting.ScriptWatcher;
 import ui.composites.MainWindow;
@@ -25,20 +25,23 @@ public class Initializer {
 		checkVersion();
 		//TODO: load basic UI separate from connection so the UI shows right away
 		//TODO: first time setup stuff if properties file not found
-		setUpStreams();
 		
-		new Thread(new ScriptWatcher(),"Script Management").start();
-
 		final Display disp = Display.getDefault();
 		MainWindow window = null;
+		
 		try {
+			HTMLLayout h = new HTMLLayout();
+			h.setTitle(KEllyBot.VERSION+ " Error Log");
+			h.setLocationInfo(true);
+			BasicConfigurator.configure(new FileAppender(h, "error_log.html",true));
 			window = new MainWindow(disp);
 			window.setBlockOnOpen(true);
 			window.open();
 			Display.getCurrent().dispose();
 			RoomManager.colorset.cleanUp();
 		} catch (Exception e) {
-			e.printStackTrace();
+			org.apache.log4j.Logger fLog = org.apache.log4j.Logger.getLogger("log.init");
+			fLog.error("Initialization failed.", e);
 		}
 	}
 
@@ -46,21 +49,9 @@ public class Initializer {
 		String s = System.getProperty("java.version");
 		int version = Integer.parseInt(s.split("[.]")[1]);
 		if(version < 7){
+			Logger vLog = Logger.getLogger("log.version");
+			vLog.fatal("JRE version out of date. Requires upgrade to full use kEllyIRC");
 			AlertBox.alert("JRE Warning", "You are not currently using JRE 1.7.0 or higher, kEllyIRC may not function properly for you. Please update your Java installation.", SWT.ICON_WARNING, SWT.OK);
-		}
-		
-	}
-
-	// redirect to a file when we have errors for when we distribute as a jar
-	private static void setUpStreams() {
-		if(!DEBUG_MODE){
-			@Cleanup PrintStream exceptionCatch = null;
-			try {
-				exceptionCatch = new PrintStream(new FileOutputStream("err.log"));
-				System.setErr(exceptionCatch);
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			}
 		}
 		
 	}

@@ -109,7 +109,8 @@ public class NotifierDialog {
 							_shell.setBackgroundImage(newImage);
 
 						} catch (Exception err) {
-							err.printStackTrace();
+							org.apache.log4j.Logger fLog = org.apache.log4j.Logger.getLogger("log.notifierdialog");
+							fLog.error("Dialog error.", err);
 						}
 					}
 				});
@@ -229,7 +230,8 @@ public class NotifierDialog {
 					_shell.setAlpha(cur);
 					RoomManager.getMain().getDisplay().timerExec(FADE_TIMER, this);
 				} catch (Exception err) {
-					err.printStackTrace();
+					org.apache.log4j.Logger fLog = org.apache.log4j.Logger.getLogger("log.notifierdialog");
+					fLog.error("Initializing error.", err);
 				}
 			}
 
@@ -249,7 +251,8 @@ public class NotifierDialog {
 
 					fadeOut(_shell);
 				} catch (Exception err) {
-					err.printStackTrace();
+					org.apache.log4j.Logger fLog = org.apache.log4j.Logger.getLogger("log.notifierdialog");
+					fLog.error("Timer start error.", err);
 				}
 			}
 
@@ -283,7 +286,8 @@ public class NotifierDialog {
 					RoomManager.getMain().getDisplay().timerExec(FADE_TIMER, this);
 
 				} catch (Exception err) {
-					err.printStackTrace();
+					org.apache.log4j.Logger fLog = org.apache.log4j.Logger.getLogger("log.notifierdialog");
+					fLog.error("Fade out error.", err);
 				}
 			}
 

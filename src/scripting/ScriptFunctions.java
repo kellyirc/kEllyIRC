@@ -3,7 +3,6 @@ package scripting;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -69,7 +68,8 @@ public final class ScriptFunctions {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(f));
 			bw.close();
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			org.apache.log4j.Logger fLog = org.apache.log4j.Logger.getLogger("log.script.scriptfunctions");
+			fLog.error("string2file failed.", ex);
 		}
 		return false;
 	}
@@ -89,10 +89,9 @@ public final class ScriptFunctions {
 						System.getProperty("line.separator"));
 			}
 			reader.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (Exception e){
+			org.apache.log4j.Logger fLog = org.apache.log4j.Logger.getLogger("log.script.scriptfunctions");
+			fLog.error("file2string failed.", e);
 		}
 
 		return contents.toString();

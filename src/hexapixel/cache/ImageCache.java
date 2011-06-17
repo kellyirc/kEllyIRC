@@ -67,7 +67,8 @@ public class ImageCache {
 		try {
 			is.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			org.apache.log4j.Logger fLog = org.apache.log4j.Logger.getLogger("log.imagecache");
+			fLog.error("Image error.", e);
 		}
 
 		return img;

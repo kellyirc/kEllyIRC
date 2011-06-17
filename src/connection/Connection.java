@@ -13,6 +13,7 @@ import listeners.ServerListener;
 import listeners.UserListener;
 import lombok.Getter;
 
+import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -66,15 +67,10 @@ public class Connection extends Composite {
 			//connecting to server
 			try {
 				attemptToConnect(cs);
-			} catch (NumberFormatException e) {
-				e.printStackTrace();
-			} catch (NickAlreadyInUseException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (IrcException e) {
-				e.printStackTrace();
-			}			
+			} catch (Exception e){
+				Logger dLog = Logger.getLogger("log.error");
+				dLog.error("Error during the connection process.", e);
+			}
 			
 			//identify nick
 			if(!cs.getNickPassword().equals(""))
