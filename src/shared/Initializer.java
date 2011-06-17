@@ -68,6 +68,7 @@ public class Initializer {
 	// called when the program exits
 	public static void quit() {
 		RoomManager.getMain().getDisplay().getSystemTray().dispose();
+		//TODO: make connections quit here
 		System.exit(0);
 	}
 
