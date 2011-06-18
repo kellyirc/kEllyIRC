@@ -9,7 +9,6 @@ import org.eclipse.swt.widgets.Display;
 
 import connection.KEllyBot;
 
-import scripting.ScriptWatcher;
 import ui.composites.MainWindow;
 
 public class Initializer {

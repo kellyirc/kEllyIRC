@@ -4,22 +4,24 @@
               To include a user specific buildfile here, simply create one in the same
               directory with the processing instruction <?eclipse.ant.import?>
               as the first entry and export the buildfile again. -->
-<project basedir="." default="build" name="kEllyIRClient">
+<project basedir="." default="jar" name="kEllyIRClient">
     <property environment="env"/>
+    <property name="ECLIPSE_HOME" value="../../../../Program Files/eclipse"/>
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.6"/>
     <property name="source" value="1.6"/>
     <path id="SWT.userclasspath">
-        <pathelement location="../../../../Program Files/eclipse/plugins/com.ibm.icu_4.4.2.v20110208.jar"/>
+        <pathelement location="../../../../Program Files/eclipse/plugins/org.eclipse.osgi_3.7.0.v20110524.jar"/>
         <pathelement location="../../../../Program Files/eclipse/plugins/org.eclipse.core.commands_3.6.0.I20110111-0800.jar"/>
-        <pathelement location="../../../../Program Files/eclipse/plugins/org.eclipse.core.runtime_3.7.0.v20110110.jar"/>
         <pathelement location="../../../../Program Files/eclipse/plugins/org.eclipse.equinox.common_3.6.0.v20110523.jar"/>
         <pathelement location="../../../../Program Files/eclipse/plugins/org.eclipse.equinox.registry_3.5.100.v20110502.jar"/>
-        <pathelement location="../../../../Program Files/eclipse/plugins/org.eclipse.jface_3.7.0.I20110522-1430.jar"/>
+        <pathelement location="../../../../Program Files/eclipse/plugins/org.eclipse.core.runtime_3.7.0.v20110110.jar"/>
         <pathelement location="../../../../Program Files/eclipse/plugins/org.eclipse.text_3.5.100.v20110505-0800.jar"/>
-        <pathelement location="../../../../Program Files/eclipse/plugins/org.eclipse.ui.forms_3.5.100.v20110425.jar"/>
+        <pathelement location="../../../../Program Files/eclipse/plugins/org.eclipse.swt.win32.win32.x86_3.7.0.v3735a.jar"/>
+        <pathelement location="../../../../Program Files/eclipse/plugins/org.eclipse.jface_3.7.0.I20110522-1430.jar"/>
         <pathelement location="../../../../Program Files/eclipse/plugins/org.eclipse.ui.workbench_3.7.0.I20110519-0100.jar"/>
-        <pathelement location="../../../../Program Files (x86)/eclipse/plugins/org.eclipse.swt.win32.win32.x86_3.7.0.v3735b.jar"/>
+        <pathelement location="../../../../Program Files/eclipse/plugins/com.ibm.icu_4.4.2.v20110208.jar"/>
+        <pathelement location="../../../../Program Files/eclipse/plugins/org.eclipse.ui.forms_3.5.100.v20110425.jar"/>
     </path>
     <path id="kEllyIRClient.classpath">
         <pathelement location="bin"/>
@@ -30,7 +32,14 @@
         <pathelement location="libs/lombok-0.10.0-BETA2.jar"/>
         <pathelement location="libs/images.jar"/>
         <pathelement location="libs/pircbotx-1.3-20110616.191550-4.jar"/>
+        <pathelement location="libs/log4j-1.2.16.jar"/>
     </path>
+	<loadfile property="dist.revision" srcFile="./.svn/entries">
+		<filterchain>
+			<headfilter lines="1" skip="3"/>
+			<deletecharacters chars="\n"/>
+		</filterchain>
+	</loadfile>
     <target name="init">
         <mkdir dir="bin"/>
         <copy includeemptydirs="false" todir="bin">
@@ -52,8 +61,46 @@
             <classpath refid="kEllyIRClient.classpath"/>
         </javac>
     </target>
+	<target name="jar" depends="build-project">
+		<tstamp />
+		<property name="jar-name" value="kEllyIRC_${dist.revision}.jar" />
+		<property name="release-path" value="release/${dist.revision}" />
+		<jar destfile="${release-path}/${jar-name}"
+			basedir="."
+			includes="**/*.class">
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Implementation-Version" value="${dist.revision} ${TODAY}" /> 
+				<attribute name="Main-Class" value="shared/Initializer" />
+			</manifest>
+		</jar>
+
+		<copy todir="${release-path}/scripts">
+			<fileset dir="scripts" />
+		</copy>
+		
+		<copy file="icon.png" todir="${release-path}" />
+		
+		<echo file="${release-path}/runme.bat" message="java -jar ${jar-name}" />
+		
+		<zip destfile = "${release-path}/release.zip" excludes="**/*.zip" basedir="${release-path}" />
+		
+	</target>
     <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
-    <target name="Initializer">
+    <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
+        <copy todir="${ant.library.dir}">
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </copy>
+        <unzip dest="${ant.library.dir}">
+            <patternset includes="jdtCompilerAdapter.jar"/>
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </unzip>
+    </target>
+    <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
+        <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+        <antcall target="build"/>
+    </target>
+    <target name="Initializer (4)">
         <java classname="shared.Initializer" failonerror="true" fork="yes">
             <classpath refid="kEllyIRClient.classpath"/>
         </java>
