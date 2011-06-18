@@ -76,6 +76,7 @@ public final class Script implements Comparable<Script> {
 		bindings.put("global", new ScriptVars());
 		bindings.put("util", new ScriptFunctions());
 		bindings.put("gui", new ScriptGUI());
+		bindings.put("sound", new SoundData());
 	}
 
 	public void readScript() {

@@ -19,11 +19,11 @@ public class NSAlertBox {
 	
 	public NSAlertBox(final String title, final String message, final int icon){
 		if(alertVisible) return;
+		alertVisible = true;
 		RoomManager.getMain().getDisplay().asyncExec(new Runnable() {
 
 			@Override
 			public void run() {
-				alertVisible = true;
 				messagebox = new MessageBox(RoomManager.getMain().getShell(), SWT.OK|icon);
 
 				messagebox.setText(title);

@@ -31,6 +31,6 @@ public final class ScriptManager {
 	
 	public static final String[] validKeywords = {"break","case","catch","continue","default","do",
 			"else","false","finally","for","if","new","null","return","switch",
-			"true","try","while","function","var","gui","util","in","global","print","println"
+			"true","try","while","function","var","gui","util","in","global","print","println","sound"
 };
 }

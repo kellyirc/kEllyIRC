@@ -11,6 +11,8 @@ import java.util.Random;
 
 import org.pircbotx.Channel;
 import org.pircbotx.User;
+import org.wishray.copernicus.NeptuneCore;
+import org.wishray.copernicus.Sound;
 
 import shared.Message;
 import shared.RoomManager;
@@ -144,5 +146,19 @@ public final class ScriptFunctions {
 				sender, ScriptVars.curChannel.getName()));
 	}
 	
-	// TODO: sounds
+	public final boolean playSound(String path){
+		File f = new File(path);
+		if(!f.exists()) return false;
+		
+		SoundData.curSound = new Sound();
+		SoundData.curSound.Load(path);
+		if(SoundData.curSound.GetError() != null ) return false;
+		
+		SoundData.curId = NeptuneCore.PlaySound(SoundData.curSound);
+		
+		return true;
+	}
+	
+	public final void stopSound() {
+	}
 }
