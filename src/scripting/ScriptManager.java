@@ -27,7 +27,7 @@ public final class ScriptManager {
 		}
 	}
 
-	public static final String[] validExt = {".js",".rb",".py"};
+	public static final String[] validExt = {".js",".rb",".py",".lua"};
 	
 	public static final String[] jsKeywords = {"break","case","catch","continue","default","do",
 			"else","false","finally","for","if","new","null","return","switch",
