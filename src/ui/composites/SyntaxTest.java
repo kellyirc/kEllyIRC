@@ -260,8 +260,8 @@ class JavaLineStyler implements LineStyleListener {
 		void initialize() {
 			fgKeys = new Hashtable<String, Integer>();
 			Integer k = new Integer(KEY);
-			for (int i = 0; i < ScriptManager.validKeywords.length; i++)
-				fgKeys.put(ScriptManager.validKeywords[i], k);
+			for (int i = 0; i < ScriptManager.jsKeywords.length; i++)
+				fgKeys.put(ScriptManager.jsKeywords[i], k);
 		}
 
 		/**
