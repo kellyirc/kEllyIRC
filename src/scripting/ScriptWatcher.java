@@ -38,7 +38,7 @@ public final class ScriptWatcher implements Runnable {
 		keys.put(key, dir);
 
 		for (File f : dir.toFile().listFiles()) {
-			if (f.isDirectory() || !f.toString().contains(".js"))
+			if (f.isDirectory() || ( !f.toString().contains(".js") && !f.toString().contains(".rb") && !f.toString().contains(".py") && !f.toString().contains(".lua")))
 				continue;
 			ScriptManager.addScript(f);
 		}

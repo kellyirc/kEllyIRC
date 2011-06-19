@@ -25,9 +25,14 @@ import sun.org.mozilla.javascript.internal.NativeArray;
 
 public final class Script implements Comparable<Script> {
 	
+	public static final int JAVASCRIPT = 1;
+	public static final int RUBY = 2;
+	
+	@Getter
+	private int scriptType=0;
+	
 	@Getter @Setter
 	private boolean inUse = true;
-	String language;
 	@Getter
 	private String script;
 	@Getter
@@ -39,15 +44,26 @@ public final class Script implements Comparable<Script> {
 	
 	private ScriptEngineManager manager = new ScriptEngineManager();
 	private ScriptEngine jsEngine = manager.getEngineByName("JavaScript");
-	private Invocable engine = (Invocable) jsEngine;
+	private ScriptEngine rbEngine = manager.getEngineByName("jruby");
+	private Invocable jsInvocable = (Invocable) jsEngine;
+	private Invocable rbInvocable = (Invocable) rbEngine;
 	private Bindings bindings = jsEngine.getBindings(ScriptContext.ENGINE_SCOPE);
 	
-	private String base = 	"importClass(org.eclipse.swt.SWT);\n" +
+	private String rbBase = "require 'java'\n";
+	
+	private String jsBase = "importClass(org.eclipse.swt.SWT);\n" +
 							"importClass(Packages.hexapixel.notifier.NotificationType);\n";
 	
 	public Script(File f) {
-		
 		this.reference = f;
+		
+		String s = reference.getName().substring(reference.getName().indexOf('.'));
+
+		if(s.equals(".js")){
+			scriptType=JAVASCRIPT;
+		} else if(s.equals(".rb")){
+			scriptType=RUBY;
+		}
 		
 		reset();
 	}
@@ -62,7 +78,14 @@ public final class Script implements Comparable<Script> {
 
 	private void initialize() {
 		try {
-			jsEngine.eval(base+script);
+			switch(scriptType){
+			case JAVASCRIPT:
+				jsEngine.eval(jsBase+script);
+				break;
+			case RUBY:
+		        rbEngine.eval(rbBase+script);
+		        break;
+			}
 		} catch (ScriptException e) {
 
 			new NSAlertBox("Script Read Error", reference.getName()+" has an error. Due to error reporting methods, I can not help you narrow down the issue.", SWT.ICON_ERROR);
@@ -108,19 +131,38 @@ public final class Script implements Comparable<Script> {
 	
 	//check line-by-line for a function name
 	private void parseFunction(String text) {
-		if(!text.contains("function")) return;
-		String elFunction = text.substring(9).split("[{]")[0].trim();
-		descriptFunctions.add(elFunction);
-		String[] array = text.replaceAll("[(]", " ").split(" ");
-		//function, onFunctionName, event), {
-		functions.add(array[1].trim());
+		switch(scriptType){
+		case JAVASCRIPT:
+			if(!text.contains("function ")) return;
+			String elFunction = text.substring(9).split("[{]")[0].trim();
+			descriptFunctions.add(elFunction);
+			String[] array = text.replaceAll("[(]", " ").split(" ");
+			//function, onFunctionName, event), {
+			functions.add(array[1].trim());
+			break;
+		case RUBY:
+			if(!text.contains("def ")) return;
+			String rbFunction = text.substring(4);
+			descriptFunctions.add(rbFunction);
+			String[] rbarray = text.replaceAll("[(]", " ").split(" ");
+			//def function(var) 
+			functions.add(rbarray[1].trim());
+			break;
+		}
 	}
 	
 	//event invocation
 	public void invoke(String function, Event<KEllyBot> e){
 		if(!inUse)return;
 		try {
-			engine.invokeFunction(function, e);
+			switch(scriptType){
+			case JAVASCRIPT:
+				jsInvocable.invokeFunction(function, e);
+				break;
+			case RUBY:
+				rbInvocable.invokeFunction(function, e);
+				break;
+			}
 		} catch (NoSuchMethodException e1) {
 			org.apache.log4j.Logger fLog = org.apache.log4j.Logger.getLogger("log.script.scripts");
 			fLog.error("Script invocation failed.", e1);
@@ -134,7 +176,14 @@ public final class Script implements Comparable<Script> {
 	public void invoke(String command, Object... args) { 
 		if(!inUse)return;
 		try {
-			engine.invokeFunction(command, args);
+			switch(scriptType){
+			case JAVASCRIPT:
+				jsInvocable.invokeFunction(command, args);
+				break;
+			case RUBY:
+				rbInvocable.invokeFunction(command, args);
+				break;
+			}
 		} catch (NoSuchMethodException e1) {
 			org.apache.log4j.Logger fLog = org.apache.log4j.Logger.getLogger("log.script.scripts");
 			fLog.error("Script invocation failed.", e1);
@@ -147,13 +196,19 @@ public final class Script implements Comparable<Script> {
 	public Object[] invoke(String command) {
 		Object[] rv = null;
 		try {
-			NativeArray arr = (NativeArray) engine.invokeFunction(command);
-			rv = new Object[(int)arr.getLength()];
-			
-			//get as object
-			for(Object o : arr.getIds()) {
-				int index = (Integer) o;
-				rv[index] = arr.get(index, null);
+			switch(scriptType){
+			case JAVASCRIPT:
+				NativeArray arr = (NativeArray) jsInvocable.invokeFunction(command);
+				rv = new Object[(int)arr.getLength()];
+				
+				//get as object
+				for(Object o : arr.getIds()) {
+					int index = (Integer) o;
+					rv[index] = arr.get(index, null);
+				}
+				break;
+			case RUBY:
+				rv = (Object[]) rbInvocable.invokeFunction(command);
 			}
 		} catch (NoSuchMethodException e) {
 			org.apache.log4j.Logger fLog = org.apache.log4j.Logger.getLogger("log.script.scripts");

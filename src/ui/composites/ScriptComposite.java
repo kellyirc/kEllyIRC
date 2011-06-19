@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
@@ -25,6 +26,9 @@ import org.eclipse.swt.graphics.Point;
 
 import scripting.Script;
 import scripting.ScriptManager;
+import scripting.styles.JavaLineStyler;
+import scripting.styles.LineStyler;
+import scripting.styles.RubyLineStyler;
 import shared.NSAlertBox;
 import shared.RoomManager;
 import shared.SWTResourceManager;
@@ -64,7 +68,7 @@ public class ScriptComposite extends Composite {
 				}
 			}
 			if(!isValid){
-				return "Needs to have a valid file extension (.js, .rb, .py).";
+				return "Needs to have a valid file extension (.js, .rb, .py, .lua).";
 			}
 			return null;
 		}
@@ -75,7 +79,8 @@ public class ScriptComposite extends Composite {
 	Script curScript;
 	CTabFolder tabs;
 	Tree tree;
-	JavaLineStyler lineStyler = new JavaLineStyler();
+	//RubyLineStyler lineStyler = new RubyLineStyler();
+	HashMap<Integer, LineStyler> stylers = new HashMap<Integer, LineStyler>();
 	private Combo combo;
 
 	/**
@@ -86,6 +91,9 @@ public class ScriptComposite extends Composite {
 	 */
 	public ScriptComposite(final Composite parent, int style) {
 		super(parent, style);
+		
+		stylers.put(Script.JAVASCRIPT, new JavaLineStyler());
+		stylers.put(Script.RUBY, new RubyLineStyler());
 
 		combo = new Combo(this, SWT.NONE);
 		combo.setEnabled(false);
@@ -170,14 +178,14 @@ public class ScriptComposite extends Composite {
 							createNewTab(s);
 							curTextBox.setText(s.getScript());
 							
-							lineStyler.parseBlockComments(s.getScript());
+							stylers.get(s.getScriptType()).parseBlockComments(s.getScript());
 						}
 					}
 
 					private void createNewTab(Script s) {
 						for(CTabItem c : tabs.getItems()){
 							if(c.getData().equals(s)){
-								tabs.setSelection(c);
+								changeTab(c);
 								return;
 							}
 						}
@@ -205,11 +213,11 @@ public class ScriptComposite extends Composite {
 						StyledText st = new StyledText(tabs, SWT.MULTI|SWT.V_SCROLL);
 						st.setWordWrap(true);
 						curTextBox = st;
-						tabs.setSelection(newItem);
 						newItem.setControl(st);
+						changeTab(newItem);
 						st.setFont(SWTResourceManager.getFont("Courier New", 9,
 								SWT.NORMAL));
-						st.addLineStyleListener(lineStyler);
+						st.addLineStyleListener(stylers.get(s.getScriptType()));
 						
 						st.addKeyListener(new KeyListener() {
 
@@ -420,7 +428,6 @@ public class ScriptComposite extends Composite {
 		}
 	}
 
-	
 	private void enableTopBar(final ToolItem tltmSave, final ToolItem tltmCut,
 			final ToolItem tltmCopy, final ToolItem tltmPaste) {
 		curTextBox = (StyledText) tabs.getSelection().getControl();
@@ -432,5 +439,10 @@ public class ScriptComposite extends Composite {
 		tltmCut.setEnabled(true);
 		tltmCopy.setEnabled(true);
 		tltmPaste.setEnabled(true);
+	}
+
+	private void changeTab(CTabItem c) {
+		tabs.setSelection(c);
+		//lineStyler.changeScript(curScript.getScriptType());
 	}
 }

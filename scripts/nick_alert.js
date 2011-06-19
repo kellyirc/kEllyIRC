@@ -1,6 +1,6 @@
 
 function onMessage(event) {
-
+//cake
 	var nicks = new Array("Elly","EllyMent");
 	var splitmessage = event.getMessage().split(" ");
 	
