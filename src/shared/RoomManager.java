@@ -16,6 +16,7 @@ import ui.composites.MainWindow;
 import ui.room.Room;
 import connection.Connection;
 import connection.KEllyBot;
+import connection.Settings;
 
 public class RoomManager {
 
@@ -124,7 +125,9 @@ public class RoomManager {
 					Room r = m.getBot().getConnection().findRoom(m.getChannel());
 					if (r == null)
 						return;
-			
+					
+					if(Settings.getSettings().getNicksIgnored().contains(m.getSender()))
+							return;
 					String strippedLine = stripControlCodes(m.getContent());
 			
 					if (r.getOutput() != null) {

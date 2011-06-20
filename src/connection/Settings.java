@@ -6,6 +6,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 
+import org.eclipse.swt.SWT;
+
+import shared.NSAlertBox;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -29,11 +33,16 @@ public class Settings {
 	ArrayList<ConnectionSettings> connSettings;
 	
 	//Other variables/objects to hold settings/preferences go here 
+	@Getter
+	@Setter
+	ArrayList<String> nicksIgnored;
+	
 	
 	//creates default settings
 	public Settings()
 	{
 		connSettings = new ArrayList<ConnectionSettings>();
+		nicksIgnored = new ArrayList<String>();
 	}
 	
 	public static void writeToFile()
@@ -58,7 +67,13 @@ public class Settings {
 				return (Settings)xstream.fromXML(new FileInputStream(filename));
 			} catch (Exception e) {
 				org.apache.log4j.Logger fLog = org.apache.log4j.Logger.getLogger("log.settings");
-				fLog.error("Unable to load settings.", e);
+				fLog.error("Unable to load settings, resetting to default.", e);
+				NSAlertBox alert = new NSAlertBox("Unable to load settings","The file settings.xml was corrupted or was not formatted correctly. Settings have reverted to their defaults.",SWT.OK,SWT.ICON_WARNING);
+				alert.go();
+				Settings defaultSettings = new Settings();
+				settings = defaultSettings;
+				writeToFile();
+				return defaultSettings;
 			}
 		}
 		return new Settings();

@@ -7,14 +7,27 @@
       <serverPassword></serverPassword>
       <ssl>false</ssl>
       <connectOnStart>false</connectOnStart>
-      <nickname>Mentos</nickname>
+      <nickname>kircFreek</nickname>
       <nickPassword></nickPassword>
-      <ident>CakeGuy</ident>
+      <ident>kircFreek</ident>
       <autoJoin>
-        <string>#dgr</string>
-        <string>#rpgbot</string>
-        <string>#idlebot</string>
+        <string>#DGR</string>
+      </autoJoin>
+    </connection.ConnectionSettings>
+    <connection.ConnectionSettings>
+      <connectionName>Notesper</connectionName>
+      <server>irc.esper.net</server>
+      <port>6667</port>
+      <serverPassword></serverPassword>
+      <ssl>false</ssl>
+      <connectOnStart>false</connectOnStart>
+      <nickname>SomeOtherFreek</nickname>
+      <nickPassword></nickPassword>
+      <ident>SomeOtherFreek</ident>
+      <autoJoin>
+        <string>#DGR</string>
       </autoJoin>
     </connection.ConnectionSettings>
   </connSettings>
+  <nicksIgnored/>
 </connection.Settings>

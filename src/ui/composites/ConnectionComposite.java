@@ -32,7 +32,8 @@ public class ConnectionComposite extends Composite {
 	private Text textIdent;
 	private Button btnUseSsl;
 	private Button btnConnectOnStartup;
-	private Button btnConnect; 
+	private Button btnConnect;
+	private Button btnSave;
 	private Label incompleteAlert; 
 	private Text textAutoJoin;
 	
@@ -46,7 +47,7 @@ public class ConnectionComposite extends Composite {
 		
 		Group grpConnectionInfo = new Group(this, SWT.NONE);
 		grpConnectionInfo.setText("Connection Info");
-		grpConnectionInfo.setBounds(10, 130, 509, 211);
+		grpConnectionInfo.setBounds(10, 130, 430, 188);
 		
 		Label lblName = new Label(grpConnectionInfo, SWT.NONE);
 		lblName.setBounds(10, 22, 95, 19);
@@ -86,33 +87,33 @@ public class ConnectionComposite extends Composite {
 		
 		Label lblNickname = new Label(grpConnectionInfo, SWT.NONE);
 		lblNickname.setText("Nickname:");
-		lblNickname.setBounds(243, 22, 95, 19);
+		lblNickname.setBounds(211, 25, 95, 19);
 		
 		textNick = new Text(grpConnectionInfo, SWT.BORDER);
-		textNick.setBounds(373, 19, 76, 19);
+		textNick.setBounds(341, 22, 76, 19);
 		
 		Label lblNickservPassword = new Label(grpConnectionInfo, SWT.NONE);
 		lblNickservPassword.setText("Nickserv Password:");
-		lblNickservPassword.setBounds(243, 47, 112, 19);
+		lblNickservPassword.setBounds(211, 50, 112, 19);
 		
 		textNickPass = new Text(grpConnectionInfo, SWT.BORDER);
-		textNickPass.setBounds(373, 47, 76, 19);
+		textNickPass.setBounds(341, 50, 76, 19);
 		
 		Label lblIdent = new Label(grpConnectionInfo, SWT.NONE);
 		lblIdent.setText("Ident:");
-		lblIdent.setBounds(243, 72, 95, 19);
+		lblIdent.setBounds(211, 75, 95, 19);
 		
 		textIdent = new Text(grpConnectionInfo, SWT.BORDER);
-		textIdent.setBounds(373, 72, 76, 19);
+		textIdent.setBounds(341, 75, 76, 19);
 		
 		Label lblAutojoin = new Label(grpConnectionInfo, SWT.NONE);
-		lblAutojoin.setBounds(243, 97, 81, 13);
+		lblAutojoin.setBounds(211, 100, 81, 13);
 		lblAutojoin.setText("Auto-Join:");
 		
 		textAutoJoin = new Text(grpConnectionInfo, SWT.BORDER);
-		textAutoJoin.setBounds(373, 100, 76, 19);
+		textAutoJoin.setBounds(341, 103, 76, 19);
 		
-		Button btnSave = new Button(grpConnectionInfo, SWT.NONE);
+		btnSave = new Button(grpConnectionInfo, SWT.NONE);
 		btnSave.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -132,12 +133,11 @@ public class ConnectionComposite extends Composite {
 					table.getItem(table.getSelectionIndex()).setData(newCS);
 					table.getItem(table.getSelectionIndex()).setText(new String[] {newCS.getConnectionName(),newCS.getServer(),newCS.getNickname()});
 					saveTable();
-					Settings.writeToFile();
 				}
 			}
 
 		});
-		btnSave.setBounds(381, 178, 68, 23);
+		btnSave.setBounds(349, 155, 68, 23);
 		btnSave.setText("Save");
 		
 		incompleteAlert = new Label(grpConnectionInfo, SWT.NONE);
@@ -150,7 +150,7 @@ public class ConnectionComposite extends Composite {
 		
 		Label lblSeparateChannelsBy = new Label(grpConnectionInfo, SWT.NONE);
 		lblSeparateChannelsBy.setForeground(SWTResourceManager.getColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
-		lblSeparateChannelsBy.setBounds(272, 128, 174, 14);
+		lblSeparateChannelsBy.setBounds(240, 131, 174, 14);
 		lblSeparateChannelsBy.setText("Separate channels by commas");
 		
 		table = new Table(this, SWT.BORDER | SWT.FULL_SELECTION);
@@ -204,7 +204,6 @@ public class ConnectionComposite extends Composite {
 				{
 					table.remove(indices);
 					saveTable();
-					Settings.writeToFile();
 					clearFields();
 					disableFields();
 				}
@@ -217,10 +216,23 @@ public class ConnectionComposite extends Composite {
 		btnConnect.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if(table.getSelectionCount()==1)
+				if(table.getSelectionCount()==1 && checkIfCompleted())
 				{
+					//save stuff
+					ArrayList<String> autoJoin = new ArrayList<String>();
+					for(String ch:textAutoJoin.getText().split(","))
+						autoJoin.add(ch);
+					ConnectionSettings newCS = new ConnectionSettings(
+							textConnName.getText(), textServer.getText(),
+							textPort.getText(), textServPass.getText(),
+							btnUseSsl.getSelection(), btnConnectOnStartup
+									.getSelection(), textNick.getText(),
+							textNickPass.getText(), textIdent.getText(),
+							autoJoin);
+					table.getItem(table.getSelectionIndex()).setData(newCS);
+					table.getItem(table.getSelectionIndex()).setText(new String[] {newCS.getConnectionName(),newCS.getServer(),newCS.getNickname()});
+					saveTable();
 					ConnectionSettings selected = (ConnectionSettings) table.getItem(table.getSelectionIndex()).getData();
-					
 					new Connection(RoomManager.getMain().getContainer(), SWT.NONE, selected);
 				}
 			}
@@ -252,6 +264,7 @@ public class ConnectionComposite extends Composite {
 			list.add((ConnectionSettings)i.getData());
 		}
 		Settings.getSettings().setConnSettings(list);
+		Settings.writeToFile();
 	}
 	
 	private void loadForms(ConnectionSettings cs)
