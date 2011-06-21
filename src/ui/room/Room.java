@@ -1,5 +1,6 @@
 package ui.room;
 
+import java.util.List;
 import java.util.TreeSet;
 
 import lombok.Data;
@@ -8,15 +9,13 @@ import lombok.EqualsAndHashCode;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.MovementEvent;
 import org.eclipse.swt.custom.MovementListener;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.wb.swt.layout.grouplayout.GroupLayout;
-import org.eclipse.wb.swt.layout.grouplayout.GroupLayout.ParallelGroup;
-import org.eclipse.wb.swt.layout.grouplayout.GroupLayout.SequentialGroup;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
@@ -25,13 +24,17 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.wb.swt.layout.grouplayout.GroupLayout;
+import org.eclipse.wb.swt.layout.grouplayout.GroupLayout.ParallelGroup;
+import org.eclipse.wb.swt.layout.grouplayout.GroupLayout.SequentialGroup;
 import org.pircbotx.Channel;
+import org.pircbotx.Colors;
 import org.pircbotx.User;
 
 import scripting.Script;
 import scripting.ScriptManager;
+import shared.ControlCodeParser;
 import shared.RoomManager;
-
 import connection.Connection;
 import connection.KEllyBot;
 
@@ -348,9 +351,17 @@ public class Room extends Composite {
 	public void updateTopic() {
 		if(topicBox==null)return;
 		final String topic = this.getCChannel().getChannel().getTopic();
+		final String strippedTopic = Colors.removeFormattingAndColors(topic);
 		RoomManager.getMain().getDisplay().asyncExec(new Runnable() {
 			public void run() {
-				topicBox.setText(topic);
+				topicBox.setText(strippedTopic);
+				
+				List<StyleRange> styleRanges = ControlCodeParser.parseControlCodes(topic,
+						topicBox.getText().length() - strippedTopic.length() );
+				
+				for(StyleRange styleRange : styleRanges.toArray(new StyleRange[styleRanges.size()]))
+					topicBox.setStyleRange(styleRange);
+				
 				topicBox.setToolTipText(topic);
 				updateToolTipText();
 			}
