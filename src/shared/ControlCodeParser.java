@@ -13,6 +13,8 @@ public class ControlCodeParser {
 	
 	public static List<StyleRange> parseControlCodes(String input, int dispos) {
 		List<StyleRange> styleRanges = new ArrayList<StyleRange>();
+		if(input == null || input.length() == 0) return styleRanges;
+		
 		Customs custom = new Customs();
 		
 		StyleRange current = new StyleRange();

@@ -1,6 +1,5 @@
 package shared;
 
-import java.awt.Scrollbar;
 import java.util.List;
 
 import lombok.Getter;
@@ -10,7 +9,6 @@ import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Tray;
 import org.eclipse.swt.widgets.TrayItem;
 import org.eclipse.swt.widgets.Tree;

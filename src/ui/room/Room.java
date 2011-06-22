@@ -15,6 +15,7 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Composite;
@@ -222,37 +223,38 @@ public class Room extends Composite {
 	}
 
 	public void instantiate(int layout) {
+		MovementListener linkClickListener = new MovementListener() {
+			@Override
+			public void getNextOffset(MovementEvent arg0) {
+				String[] message = arg0.lineText.split(" ");
+				int offset = arg0.offset - arg0.lineOffset;
+				for (String s : message) {
+					if (arg0.lineText.indexOf(s) > offset || arg0.lineText.indexOf(s)+s.length() < offset)
+						continue;
+					
+					if (s.contains("://")) {
+						Program.launch(s);
+					}
+				}
+			}
 
+			@Override
+			public void getPreviousOffset(MovementEvent arg0) {
+
+			}
+		};
+		
 		if ((layout & TOPIC) != 0) {
 			topicBox = new StyledText(this, SWT.BORDER | SWT.WRAP);
 			topicBox.setEditable(false);
+			topicBox.addWordMovementListener(linkClickListener);
 		}
 		if ((layout & IO) != 0) {
 			// set up the output window
 			output = new StyledText(this, SWT.BORDER | SWT.V_SCROLL | SWT.WRAP
 					| SWT.MULTI);
 			output.setEditable(false);
-			output.addWordMovementListener(new MovementListener() {
-
-				@Override
-				public void getNextOffset(MovementEvent arg0) {
-					String[] message = arg0.lineText.split(" ");
-					int offset = arg0.offset - arg0.lineOffset;
-					for (String s : message) {
-						if (arg0.lineText.indexOf(s) > offset || arg0.lineText.indexOf(s)+s.length() < offset)
-							continue;
-						
-						if (s.contains("://")) {
-							Program.launch(s);
-						}
-					}
-				}
-
-				@Override
-				public void getPreviousOffset(MovementEvent arg0) {
-
-				}
-			});
+			output.addWordMovementListener(linkClickListener);
 
 			// set up the input box and it's enter-key listener
 			input = new StyledText(this, SWT.BORDER);
@@ -267,6 +269,23 @@ public class Room extends Composite {
 									input.getText().replaceAll("\r\n", ""));
 						}
 						input.setText("");
+					}
+										
+					if(e.stateMask == SWT.CTRL) {
+						int insertPos = input.getCaretOffset();
+						String insertCode = "";
+						switch(e.keyCode) {
+							case 'B': case 'b': //Bold
+								insertCode = "\u0002"; break;
+							case 'U': case 'u': //Underlin
+								insertCode = "\u001f"; break;
+							case 'R': case 'r': //Italic
+								insertCode = "\u0016"; break; 
+							case 'K': case 'k': //Color
+								insertCode = "\u0003"; break;
+						}
+						input.replaceTextRange(insertPos,0,insertCode);
+						input.setCaretOffset(insertPos+1);
 					}
 				}
 			});
@@ -361,6 +380,23 @@ public class Room extends Composite {
 				
 				for(StyleRange styleRange : styleRanges.toArray(new StyleRange[styleRanges.size()]))
 					topicBox.setStyleRange(styleRange);
+				
+				for (String s : strippedTopic.split(" ")) {
+					if (s.contains("://")) {
+						// TODO: make this conform to the global list, and make the
+						// global list work
+						Color blue = new Color(topicBox.getDisplay(), 0, 0, 255);
+						StyleRange styleRange = new StyleRange();
+						styleRange.start = topicBox.getCharCount()
+								- strippedTopic.length() + strippedTopic.indexOf(s);
+						styleRange.length = s.length();
+						styleRange.foreground = blue;
+						styleRange.data = s;
+						styleRange.underline = true;
+						styleRange.underlineStyle = SWT.UNDERLINE_LINK;
+						topicBox.setStyleRange(styleRange);
+					}
+				}
 				
 				topicBox.setToolTipText(topic);
 				updateToolTipText();
