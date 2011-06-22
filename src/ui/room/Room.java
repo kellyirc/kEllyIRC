@@ -275,6 +275,8 @@ public class Room extends Composite {
 						int insertPos = input.getCaretOffset();
 						String insertCode = "";
 						switch(e.keyCode) {
+							case 'O': case 'o': //Normal (kills all formatting)
+								insertCode = "\u000f"; break;
 							case 'B': case 'b': //Bold
 								insertCode = "\u0002"; break;
 							case 'U': case 'u': //Underlin
