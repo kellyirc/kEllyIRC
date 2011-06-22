@@ -1,5 +1,6 @@
 package shared;
 
+import java.awt.Scrollbar;
 import java.util.List;
 
 import lombok.Getter;
@@ -9,6 +10,7 @@ import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Tray;
 import org.eclipse.swt.widgets.TrayItem;
 import org.eclipse.swt.widgets.Tree;
@@ -82,8 +84,13 @@ public class RoomManager {
 					String strippedLine = Colors.removeFormattingAndColors(m.getContent());
 			
 					if (r.getOutput() != null) {
+						int scrollPos = r.getOutput().getTopPixel();
+						int ySize = r.getOutput().getBounds().height;
+						boolean scrollDown = (scrollPos > (r.getOutput().getVerticalBar().getMaximum() - ySize));
+						
 						r.getOutput().append("<" + m.getSender() + "> " + strippedLine);
-						r.getOutput().setSelection(r.getOutput().getText().length()); // scroll the output down
+						
+						if(scrollDown) r.getOutput().setSelection(r.getOutput().getText().length()); // scroll the output down
 					}
 					
 					List<StyleRange> styleRanges = ControlCodeParser.parseControlCodes(m.getContent(),
