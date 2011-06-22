@@ -237,12 +237,12 @@ public class Room extends Composite {
 				@Override
 				public void getNextOffset(MovementEvent arg0) {
 					String[] message = arg0.lineText.split(" ");
+					int offset = arg0.offset - arg0.lineOffset;
 					for (String s : message) {
-						if (arg0.lineText.indexOf(s) + s.length() < arg0.offset)
+						if (arg0.lineText.indexOf(s) > offset || arg0.lineText.indexOf(s)+s.length() < offset)
 							continue;
-						if (s.contains("://")
-								&& arg0.lineText.indexOf(s) + s.length() > arg0.offset) {
-							//FIXME this doesn't work
+						
+						if (s.contains("://")) {
 							Program.launch(s);
 						}
 					}

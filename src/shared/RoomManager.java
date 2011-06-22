@@ -92,14 +92,14 @@ public class RoomManager {
 					for(StyleRange styleRange : styleRanges.toArray(new StyleRange[styleRanges.size()]))
 						r.getOutput().setStyleRange(styleRange);
 			
-					for (String s : m.getContent().split(" ")) {
+					for (String s : strippedLine.split(" ")) {
 						if (s.contains("://")) {
 							// TODO: make this conform to the global list, and make the
 							// global list work
 							Color blue = new Color(r.getOutput().getDisplay(), 0, 0, 255);
 							StyleRange styleRange = new StyleRange();
 							styleRange.start = r.getOutput().getCharCount()
-									- m.getContent().length() + m.getContent().indexOf(s);
+									- strippedLine.length() + strippedLine.indexOf(s);
 							styleRange.length = s.length();
 							styleRange.foreground = blue;
 							styleRange.data = s;
