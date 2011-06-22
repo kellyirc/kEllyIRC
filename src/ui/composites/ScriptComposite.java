@@ -14,6 +14,8 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.ExtendedModifyEvent;
+import org.eclipse.swt.custom.ExtendedModifyListener;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -73,8 +75,8 @@ public class ScriptComposite extends Composite {
 			return null;
 		}
 	}
+
 	//TODO: show when a file is modified by changing the title of the tab to contain an asterisk
-	//TODO: allow options for word wrapping
 	StyledText curTextBox;
 	Script curScript;
 	CTabFolder tabs;
@@ -177,16 +179,26 @@ public class ScriptComposite extends Composite {
 							
 							createNewTab(s);
 							curTextBox.setText(s.getScript());
+							curTextBox.addExtendedModifyListener(new ExtendedModifyListener(){
+
+								@Override
+								public void modifyText(ExtendedModifyEvent event) {
+									CTabItem currentTab = tabs.getSelection();
+									if(!currentTab.getText().startsWith("*")){
+										currentTab.setText("*"+currentTab.getText());
+									}
+									
+								}});
 							
 							stylers.get(s.getScriptType()).parseBlockComments(s.getScript());
 						}
 					}
 
-					private void createNewTab(Script s) {
+					private CTabItem createNewTab(Script s) {
 						for(CTabItem c : tabs.getItems()){
 							if(c.getData().equals(s)){
 								changeTab(c);
-								return;
+								return c;
 							}
 						}
 						CTabItem newItem = new CTabItem(tabs, SWT.CLOSE);
@@ -247,6 +259,7 @@ public class ScriptComposite extends Composite {
 							}
 						});
 						enableTopBar(tltmSave, tltmCut, tltmCopy, tltmPaste);
+						return newItem;
 					}
 				});
 		checkboxTreeViewer.addCheckStateListener(new ICheckStateListener() {
@@ -409,6 +422,10 @@ public class ScriptComposite extends Composite {
 	}
 
 	private void save() {
+		CTabItem currentTab = tabs.getSelection();
+		if(currentTab.getText().startsWith("*")){
+			currentTab.setText(currentTab.getText().substring(1));
+		}
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(curScript.getReference()));
 			bw.write(curTextBox.getText());
@@ -443,6 +460,5 @@ public class ScriptComposite extends Composite {
 
 	private void changeTab(CTabItem c) {
 		tabs.setSelection(c);
-		//lineStyler.changeScript(curScript.getScriptType());
 	}
 }
