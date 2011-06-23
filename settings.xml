@@ -1,31 +1,17 @@
 <connection.Settings>
   <connSettings>
     <connection.ConnectionSettings>
-      <connectionName>Esper</connectionName>
+      <connectionName>EsperNet</connectionName>
       <server>irc.esper.net</server>
       <port>6667</port>
       <serverPassword></serverPassword>
       <ssl>false</ssl>
-      <connectOnStart>false</connectOnStart>
-      <nickname>kircFreek</nickname>
+      <connectOnStart>true</connectOnStart>
+      <nickname>Herpaderp</nickname>
       <nickPassword></nickPassword>
-      <ident>kircFreek</ident>
+      <ident>Herpaderp</ident>
       <autoJoin>
-        <string>#DGR</string>
-      </autoJoin>
-    </connection.ConnectionSettings>
-    <connection.ConnectionSettings>
-      <connectionName>Notesper</connectionName>
-      <server>irc.esper.net</server>
-      <port>6667</port>
-      <serverPassword></serverPassword>
-      <ssl>false</ssl>
-      <connectOnStart>false</connectOnStart>
-      <nickname>SomeOtherFreek</nickname>
-      <nickPassword></nickPassword>
-      <ident>SomeOtherFreek</ident>
-      <autoJoin>
-        <string>#DGR</string>
+        <string>#Brownalicious</string>
       </autoJoin>
     </connection.ConnectionSettings>
   </connSettings>

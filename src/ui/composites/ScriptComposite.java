@@ -6,13 +6,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.jface.dialogs.IInputValidator;
+import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.ExtendedModifyEvent;
 import org.eclipse.swt.custom.ExtendedModifyListener;
@@ -25,6 +26,17 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 
 import scripting.Script;
 import scripting.ScriptManager;
@@ -34,17 +46,7 @@ import scripting.styles.RubyLineStyler;
 import shared.NSAlertBox;
 import shared.RoomManager;
 import shared.SWTResourceManager;
-
-import org.eclipse.jface.dialogs.IInputValidator;
-import org.eclipse.jface.dialogs.InputDialog;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
-import org.eclipse.jface.viewers.CheckboxTreeViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
-import org.eclipse.jface.window.Window;
-import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.Label;
 
 public class ScriptComposite extends Composite {
 
@@ -94,10 +96,24 @@ public class ScriptComposite extends Composite {
 	public ScriptComposite(final Composite parent, int style) {
 		super(parent, style);
 		
+		setLayout(new GridLayout(3,false));
+		
 		stylers.put(Script.JAVASCRIPT, new JavaLineStyler());
 		stylers.put(Script.RUBY, new RubyLineStyler());
 
+		final CheckboxTreeViewer checkboxTreeViewer = new CheckboxTreeViewer(
+				this, SWT.BORDER);
+		Tree tree = checkboxTreeViewer.getTree();
+		GridData treeGD = new GridData(SWT.LEFT, SWT.FILL, false, true, 1, 2);
+		treeGD.widthHint = 124;
+		tree.setLayoutData(treeGD);
+//		tree.setBounds(10, 9, 124, 369);
+		this.tree = tree;
+
+		updateTreeItems();
+		
 		combo = new Combo(this, SWT.NONE);
+		combo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		combo.setEnabled(false);
 		combo.setBounds(140, 9, 196, 23);
 		combo.addSelectionListener(new SelectionAdapter() {
@@ -109,19 +125,6 @@ public class ScriptComposite extends Composite {
 			}
 		});
 
-		final CheckboxTreeViewer checkboxTreeViewer = new CheckboxTreeViewer(
-				this, SWT.BORDER);
-		Tree tree = checkboxTreeViewer.getTree();
-		tree.setBounds(10, 9, 124, 369);
-		this.tree = tree;
-
-		updateTreeItems();
-		
-		tabs = new CTabFolder(this, SWT.BORDER);
-		tabs.setSimple(false);
-		tabs.setBounds(140, 38, 508, 340);
-		tabs.setSelectionBackground(Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
-		
 		ToolBar toolBar = new ToolBar(this, SWT.FLAT | SWT.RIGHT);
 		toolBar.setBounds(342, 9, 306, 23);
 		
@@ -153,6 +156,16 @@ public class ScriptComposite extends Composite {
 		tltmPaste.setText("Paste");
 
 		buttonListeners(parent, tltmNew, tltmSave, tltmCut, tltmCopy, tltmPaste, tltmDelete, tltmRename);
+		
+
+		
+		tabs = new CTabFolder(this, SWT.BORDER);
+		tabs.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
+		tabs.setSimple(false);
+		tabs.setBounds(140, 38, 508, 340);
+		tabs.setSelectionBackground(Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
+		new Label(this, SWT.NONE);
+		
 		
 		tabs.addSelectionListener(new SelectionListener(){
 

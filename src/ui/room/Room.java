@@ -327,7 +327,7 @@ public class Room extends Composite {
 		}
 		ss.add(p2);
 		if ((layout & WHO) != 0) {
-			ss.add(who, GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE);
+			ss.add(who, GroupLayout.DEFAULT_SIZE, 122, 122);
 		}
 		gl_composite.setHorizontalGroup(gl_composite.createParallelGroup(
 				GroupLayout.LEADING).add(ss));
@@ -336,7 +336,7 @@ public class Room extends Composite {
 		SequentialGroup s = gl_composite.createSequentialGroup();
 
 		if ((layout & TOPIC) != 0) {
-			s.add(topicBox, GroupLayout.DEFAULT_SIZE, 15, Short.MAX_VALUE);
+			s.add(topicBox, GroupLayout.DEFAULT_SIZE, 15, 18);
 		}
 		if ((layout & IO) != 0) {
 			if ((layout & TOPIC) == 0) {
@@ -407,9 +407,9 @@ public class Room extends Composite {
 	}
 
 	public void updateToolTipText() {
-		// channel.getItemRef().setToolTipText("Channnel: " + channelName +
-		// "\nCurrent Users: " + userCount +
-		// "\nLast Message: " + lastMessage);
+//		 cChannel.getItemRef().setToolTipText("Channnel: " + channelName +
+//		 "\nCurrent Users: " + userCount +
+//		 "\nLast Message: " + lastMessage);
 	}
 
 	private void updateUserCount() {

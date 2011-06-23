@@ -5,10 +5,14 @@ import java.util.ArrayList;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -16,10 +20,11 @@ import org.eclipse.swt.widgets.Text;
 
 import shared.RoomManager;
 import shared.SWTResourceManager;
-
 import connection.Connection;
 import connection.ConnectionSettings;
 import connection.Settings;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.GridData;
 
 public class ConnectionComposite extends Composite {
 	private Table table;
@@ -44,10 +49,104 @@ public class ConnectionComposite extends Composite {
 	 */
 	public ConnectionComposite(Composite parent, int style) {
 		super(parent, style);
+		setLayout(new GridLayout(2, false));
+		
+		table = new Table(this, SWT.BORDER | SWT.FULL_SELECTION);
+		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		table.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				enableFields();
+				loadForms((ConnectionSettings)table.getItem(table.getSelectionIndex()).getData());
+				//get rid of any blank items
+				clearBlanks();
+				
+			}
+		});
+		table.setLinesVisible(true);
+		table.setHeaderVisible(true);
+		
+		TableColumn tblclmnName = new TableColumn(table, SWT.NONE);
+		tblclmnName.setWidth(139);
+		tblclmnName.setText("Name");
+		
+		TableColumn tblclmnServer = new TableColumn(table, SWT.NONE);
+		tblclmnServer.setWidth(176);
+		tblclmnServer.setText("Server");
+		
+		TableColumn tblclmnNickname = new TableColumn(table, SWT.NONE);
+		tblclmnNickname.setWidth(148);
+		tblclmnNickname.setText("Nickname");
+		
+		Composite composite = new Composite(this, SWT.NONE);
+		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+		GridLayout gl_composite = new GridLayout(1, false);
+		composite.setLayout(gl_composite);
+		
+		Button btnNew = new Button(composite, SWT.NONE);
+		GridData gd_btnNew = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+		gd_btnNew.widthHint = 65;
+		btnNew.setLayoutData(gd_btnNew);
+		btnNew.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				clearBlanks();
+				TableItem i = new TableItem(table,SWT.NONE);
+				i.setText(new String[] {"[blank]","[blank]","[blank]"});
+				table.setSelection(i);
+				defaultFields();
+				enableFields();
+			}
+		});
+		btnNew.setText("New");
+		
+		Button btnDel = new Button(composite, SWT.NONE);
+		btnDel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		btnDel.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				int[] indices = table.getSelectionIndices();
+				if(indices.length!=0)
+				{
+					table.remove(indices);
+					saveTable();
+					clearFields();
+					disableFields();
+				}
+			}
+		});
+		btnDel.setText("Delete");
+		
+		btnConnect = new Button(composite, SWT.NONE);
+		btnConnect.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1));
+		btnConnect.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if(table.getSelectionCount()==1 && checkIfCompleted())
+				{
+					//save stuff
+					ArrayList<String> autoJoin = new ArrayList<String>();
+					for(String ch:textAutoJoin.getText().split(","))
+						autoJoin.add(ch);
+					ConnectionSettings newCS = new ConnectionSettings(
+							textConnName.getText(), textServer.getText(),
+							textPort.getText(), textServPass.getText(),
+							btnUseSsl.getSelection(), btnConnectOnStartup
+									.getSelection(), textNick.getText(),
+							textNickPass.getText(), textIdent.getText(),
+							autoJoin);
+					table.getItem(table.getSelectionIndex()).setData(newCS);
+					table.getItem(table.getSelectionIndex()).setText(new String[] {newCS.getConnectionName(),newCS.getServer(),newCS.getNickname()});
+					saveTable();
+					ConnectionSettings selected = (ConnectionSettings) table.getItem(table.getSelectionIndex()).getData();
+					new Connection(RoomManager.getMain().getContainer(), SWT.NONE, selected);
+				}
+			}
+		});
+		btnConnect.setText("Connect");
 		
 		Group grpConnectionInfo = new Group(this, SWT.NONE);
 		grpConnectionInfo.setText("Connection Info");
-		grpConnectionInfo.setBounds(10, 130, 430, 188);
 		
 		Label lblName = new Label(grpConnectionInfo, SWT.NONE);
 		lblName.setBounds(10, 22, 95, 19);
@@ -152,94 +251,7 @@ public class ConnectionComposite extends Composite {
 		lblSeparateChannelsBy.setForeground(SWTResourceManager.getColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
 		lblSeparateChannelsBy.setBounds(240, 131, 174, 14);
 		lblSeparateChannelsBy.setText("Separate channels by commas");
-		
-		table = new Table(this, SWT.BORDER | SWT.FULL_SELECTION);
-		table.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				enableFields();
-				loadForms((ConnectionSettings)table.getItem(table.getSelectionIndex()).getData());
-				//get rid of any blank items
-				clearBlanks();
-				
-			}
-		});
-		table.setLinesVisible(true);
-		table.setHeaderVisible(true);
-		table.setBounds(10, 10, 430, 114);
-		
-		TableColumn tblclmnName = new TableColumn(table, SWT.NONE);
-		tblclmnName.setWidth(113);
-		tblclmnName.setText("Name");
-		
-		TableColumn tblclmnServer = new TableColumn(table, SWT.NONE);
-		tblclmnServer.setWidth(176);
-		tblclmnServer.setText("Server");
-		
-		TableColumn tblclmnNickname = new TableColumn(table, SWT.NONE);
-		tblclmnNickname.setWidth(133);
-		tblclmnNickname.setText("Nickname");
-		
-		Button btnNew = new Button(this, SWT.NONE);
-		btnNew.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				clearBlanks();
-				TableItem i = new TableItem(table,SWT.NONE);
-				i.setText(new String[] {"[blank]","[blank]","[blank]"});
-				table.setSelection(i);
-				defaultFields();
-				enableFields();
-			}
-		});
-		btnNew.setText("New");
-		btnNew.setBounds(451, 10, 68, 23);
-		
-		Button btnDel = new Button(this, SWT.NONE);
-		btnDel.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				int[] indices = table.getSelectionIndices();
-				if(indices.length!=0)
-				{
-					table.remove(indices);
-					saveTable();
-					clearFields();
-					disableFields();
-				}
-			}
-		});
-		btnDel.setText("Delete");
-		btnDel.setBounds(451, 39, 68, 23);
-		
-		btnConnect = new Button(this, SWT.NONE);
-		btnConnect.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if(table.getSelectionCount()==1 && checkIfCompleted())
-				{
-					//save stuff
-					ArrayList<String> autoJoin = new ArrayList<String>();
-					for(String ch:textAutoJoin.getText().split(","))
-						autoJoin.add(ch);
-					ConnectionSettings newCS = new ConnectionSettings(
-							textConnName.getText(), textServer.getText(),
-							textPort.getText(), textServPass.getText(),
-							btnUseSsl.getSelection(), btnConnectOnStartup
-									.getSelection(), textNick.getText(),
-							textNickPass.getText(), textIdent.getText(),
-							autoJoin);
-					table.getItem(table.getSelectionIndex()).setData(newCS);
-					table.getItem(table.getSelectionIndex()).setText(new String[] {newCS.getConnectionName(),newCS.getServer(),newCS.getNickname()});
-					saveTable();
-					ConnectionSettings selected = (ConnectionSettings) table.getItem(table.getSelectionIndex()).getData();
-					new Connection(RoomManager.getMain().getContainer(), SWT.NONE, selected);
-				}
-			}
-		});
-		btnConnect.setBounds(451, 68, 68, 23);
-		btnConnect.setText("Connect");
-
+		new Label(this, SWT.NONE);
 
 		loadTable();
 		disableFields();
