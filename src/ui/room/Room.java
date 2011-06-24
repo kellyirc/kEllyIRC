@@ -218,6 +218,7 @@ public class Room extends Composite {
 	public Room(Composite c, int style, int layout, Tree tree,
 			String channelstr, Connection newConnection, Channel channel) {
 		super(c, style);
+		this.channelName = channelstr;
 		setServerConnection(newConnection);
 		this.setBot(newConnection.getBot());
 		this.cChannel = new CustomChannel(tree, channelstr, newConnection,
@@ -268,7 +269,7 @@ public class Room extends Composite {
 					if (e.character == SWT.CR) {
 						if (cChannel != null && serverConnection != null) {
 							serverConnection.getBot().sendMessage(
-									cChannel.getChannel(),
+									channelName,
 									input.getText().replaceAll("\r\n", ""));
 						}
 						input.setText("");

@@ -6,12 +6,26 @@
       <port>6667</port>
       <serverPassword></serverPassword>
       <ssl>false</ssl>
-      <connectOnStart>true</connectOnStart>
+      <connectOnStart>false</connectOnStart>
       <nickname>Herpaderp</nickname>
       <nickPassword></nickPassword>
       <ident>Herpaderp</ident>
       <autoJoin>
         <string>#Brownalicious</string>
+      </autoJoin>
+    </connection.ConnectionSettings>
+    <connection.ConnectionSettings>
+      <connectionName>Mentos</connectionName>
+      <server>irc.esper.net</server>
+      <port>6667</port>
+      <serverPassword></serverPassword>
+      <ssl>false</ssl>
+      <connectOnStart>false</connectOnStart>
+      <nickname>Mentos</nickname>
+      <nickPassword></nickPassword>
+      <ident>CAKELIE</ident>
+      <autoJoin>
+        <string>#dgr</string>
       </autoJoin>
     </connection.ConnectionSettings>
   </connSettings>

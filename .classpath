@@ -20,5 +20,6 @@
 	<classpathentry kind="lib" path="libs/tritonus_share.jar"/>
 	<classpathentry kind="lib" path="libs/vorbisspi1.0.3.jar"/>
 	<classpathentry kind="lib" path="libs/jruby-complete-1.6.2.jar"/>
+	<classpathentry kind="lib" path="swing2swt.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
