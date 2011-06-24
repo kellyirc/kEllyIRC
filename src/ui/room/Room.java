@@ -197,7 +197,9 @@ public class Room extends Composite {
 	
 	// TODO: change to booleans
 	public static final int WHO = 1, TOPIC = 2, IO = 4;
-
+	
+	
+	
 	private CustomChannel cChannel;
 	private Connection serverConnection;
 	private KEllyBot bot;
@@ -208,7 +210,7 @@ public class Room extends Composite {
 
 	private Tree who;
 
-	// private int layout;
+	private int roomLayout;
 
 	// variables used with the tool tip
 	private int userCount;
@@ -223,6 +225,7 @@ public class Room extends Composite {
 		this.setBot(newConnection.getBot());
 		this.cChannel = new CustomChannel(tree, channelstr, newConnection,
 				channel, this);
+		roomLayout = layout;
 		instantiate(layout);
 	}
 
@@ -396,6 +399,8 @@ public class Room extends Composite {
 				.getUsers().size() : 0;
 		lastMessage = "N/A";
 		channelName = cChannel.getChannelString();
+		
+		serverConnection.switchComposite(this);
 	}
 	
 	private void updateWhoListener() {
@@ -438,15 +443,17 @@ public class Room extends Composite {
 				}
 				
 				topicBox.setToolTipText(topic);
-				updateToolTipText();
 			}
 		});
 	}
 
-	public void updateToolTipText() {
-//		 cChannel.getItemRef().setToolTipText("Channnel: " + channelName +
-//		 "\nCurrent Users: " + userCount +
-//		 "\nLast Message: " + lastMessage);
+	public String getToolTipText() {
+		String output = "";
+		output +="Room: " + channelName;
+		if((roomLayout & Room.WHO)!= 0)
+			output += "\nCurrent Users: " + userCount;
+		output += "\nLast Message: " + lastMessage;
+		return output;
 	}
 
 	private void updateUserCount() {

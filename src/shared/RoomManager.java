@@ -90,7 +90,7 @@ public class RoomManager {
 						//TODO: Make PM and NOTICE and CONSOLE types do what they're supposed to do.
 						case Message.MSG:
 						case Message.PM:
-						case Message.NOTICE:
+						case Message.NOTICE: r.updateLastMessage("<" + m.getSender() + "> " + strippedLine);
 						case Message.CONSOLE: r.getOutput().append("<" + m.getSender() + "> " + strippedLine); break;
 						case Message.ACTION: r.getOutput().append("***" + m.getSender() + " " + strippedLine); break;
 						
