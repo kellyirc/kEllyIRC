@@ -190,12 +190,17 @@ public class Connection extends Composite {
 				Shell shell = label.getShell ();
 				switch (event.type) {
 					case SWT.MouseDown:
-						TreeItem item = (TreeItem) label.getData ("_TREEITEM");
-						chanList.setSelection((TreeItem)item);
-						if (item != null && item.getData()!=null) 
-							switchComposite((Room) item.getData());
+						Event e = new Event ();
+						e.item = (TreeItem) label.getData ("_TREEITEM");
+						chanList.setSelection((TreeItem)e.item);
+						//TODO: Somehow pass the event down to chanList
+						//		so we can later handle rightclicking
+						//		for menus
+//						chanList.notifyListeners (SWT.MouseDown, e);
+						if (e.item != null && e.item.getData()!=null) 
+							switchComposite((Room) e.item.getData());
 						shell.dispose ();
-						//chanList.setFocus();
+						chanList.setFocus();
 						break;
 					case SWT.MouseExit:
 						shell.dispose ();
