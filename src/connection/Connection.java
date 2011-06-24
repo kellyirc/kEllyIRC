@@ -155,7 +155,7 @@ public class Connection extends Composite {
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(GroupLayout.LEADING)
 				.add(groupLayout.createSequentialGroup()
-					.add(chanList, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.add(chanList, 150, 150, 150)
 					.addPreferredGap(LayoutStyle.RELATED)
 					.add(scrolledComposite, GroupLayout.DEFAULT_SIZE, 359, Short.MAX_VALUE))
 		);
