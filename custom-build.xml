@@ -60,7 +60,7 @@
 		
 		<echo file="${release-path}/runme.bat" message="java -jar ${jar-name}" />
 		
-		<zip destfile = "${release-path}/release.zip" excludes="**/*.zip" basedir="${release-path}" />
+		<zip destfile = "${release-path}/release_${full-version}.zip" excludes="**/*.zip" basedir="${release-path}" />
 		
 	</target>
 </project>
