@@ -19,25 +19,26 @@ public class MessageListener extends ConnectionListener{
 	@Override
 	public void onMessage(MessageEvent<KEllyBot> event) throws Exception {
 		super.onMessage(event);
-		manageMessage(new Message(nc, event.getMessage(), event.getUser().getNick(), event.getChannel()));
+		manageMessage(new Message(nc, event.getMessage(), event.getUser().getNick(), event.getChannel(), Message.MSG));
 	}
 
 	@Override
 	public void onAction(ActionEvent<KEllyBot> event) throws Exception {
 		super.onAction(event);
-		manageMessage(new Message(nc, "***"+event.getAction(), event.getUser().getNick(), event.getChannel()));	
+		manageMessage(new Message(nc, event.getAction(), event.getUser().getNick(), event.getChannel(), Message.ACTION));	
 	}
 
 	@Override
 	public void onNotice(NoticeEvent<KEllyBot> event) throws Exception {	
 		super.onNotice(event);
-		manageMessage(new Message(nc, "NOTICE: "+event.getNotice(), event.getUser().getNick(), event.getChannel()));
+		manageMessage(new Message(nc, "NOTICE: "+event.getNotice(), event.getUser().getNick(), event.getChannel(), Message.NOTICE));
 	}
 
 	@Override
 	public void onPrivateMessage(PrivateMessageEvent<KEllyBot> event)
 			throws Exception {	
 		super.onPrivateMessage(event);
-		manageMessage(new Message(nc, event.getMessage(), event.getUser().getNick(), event.getUser().getNick()));
+		manageMessage(new Message(nc, event.getMessage(), event.getUser().getNick(), event.getUser().getNick(), Message.PM
+				));
 	} 
 }

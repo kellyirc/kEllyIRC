@@ -17,7 +17,7 @@ public class DisconnectListener extends ConnectionListener {
 	//TODO: try a few times to reconnect
 	public void onDisconnect(Event<KEllyBot> event){
 		for(Channel c : event.getBot().getChannels()){
-			manageMessage(new Message(nc, "You have been disconnected.. attempting to reconnect.", c.getName(), c));
+			manageMessage(new Message(nc, "You have been disconnected.. attempting to reconnect.", c.getName(), c, Message.CONSOLE));
 		}
 	}
 

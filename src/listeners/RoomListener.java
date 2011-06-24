@@ -24,7 +24,7 @@ public class RoomListener extends ConnectionListener{
 			nc.createRoom(event.getChannel().getName(), Room.IO | Room.TOPIC | Room.WHO, event.getChannel());
 		}
 		super.onJoin(event);
-		queueMessage(new Message(nc, event.getUser().getNick()+" has joined.", event.getChannel().getName(), event.getChannel().getName()));
+		queueMessage(new Message(nc, event.getUser().getNick()+" has joined.", event.getChannel().getName(), event.getChannel().getName(), Message.CONSOLE));
 		updateWho(event.getChannel());
 	}
 
@@ -32,21 +32,21 @@ public class RoomListener extends ConnectionListener{
 	public void onMode(ModeEvent<KEllyBot> event) throws Exception {
 		super.onMode(event);
 		updateWho(event.getChannel());
-		queueMessage(new Message(nc, event.getMode()+" by "+event.getUser().getNick(), event.getChannel().getName(), event.getChannel().getName()));
+		queueMessage(new Message(nc, event.getMode()+" by "+event.getUser().getNick(), event.getChannel().getName(), event.getChannel().getName(), Message.CONSOLE));
 	}
 
 	@Override
 	public void onPart(PartEvent<KEllyBot> event) throws Exception {
 		super.onPart(event);
 		updateWho(event.getChannel());
-		queueMessage(new Message(nc, event.getUser().getNick()+" has parted.", event.getChannel().getName(), event.getChannel().getName()));
+		queueMessage(new Message(nc, event.getUser().getNick()+" has parted.", event.getChannel().getName(), event.getChannel().getName(), Message.CONSOLE));
 	}
 
 	@Override
 	public void onKick(KickEvent<KEllyBot> event) throws Exception {
 		super.onKick(event);
 		updateWho(event.getChannel());
-		queueMessage(new Message(nc, event.getRecipient().getNick()+" was kicked by "+event.getSource().getNick()+(event.getReason() != null?" ["+event.getReason()+"]" : ""), event.getChannel().getName(), event.getChannel().getName()));
+		queueMessage(new Message(nc, event.getRecipient().getNick()+" was kicked by "+event.getSource().getNick()+(event.getReason() != null?" ["+event.getReason()+"]" : ""), event.getChannel().getName(), event.getChannel().getName(), Message.CONSOLE));
 	}
 
 	@Override
@@ -55,11 +55,11 @@ public class RoomListener extends ConnectionListener{
 		nc.updateTopic(event.getChannel().getName());
 		if(event.getDate() < System.currentTimeMillis()){
 			//topic was set already
-			queueMessage(new Message(nc, event.getTopic(), event.getChannel().getName(), event.getChannel().getName()));
-			queueMessage(new Message(nc, "Topic set by: "+event.getUser().getNick(), event.getChannel().getName(), event.getChannel().getName()));
+			queueMessage(new Message(nc, event.getTopic(), event.getChannel().getName(), event.getChannel().getName(), Message.CONSOLE));
+			queueMessage(new Message(nc, "Topic set by: "+event.getUser().getNick(), event.getChannel().getName(), event.getChannel().getName(), Message.CONSOLE));
 		} else {
 			//topic was changed
-			queueMessage(new Message(nc, event.getUser().getNick()+" changed the topic.", event.getChannel().getName(), event.getChannel().getName()));
+			queueMessage(new Message(nc, event.getUser().getNick()+" changed the topic.", event.getChannel().getName(), event.getChannel().getName(), Message.CONSOLE));
 		}
 	}
 

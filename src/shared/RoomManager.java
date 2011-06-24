@@ -85,8 +85,16 @@ public class RoomManager {
 						int scrollPos = r.getOutput().getTopPixel();
 						int ySize = r.getOutput().getBounds().height;
 						boolean scrollDown = (scrollPos > (r.getOutput().getVerticalBar().getMaximum() - ySize));
+						switch(m.getType())
+						{
+						//TODO: Make PM and NOTICE and CONSOLE types do what they're supposed to do.
+						case Message.MSG:
+						case Message.PM:
+						case Message.NOTICE:
+						case Message.CONSOLE: r.getOutput().append("<" + m.getSender() + "> " + strippedLine); break;
+						case Message.ACTION: r.getOutput().append("***" + m.getSender() + " " + strippedLine); break;
 						
-						r.getOutput().append("<" + m.getSender() + "> " + strippedLine);
+						}
 						
 						if(scrollDown) r.getOutput().setSelection(r.getOutput().getText().length()); // scroll the output down
 					}

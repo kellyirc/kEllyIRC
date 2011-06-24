@@ -34,6 +34,7 @@ import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.managers.ListenerManager;
 
 import scripting.ScriptVars;
+import shared.NSAlertBox;
 import shared.RoomManager;
 import ui.room.Room;
 
@@ -72,7 +73,6 @@ public class Connection extends Composite {
 				Logger dLog = Logger.getLogger("log.error");
 				dLog.error("Error during the connection process.", e);
 			}
-			
 			//identify nick
 			if(!cs.getNickPassword().equals(""))
 			{
@@ -84,17 +84,42 @@ public class Connection extends Composite {
 			{
 				bot.joinChannel(channel);
 			}
-			
 		}
 		
-		private void attemptToConnect(ConnectionSettings cs) throws NumberFormatException, NickAlreadyInUseException, IOException, IrcException
+		private void attemptToConnect(ConnectionSettings cs)
 		{
-			if(!cs.getServerPassword().equals(""))
-				bot.connect(cs.getServer(), Integer.parseInt(cs.getPort()),cs.getServerPassword());
-			else if(cs.isSsl())
-				bot.connect(cs.getServer(), Integer.parseInt(cs.getPort()),SSLSocketFactory.getDefault());
-			else
-				bot.connect(cs.getServer(), Integer.parseInt(cs.getPort()));
+			final ConnectionSettings CS = cs;
+			new Thread(new Runnable(){
+
+				public void run() {
+					boolean connected = false;
+					int tries = 0;
+					while(!connected && tries < 3)
+					try {
+						tries++;
+						if(!CS.getServerPassword().equals(""))
+							bot.connect(CS.getServer(), Integer.parseInt(CS.getPort()),CS.getServerPassword());
+						else if(CS.isSsl())
+							bot.connect(CS.getServer(), Integer.parseInt(CS.getPort()),SSLSocketFactory.getDefault());
+						else
+						bot.connect(CS.getServer(), Integer.parseInt(CS.getPort()));
+						connected = true;
+					} catch (NumberFormatException e) {
+						Logger dLog = Logger.getLogger("log.error");
+						dLog.error("Improper port, not a number", e);
+						NSAlertBox alert = new NSAlertBox("Connection failed", "The port was not a number. Please use a number 0-65535", SWT.ICON_ERROR, SWT.OK);
+					} catch (NickAlreadyInUseException e) {
+					} catch (IOException e) {
+						Logger dLog = Logger.getLogger("log.error");
+						dLog.error("IOException while trying to connect", e);
+					} catch (IrcException e) {
+						Logger dLog = Logger.getLogger("log.error");
+						dLog.error("IrcException while trying to connect", e);
+					}
+				}
+				
+			}).run();
+			
 		}
 	}
 	
@@ -120,10 +145,6 @@ public class Connection extends Composite {
 		CTabItem c = new CTabItem((CTabFolder) parent, SWT.NONE);
 		c.setText(cs.getConnectionName());
 		c.setControl(this);
-		
-		this.bot = new KEllyBot(this);
-		this.data = new ConnectionData(this.bot, cs, this);
-		this.cs = cs;
 		
 		chanList = new Tree(this, SWT.BORDER);
 		
@@ -157,8 +178,12 @@ public class Connection extends Composite {
 			}
 		});	
 		
+		this.bot = new KEllyBot(this);
+		this.data = new ConnectionData(this.bot, cs, this);
+		this.cs = cs;
+		
 		createRoom("Console", Room.IO);
-
+		RoomManager.getMain().getContainer().setSelection(c);
 	}
 
 	@Override

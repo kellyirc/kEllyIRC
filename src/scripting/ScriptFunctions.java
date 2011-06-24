@@ -143,7 +143,7 @@ public final class ScriptFunctions {
 
 	public final void error(String sender, String err) {
 		RoomManager.enQueue(new Message(ScriptVars.curConnection, err,
-				sender, ScriptVars.curChannel.getName()));
+				sender, ScriptVars.curChannel.getName(), Message.CONSOLE));
 	}
 	
 	public final boolean playSound(String path){

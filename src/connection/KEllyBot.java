@@ -32,7 +32,7 @@ public class KEllyBot extends PircBotX {
 	        if(target==null || target.equals("Console")){
 	        	return;
 	        }
-	        RoomManager.enQueue(new Message(this, message, getNick(), target));  
+	        RoomManager.enQueue(new Message(this, message, getNick(), target, Message.MSG));  
 			super.sendMessage(target, message);
 		}
 	}
@@ -45,7 +45,7 @@ public class KEllyBot extends PircBotX {
 	        if(target==null || target.equals("Console")){
 	        	return;
 	        }
-	        RoomManager.enQueue(new Message(this, "***"+message, getNick(), target));  
+	        RoomManager.enQueue(new Message(this, message, getNick(), target, Message.ACTION));  
 			super.sendAction(target, message);
 		}
 	}
@@ -55,13 +55,13 @@ public class KEllyBot extends PircBotX {
         if(target==null || target.equals("Console")){
         	return;
         }
-        RoomManager.enQueue(new Message(this, "NOTICE: "+notice, getNick(), target));
+        RoomManager.enQueue(new Message(this, "NOTICE: "+notice, getNick(), target, Message.NOTICE));
 		super.sendNotice(target, notice);
 	}
 
 	public void changeNick(String nick){
 		super.changeNick(nick);
-		RoomManager.enQueue(new Message(connection, "You are now known as "+nick, "System", ScriptVars.curChannel));
+		RoomManager.enQueue(new Message(connection, "You are now known as "+nick, "System", ScriptVars.curChannel, Message.CONSOLE));
 	}
 
 	public void doCommand(String line) {
@@ -82,7 +82,7 @@ public class KEllyBot extends PircBotX {
 		
 		if(!found){
 			Room r = (Room) connection.getScrolledComposite().getContent();
-			RoomManager.enQueue(new Message(connection, command + " is not a valid alias. Please define it.", "System", r.getChannelName()));
+			RoomManager.enQueue(new Message(connection, command + " is not a valid alias. Please define it.", "System", r.getChannelName(), Message.CONSOLE));
 		}
 		
 	}

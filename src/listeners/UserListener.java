@@ -25,7 +25,7 @@ public class UserListener extends ConnectionListener{
 		for(Channel c : channels){
 			if(c.getUsers().contains(event.getUser())){
 				updateWho(c);
-				manageMessage(new Message(nc, event.getOldNick()+" is now known as "+event.getNewNick()+".", c.getName(), c));
+				manageMessage(new Message(nc, event.getOldNick()+" is now known as "+event.getNewNick()+".", c.getName(), c, Message.CONSOLE));
 			}
 		}
 	}
@@ -35,7 +35,7 @@ public class UserListener extends ConnectionListener{
 		for(Channel c : event.getUser().getChannels()){
 			if(c.getUsers().contains(event.getBot().getUserBot())){
 				updateWho(c);
-				manageMessage(new Message(nc, event.getUser().getNick()+" has quit IRC. "+(event.getReason()!=null ? "("+event.getReason()+")"  : ""), c.getName(), c));
+				manageMessage(new Message(nc, event.getUser().getNick()+" has quit IRC. "+(event.getReason()!=null ? "("+event.getReason()+")"  : ""), c.getName(), c, Message.CONSOLE));
 			}
 		}
 		super.onQuit(event);
