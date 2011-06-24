@@ -7,12 +7,15 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ExtendedModifyEvent;
+import org.eclipse.swt.custom.ExtendedModifyListener;
 import org.eclipse.swt.custom.MovementEvent;
 import org.eclipse.swt.custom.MovementListener;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
@@ -272,26 +275,46 @@ public class Room extends Composite {
 					}
 										
 					if(e.stateMask == SWT.CTRL) {
-						int insertPos = input.getCaretOffset();
-						String insertCode = "";
 						switch(e.keyCode) {
+						//KR's formatting stuff
 							case 'O': case 'o': //Normal (kills all formatting)
-								insertCode = "\u000f"; break;
+								insertCode("\u000f"); break;
 							case 'B': case 'b': //Bold
-								insertCode = "\u0002"; break;
+								insertCode("\u0002"); break;
 							case 'U': case 'u': //Underlin
-								insertCode = "\u001f"; break;
+								insertCode("\u001f"); break;
 							case 'R': case 'r': //Italic
-								insertCode = "\u0016"; break; 
+								insertCode("\u0016"); break; 
 							case 'K': case 'k': //Color
-								insertCode = "\u0003"; break;
+								insertCode("\u0003"); break;
+								
+						//key combinations
+							case 'A': case 'a': //Select all
+								input.selectAll();
 						}
-						input.replaceTextRange(insertPos,0,insertCode);
-						input.setCaretOffset(insertPos+1);
 					}
 				}
+				
+				private void insertCode(String insertCode)
+				{
+					int insertPos = input.getCaretOffset();
+					input.replaceTextRange(insertPos,0,insertCode);
+					input.setCaretOffset(insertPos+1);
+				}
 			});
+			//prevent selected text from disappearing when you hit enter
+			input.addExtendedModifyListener(new ExtendedModifyListener(){
 
+				public void modifyText(ExtendedModifyEvent e) {
+					String text = ((StyledText)e.widget).getText();
+					if(text.contains(""+SWT.CR))
+						((StyledText) e.widget).setText((text.substring(0,
+								e.start) + e.replacedText + text
+								.substring(e.start))
+								.replaceAll("\r\n", ""));
+					
+				}
+			});
 		}
 
 		if ((layout & WHO) != 0) {
