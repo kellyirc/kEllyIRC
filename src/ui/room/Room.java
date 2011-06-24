@@ -350,7 +350,7 @@ public class Room extends Composite {
 		}
 		ss.add(p2);
 		if ((layout & WHO) != 0) {
-			ss.add(who, GroupLayout.DEFAULT_SIZE, 122, 122);
+			ss.add(who, 150, 150, 150);
 		}
 		gl_composite.setHorizontalGroup(gl_composite.createParallelGroup(
 				GroupLayout.LEADING).add(ss));
