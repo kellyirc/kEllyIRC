@@ -190,14 +190,12 @@ public class Connection extends Composite {
 				Shell shell = label.getShell ();
 				switch (event.type) {
 					case SWT.MouseDown:
-						Event e = new Event ();
-						e.item = (TreeItem) label.getData ("_TREEITEM");
-						chanList.setSelection((TreeItem)e.item);
-//						chanList.notifyListeners (SWT.MouseDown, e);
-						if (e.item != null && e.item.getData()!=null) 
-							switchComposite((Room) e.item.getData());
+						TreeItem item = (TreeItem) label.getData ("_TREEITEM");
+						chanList.setSelection((TreeItem)item);
+						if (item != null && item.getData()!=null) 
+							switchComposite((Room) item.getData());
 						shell.dispose ();
-						chanList.setFocus();
+						//chanList.setFocus();
 						break;
 					case SWT.MouseExit:
 						shell.dispose ();
@@ -272,6 +270,7 @@ public class Connection extends Composite {
 		ScriptVars.curConnection = c.getBot();
 		c.updateTopic();
 		c.updateWho();
+		c.getInput().setFocus();
 	}
 	
 	public void createRoom(String s, int layout) {
