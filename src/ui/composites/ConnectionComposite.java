@@ -3,16 +3,19 @@ package ui.composites;
 import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -23,8 +26,6 @@ import shared.SWTResourceManager;
 import connection.Connection;
 import connection.ConnectionSettings;
 import connection.Settings;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.GridData;
 
 public class ConnectionComposite extends Composite {
 	private Table table;
@@ -56,13 +57,40 @@ public class ConnectionComposite extends Composite {
 		table.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				enableFields();
-				loadForms((ConnectionSettings)table.getItem(table.getSelectionIndex()).getData());
-				//get rid of any blank items
-				clearBlanks();
-				
+				if(!table.getItem(table.getSelectionIndex()).getText(0).equals("[blank]"))
+				{
+					incompleteAlert.setVisible(false);
+					enableFields();
+					loadForms((ConnectionSettings)table.getItem(table.getSelectionIndex()).getData());
+					//get rid of any blank items
+					clearBlanks();
+				}
 			}
 		});
+		//connect the connection on double click
+		table.addMouseListener(new MouseListener(){
+			public void mouseDoubleClick(MouseEvent e) {
+				TableItem item = table.getItem(new Point(e.x, e.y));
+				if(item != null)
+				{
+					saveAndConnect();
+				}
+			}
+			public void mouseDown(MouseEvent arg0) {}
+			public void mouseUp(MouseEvent arg0) {}
+		});
+		//connect the connection when user presses enter
+		table.addKeyListener(new KeyListener(){
+			public void keyPressed(KeyEvent arg0) {}
+			public void keyReleased(KeyEvent e) {
+				if(e.character == SWT.CR && table.getSelectionCount()==1)
+				{
+					saveAndConnect();
+				}
+			}
+			
+		});
+		
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
 		
@@ -90,6 +118,7 @@ public class ConnectionComposite extends Composite {
 		btnNew.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				incompleteAlert.setVisible(false);
 				clearBlanks();
 				TableItem i = new TableItem(table,SWT.NONE);
 				i.setText(new String[] {"[blank]","[blank]","[blank]"});
@@ -122,25 +151,7 @@ public class ConnectionComposite extends Composite {
 		btnConnect.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if(table.getSelectionCount()==1 && checkIfCompleted())
-				{
-					//save stuff
-					ArrayList<String> autoJoin = new ArrayList<String>();
-					for(String ch:textAutoJoin.getText().split(","))
-						autoJoin.add(ch);
-					ConnectionSettings newCS = new ConnectionSettings(
-							textConnName.getText(), textServer.getText(),
-							textPort.getText(), textServPass.getText(),
-							btnUseSsl.getSelection(), btnConnectOnStartup
-									.getSelection(), textNick.getText(),
-							textNickPass.getText(), textIdent.getText(),
-							autoJoin);
-					table.getItem(table.getSelectionIndex()).setData(newCS);
-					table.getItem(table.getSelectionIndex()).setText(new String[] {newCS.getConnectionName(),newCS.getServer(),newCS.getNickname()});
-					saveTable();
-					ConnectionSettings selected = (ConnectionSettings) table.getItem(table.getSelectionIndex()).getData();
-					new Connection(RoomManager.getMain().getContainer(), SWT.NONE, selected);
-				}
+				saveAndConnect();
 			}
 		});
 		btnConnect.setText("Connect");
@@ -173,7 +184,7 @@ public class ConnectionComposite extends Composite {
 		lblServerPassword.setText("Server Password:");
 		lblServerPassword.setBounds(10, 103, 95, 19);
 		
-		textServPass = new Text(grpConnectionInfo, SWT.BORDER);
+		textServPass = new Text(grpConnectionInfo, SWT.BORDER | SWT.PASSWORD);
 		textServPass.setBounds(111, 100, 76, 19);
 		
 		btnUseSsl = new Button(grpConnectionInfo, SWT.CHECK);
@@ -195,7 +206,7 @@ public class ConnectionComposite extends Composite {
 		lblNickservPassword.setText("Nickserv Password:");
 		lblNickservPassword.setBounds(211, 50, 112, 19);
 		
-		textNickPass = new Text(grpConnectionInfo, SWT.BORDER);
+		textNickPass = new Text(grpConnectionInfo, SWT.BORDER | SWT.PASSWORD);
 		textNickPass.setBounds(341, 50, 76, 19);
 		
 		Label lblIdent = new Label(grpConnectionInfo, SWT.NONE);
@@ -398,5 +409,27 @@ public class ConnectionComposite extends Composite {
 		textNickPass.setText("");
 		textIdent.setText("");
 		textAutoJoin.setText("");
+	}
+	private void saveAndConnect()
+	{
+		if(table.getSelectionCount()==1 && checkIfCompleted())
+		{
+			//save stuff
+			ArrayList<String> autoJoin = new ArrayList<String>();
+			for(String ch:textAutoJoin.getText().split(","))
+				autoJoin.add(ch);
+			ConnectionSettings newCS = new ConnectionSettings(
+					textConnName.getText(), textServer.getText(),
+					textPort.getText(), textServPass.getText(),
+					btnUseSsl.getSelection(), btnConnectOnStartup
+							.getSelection(), textNick.getText(),
+					textNickPass.getText(), textIdent.getText(),
+					autoJoin);
+			table.getItem(table.getSelectionIndex()).setData(newCS);
+			table.getItem(table.getSelectionIndex()).setText(new String[] {newCS.getConnectionName(),newCS.getServer(),newCS.getNickname()});
+			saveTable();
+			ConnectionSettings selected = (ConnectionSettings) table.getItem(table.getSelectionIndex()).getData();
+			new Connection(RoomManager.getMain().getContainer(), SWT.NONE, selected);
+		}
 	}
 }

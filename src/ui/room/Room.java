@@ -259,6 +259,19 @@ public class Room extends Composite {
 					| SWT.MULTI);
 			output.setEditable(false);
 			output.addWordMovementListener(linkClickListener);
+			//if key pressed while output box selected, move to input box
+			output.addKeyListener(new KeyAdapter() {
+				public void keyPressed(KeyEvent e) {
+					//TODO: Make this accept more than letters and digits,
+					//		without letting it put weird characters in
+					if(e.stateMask != SWT.CTRL && e.stateMask != SWT.ALT && e.character != 0 && e.character != SWT.CR)
+					{
+						input.append(""+e.character);
+						input.setSelection(input.getText().length());
+						input.setFocus();
+					}
+				}
+			});
 
 			// set up the input box and it's enter-key listener
 			input = new StyledText(this, SWT.BORDER);
