@@ -1,6 +1,7 @@
+//META<inuse=false>
+//META<author=EllyMent>
 
 function onMessage(event) {
-//cake
 	var nicks = new Array("Elly","EllyMent");
 	var splitmessage = event.getMessage().split(" ");
 	

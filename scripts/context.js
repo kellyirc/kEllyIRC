@@ -1,3 +1,6 @@
+//META<inuse=true>
+//META<author=EllyMent>
+
 function getContextCommands() {
 	return [
 	"Slap","Poke"

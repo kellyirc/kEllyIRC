@@ -27,50 +27,50 @@ public final class ScriptGUI {
 				NotifierSettings.getBackgroundBottomGradient());
 	}
 	
-	public static void window(String title, String message) {
-		NotifierDialog.window(title, message, null, NotifierSettings.getTextColor(),
+	public static void window(String message, String title) {
+		NotifierDialog.window(message, title, null, NotifierSettings.getTextColor(),
 				NotifierSettings.getTitleColor(),
 				NotifierSettings.getBorderColor(),
 				NotifierSettings.getBackgroundTopGradient(),
 				NotifierSettings.getBackgroundBottomGradient());
 	}
 	
-	public static void window(String title, String message,
+	public static void window(String message, String title,
 			NotificationType type) {
-		NotifierDialog.window(title, message, type, NotifierSettings.getTextColor(),
+		NotifierDialog.window(message, title, type, NotifierSettings.getTextColor(),
 				NotifierSettings.getTitleColor(),
 				NotifierSettings.getBorderColor(),
 				NotifierSettings.getBackgroundTopGradient(),
 				NotifierSettings.getBackgroundBottomGradient());
 	}
 	
-	public static void window(String title, String message,
+	public static void window(String message, String title,
 			NotificationType type, Color textColor) {
-		NotifierDialog.window(title, message, type, textColor,
+		NotifierDialog.window(message, title, type, textColor,
 				NotifierSettings.getTitleColor(),
 				NotifierSettings.getBorderColor(),
 				NotifierSettings.getBackgroundTopGradient(),
 				NotifierSettings.getBackgroundBottomGradient());
 	}
 	
-	public static void window(String title, String message,
+	public static void window(String message, String title,
 			NotificationType type, Color textColor, Color titleColor) {
-		NotifierDialog.window(title, message, type, textColor, titleColor,
+		NotifierDialog.window(message, title, type, textColor, titleColor,
 				NotifierSettings.getBorderColor(),
 				NotifierSettings.getBackgroundTopGradient(),
 				NotifierSettings.getBackgroundBottomGradient());
 	}
 	
-	public static void window(String title, String message,
+	public static void window(String message, String title,
 			NotificationType type, Color textColor, Color titleColor, Color borderColor) {
-		NotifierDialog.window(title, message, type, textColor, titleColor, borderColor, 
+		NotifierDialog.window(message, title, type, textColor, titleColor, borderColor, 
 				NotifierSettings.getBackgroundTopGradient(),
 				NotifierSettings.getBackgroundBottomGradient());
 	}
 	
-	public static void window(String title, String message,
+	public static void window(String message, String title,
 			NotificationType type, Color textColor, Color titleColor, Color borderColor, Color topGrad, Color btmGrad) {
-		NotifierDialog.window(title, message, type, textColor, titleColor, borderColor, topGrad, btmGrad);
+		NotifierDialog.window(message, title, type, textColor, titleColor, borderColor, topGrad, btmGrad);
 	}
 
 	//wrapping jface.InputDialog()

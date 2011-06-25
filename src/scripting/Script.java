@@ -114,6 +114,7 @@ public final class Script implements Comparable<Script> {
 		
 		BufferedReader reader = null;
 		if(!reference.exists()) return;
+
 		try {
 			reader = new BufferedReader(new FileReader(reference));
 			String text = null;
@@ -132,6 +133,9 @@ public final class Script implements Comparable<Script> {
 	
 	//check line-by-line for a function name
 	private void parseFunction(String text) {
+		if(text.toLowerCase().contains("meta")) {
+			parseMeta(text);
+		}
 		switch(scriptType){
 		case JAVASCRIPT:
 			if(!text.contains("function ")) return;
@@ -149,6 +153,14 @@ public final class Script implements Comparable<Script> {
 			//def function(var) 
 			functions.add(rbarray[1].trim());
 			break;
+		}
+	}
+	
+	private void parseMeta(String text){
+		//META<inuse=false>
+		String[] cleanMeta = text.replaceAll("[<>]", " ").split(" ")[1].split("=");
+		if(cleanMeta[0].equals("inuse")){
+			this.inUse = Boolean.parseBoolean(cleanMeta[1]);
 		}
 	}
 	

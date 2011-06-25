@@ -1,3 +1,5 @@
+//META<inuse=false>
+//META<author=EllyMent>
 
 function play(connection, sound_path) {
 
@@ -8,9 +10,7 @@ function play(connection, sound_path) {
 	connection.sendMessage(global.currentChannel(), "Now playing: "+sound.currentSound().getName());
 
 }
-//cake
-/*
-*/
+
 function stop(connection, args) {
 	util.stopSound();
 }

@@ -48,7 +48,7 @@ public class NotifierDialog {
 
 	private static Shell _shell;
 
-	public static void window(final String title, final String message,
+	public static void window(final String message, final String title,
 			final NotificationType type, final Color textColor,
 			final Color titleColor, final Color borderColor,
 			final Color topGradient, final Color btmGradient) {

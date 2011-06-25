@@ -1,3 +1,5 @@
+//META<inuse=true>
+//META<author=EllyMent>
 
 //join a channel (password optional)
 function join(connection, sargs) {
