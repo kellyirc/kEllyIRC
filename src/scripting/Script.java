@@ -52,7 +52,8 @@ public final class Script implements Comparable<Script> {
 	private String rbBase = "require 'java'\n";
 	
 	private String jsBase = "importClass(org.eclipse.swt.SWT);\n" +
-							"importClass(Packages.hexapixel.notifier.NotificationType);\n";
+							"importClass(Packages.hexapixel.notifier.NotificationType);\n" +
+							"importClass(Packages.org.pircbotx.Colors);\n";
 	
 	public Script(File f) {
 		this.reference = f;
