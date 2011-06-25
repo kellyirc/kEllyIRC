@@ -1,7 +1,9 @@
 package ui.room;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.TreeSet;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,10 +15,12 @@ import org.eclipse.swt.custom.MovementEvent;
 import org.eclipse.swt.custom.MovementListener;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.program.Program;
@@ -277,6 +281,16 @@ public class Room extends Composite {
 
 			// set up the input box and it's enter-key listener
 			input = new StyledText(this, SWT.BORDER);
+			
+			input.addVerifyKeyListener(new VerifyKeyListener() {
+				@Override
+				public void verifyKey(VerifyEvent e) {
+					if(e.stateMask == SWT.CTRL && //Ignore adding an indent when hitting
+							(e.keyCode == 'I' || e.keyCode == 'i')) //Ctrl + I
+						e.doit = false;
+				}
+			});
+			
 			input.addKeyListener(new KeyAdapter() {
 				@Override
 				public void keyPressed(KeyEvent e) {
@@ -293,21 +307,20 @@ public class Room extends Composite {
 										
 					if(e.stateMask == SWT.CTRL) {
 						switch(e.keyCode) {
-						//KR's formatting stuff
-							case 'O': case 'o': //Normal (kills all formatting)
+						//Key combinations
+							case 'O': case 'o': //Insert Normal (kills all formatting)
 								insertCode("\u000f"); break;
-							case 'B': case 'b': //Bold
+							case 'B': case 'b': //Insert Bold
 								insertCode("\u0002"); break;
-							case 'U': case 'u': //Underlin
+							case 'U': case 'u': //Insert Underlin
 								insertCode("\u001f"); break;
-							case 'R': case 'r': //Italic
+							case 'I': case 'i': //Insert Italic
 								insertCode("\u0016"); break; 
-							case 'K': case 'k': //Color
+							case 'K': case 'k': //Insert Color
 								insertCode("\u0003"); break;
 								
-						//key combinations
 							case 'A': case 'a': //Select all
-								input.selectAll();
+								input.selectAll(); break;
 						}
 					}
 				}
@@ -474,11 +487,20 @@ public class Room extends Composite {
 				getWho().removeAll();
 		
 				Channel chan = c.getCChannel().getChannel();
-		
+				
+				Comparator<User> nickOrder = new Comparator<User>() {
+					@Override
+					public int compare(User u1, User u2) {;
+						return u1.getNick().compareTo(u2.getNick());
+					}
+				};
+				
 				if (chan.getOwners().size() > 0) {
 					TreeItem t = new TreeItem(c.getWho(), SWT.NONE);
 					t.setText("Owners");
-					for (User u : new TreeSet<User>(chan.getOwners())) {
+					List<User> users = new LinkedList<User>(chan.getOwners());
+					Collections.sort(users,nickOrder);
+					for (User u : users) {
 						UserTreeItem i = new UserTreeItem(t, SWT.NONE, u,
 								c.getCChannel());
 						i.getTree().setText(u.getNick());
@@ -488,7 +510,9 @@ public class Room extends Composite {
 				if (chan.getSuperOps().size() > 0) {
 					TreeItem t = new TreeItem(c.getWho(), SWT.NONE);
 					t.setText("Super-Ops");
-					for (User u : new TreeSet<User>(chan.getSuperOps())) {
+					List<User> users = new LinkedList<User>(chan.getSuperOps());
+					Collections.sort(users,nickOrder);
+					for (User u : users) {
 						UserTreeItem i = new UserTreeItem(t, SWT.NONE, u,
 								c.getCChannel());
 						i.getTree().setText(u.getNick());
@@ -498,7 +522,9 @@ public class Room extends Composite {
 				if (chan.getOps().size() > 0) {
 					TreeItem t = new TreeItem(c.getWho(), SWT.NONE);
 					t.setText("Ops");
-					for (User u : new TreeSet<User>(chan.getOps())) {
+					List<User> users = new LinkedList<User>(chan.getOps());
+					Collections.sort(users,nickOrder);
+					for (User u : users) {
 						UserTreeItem i = new UserTreeItem(t, SWT.NONE, u,
 								c.getCChannel());
 						i.getTree().setText(u.getNick());
@@ -508,7 +534,9 @@ public class Room extends Composite {
 				if (chan.getHalfOps().size() > 0) {
 					TreeItem t = new TreeItem(c.getWho(), SWT.NONE);
 					t.setText("Half-Ops");
-					for (User u : new TreeSet<User>(chan.getHalfOps())) {
+					List<User> users = new LinkedList<User>(chan.getHalfOps());
+					Collections.sort(users,nickOrder);
+					for (User u : users) {
 						UserTreeItem i = new UserTreeItem(t, SWT.NONE, u,
 								c.getCChannel());
 						i.getTree().setText(u.getNick());
@@ -518,7 +546,9 @@ public class Room extends Composite {
 				if (chan.getVoices().size() > 0) {
 					TreeItem t = new TreeItem(c.getWho(), SWT.NONE);
 					t.setText("Voices");
-					for (User u : new TreeSet<User>(chan.getVoices())) {
+					List<User> users = new LinkedList<User>(chan.getVoices());
+					Collections.sort(users,nickOrder);
+					for (User u : users) {
 						UserTreeItem i = new UserTreeItem(t, SWT.NONE, u,
 								c.getCChannel());
 						i.getTree().setText(u.getNick());
@@ -529,7 +559,9 @@ public class Room extends Composite {
 				if (chan.getNormalUsers().size() > 0) {
 					TreeItem t = new TreeItem(c.getWho(), SWT.NONE);
 					t.setText("Normal");
-					for (User u : new TreeSet<User>(chan.getNormalUsers())) {
+					List<User> users = new LinkedList<User>(chan.getNormalUsers());
+					Collections.sort(users,nickOrder);
+					for (User u : users) {
 						UserTreeItem i = new UserTreeItem(t, SWT.NONE, u,
 								c.getCChannel());
 						i.getTree().setText(u.getNick());

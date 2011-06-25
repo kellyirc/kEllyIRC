@@ -92,7 +92,7 @@ public class RoomManager {
 						case Message.PM:
 						case Message.NOTICE: r.updateLastMessage("<" + m.getSender() + "> " + strippedLine);
 						case Message.CONSOLE: r.getOutput().append("<" + m.getSender() + "> " + strippedLine); break;
-						case Message.ACTION: r.getOutput().append("***" + m.getSender() + " " + strippedLine); break;
+						case Message.ACTION: r.getOutput().append("*** " + m.getSender() + " " + strippedLine); break;
 						
 						}
 						

@@ -61,6 +61,7 @@ public class Connection extends Composite {
 			bot.setAutoNickChange(true);
 			bot.setName(cs.getNickname());
 			bot.setLogin(cs.getIdent());
+			bot.setMessageDelay(0);
 			
 			ListenerManager<PircBotX> l = bot.getListenerManager();
 			l.addListener(this);
