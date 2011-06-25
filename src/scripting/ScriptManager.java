@@ -31,7 +31,7 @@ public final class ScriptManager {
 	
 	public static final String[] jsKeywords = {"break","case","catch","continue","default","do",
 			"else","false","finally","for","if","new","null","return","switch",
-			"true","try","while","function","var","gui","util","in","global","print","println","sound"
+			"true","try","while","function","var","gui","util","in","global","print","println","sound","importPackage","importClass"
 	};
 	
 	public static final String[] rbKeywords = {"alias","and","BEGIN","break","case","class","def","defined",

@@ -112,7 +112,7 @@ public class Connection extends Composite {
 					} catch (NumberFormatException e) {
 						Logger dLog = Logger.getLogger("log.error");
 						dLog.error("Improper port, not a number", e);
-						NSAlertBox alert = new NSAlertBox("Connection failed", "The port was not a number. Please use a number 0-65535", SWT.ICON_ERROR, SWT.OK);
+						new NSAlertBox("Connection failed", "The port was not a number. Please use a number 0-65535", SWT.ICON_ERROR, SWT.OK);
 					} catch (NickAlreadyInUseException e) {
 					} catch (IOException e) {
 						Logger dLog = Logger.getLogger("log.error");

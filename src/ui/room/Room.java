@@ -282,6 +282,7 @@ public class Room extends Composite {
 				public void keyPressed(KeyEvent e) {
 					// CR == Carriage Return == Enter
 					if (e.character == SWT.CR) {
+						if(input.getText().equals("")) return;
 						if (cChannel != null && serverConnection != null) {
 							serverConnection.getBot().sendMessage(
 									channelName,
