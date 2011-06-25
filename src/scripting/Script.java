@@ -55,7 +55,7 @@ public final class Script implements Comparable<Script> {
 							"importClass(Packages.hexapixel.notifier.NotificationType);\n" +
 							"importClass(Packages.org.pircbotx.Colors);\n" +
 							"importClass(java.lang.Thread);\n" +
-							"importClass(Packages.connection.kEllyBot);\n" +
+							"importClass(Packages.connection.KEllyBot);\n" +
 							"importPackage(org.pircbotx);\n" +
 							"importPackage(java.util);\n" +
 							"importPackage(java.lang);\n";
