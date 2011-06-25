@@ -126,6 +126,8 @@ public final class ScriptFunctions {
 	}
 
 	public final boolean checkArgs(String s, int args) {
+		if(s.length()==0)
+			return false;
 		return s.split(" ").length >= args;
 	}
 
