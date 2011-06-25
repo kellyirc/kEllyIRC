@@ -146,6 +146,14 @@ public final class ScriptFunctions {
 				sender, ScriptVars.curChannel.getName(), Message.CONSOLE));
 	}
 	
+	public final void invoke(String script, String function, String args){
+		for(Script s : ScriptManager.scripts){
+			if(s.getFunctions().contains(function)){
+				s.invoke(function, args);
+			}
+		}
+	}
+	
 	public final boolean playSound(String path){
 		File f = new File(path);
 		if(!f.exists()) return false;
