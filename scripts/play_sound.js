@@ -1,4 +1,4 @@
-//META<inuse=false>
+//META<inuse=true>
 //META<author=EllyMent>
 
 function play(connection, sound_path) {
@@ -13,4 +13,8 @@ function play(connection, sound_path) {
 
 function stop(connection, args) {
 	util.stopSound();
+}
+
+function pause(connection, args) {
+	util.pauseSound();
 }

@@ -13,6 +13,7 @@ import org.pircbotx.Channel;
 import org.pircbotx.User;
 import org.wishray.copernicus.NeptuneCore;
 import org.wishray.copernicus.Sound;
+import org.wishray.copernicus.SoundReference;
 
 import shared.Message;
 import shared.RoomManager;
@@ -165,10 +166,24 @@ public final class ScriptFunctions {
 		if(SoundData.curSound.GetError() != null ) return false;
 		
 		SoundData.curId = NeptuneCore.PlaySound(SoundData.curSound);
+		SoundData.soundRef = new SoundReference(SoundData.curId);
+		SoundData.isPaused = false;
 		
 		return true;
 	}
 	
 	public final void stopSound() {
+		if(SoundData.soundRef == null) return;
+		SoundData.soundRef.Stop();
 	}
+	
+	public final void pauseSound() {
+		if(SoundData.soundRef == null) return;
+		if(SoundData.isPaused){
+			SoundData.soundRef.Play();
+		} else {
+			SoundData.soundRef.Pause();
+		}
+	}
+	
 }
