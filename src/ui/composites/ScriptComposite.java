@@ -190,7 +190,9 @@ public class ScriptComposite extends Composite {
 						if (item != null) {
 							Script s = (Script) item.getData();
 							
-							createNewTab(s);
+							if(!createNewTab(s)) {
+								return;
+							}
 							curTextBox.setText(s.getScript());
 							curTextBox.addExtendedModifyListener(new ExtendedModifyListener(){
 
@@ -207,11 +209,11 @@ public class ScriptComposite extends Composite {
 						}
 					}
 
-					private CTabItem createNewTab(Script s) {
+					private boolean createNewTab(Script s) {
 						for(CTabItem c : tabs.getItems()){
 							if(c.getData().equals(s)){
-								changeTab(c);
-								return c;
+								//changeTab(c);
+								return false;
 							}
 						}
 						CTabItem newItem = new CTabItem(tabs, SWT.CLOSE);
@@ -272,7 +274,7 @@ public class ScriptComposite extends Composite {
 							}
 						});
 						enableTopBar(tltmSave, tltmCut, tltmCopy, tltmPaste);
-						return newItem;
+						return true;
 					}
 				});
 		checkboxTreeViewer.addCheckStateListener(new ICheckStateListener() {
@@ -473,5 +475,6 @@ public class ScriptComposite extends Composite {
 
 	private void changeTab(CTabItem c) {
 		tabs.setSelection(c);
+		
 	}
 }

@@ -20,7 +20,6 @@ public class Initializer {
 	 * @param args
 	 */
 	public static void main(String args[]) {
-		
 		checkVersion();
 		//TODO: load basic UI separate from connection so the UI shows right away
 		//TODO: first time setup stuff if properties file not found

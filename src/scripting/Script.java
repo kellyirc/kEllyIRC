@@ -42,6 +42,8 @@ public final class Script implements Comparable<Script> {
 	@Getter
 	private ConcurrentSkipListSet<String> descriptFunctions = new ConcurrentSkipListSet<String>();
 	
+	
+	private static final String nl = System.getProperty("line.separator");
 	private ScriptEngineManager manager = new ScriptEngineManager();
 	private ScriptEngine jsEngine = manager.getEngineByName("JavaScript");
 	private ScriptEngine rbEngine = manager.getEngineByName("jruby");
@@ -49,16 +51,16 @@ public final class Script implements Comparable<Script> {
 	private Invocable rbInvocable = (Invocable) rbEngine;
 	private Bindings bindings = jsEngine.getBindings(ScriptContext.ENGINE_SCOPE);
 	
-	private String rbBase = "require 'java'\n";
+	private String rbBase = "require \"java\""+nl;
 	
-	private String jsBase = "importClass(org.eclipse.swt.SWT);\n" +
-							"importClass(Packages.hexapixel.notifier.NotificationType);\n" +
-							"importClass(Packages.org.pircbotx.Colors);\n" +
-							"importClass(java.lang.Thread);\n" +
-							"importClass(Packages.connection.KEllyBot);\n" +
-							"importPackage(org.pircbotx);\n" +
-							"importPackage(java.util);\n" +
-							"importPackage(java.lang);\n";
+	private String jsBase = "importClass(org.eclipse.swt.SWT);" +nl+
+							"importClass(Packages.hexapixel.notifier.NotificationType);" +nl+
+							"importClass(Packages.org.pircbotx.Colors);" +nl+
+							"importClass(java.lang.Thread);" +nl+
+							"importClass(Packages.connection.KEllyBot);" +nl+
+							"importPackage(org.pircbotx);" +nl+
+							"importPackage(java.util);" +nl+
+							"importPackage(java.lang);" +nl;
 	
 	public Script(File f) {
 		this.reference = f;
@@ -89,7 +91,7 @@ public final class Script implements Comparable<Script> {
 				jsEngine.eval(jsBase+script);
 				break;
 			case RUBY:
-		        rbEngine.eval(rbBase+script);
+		        rbEngine.eval(rbBase+"puts 'hello world'");
 		        break;
 			}
 		} catch (ScriptException e) {
