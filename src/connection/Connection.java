@@ -26,7 +26,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.wb.swt.layout.grouplayout.GroupLayout;
@@ -138,6 +137,7 @@ public class Connection extends Composite {
 	@Getter 
 	private ConnectionSettings cs;
 	private Tree chanList;
+	@Getter
 	private LinkedList<Room> rooms = new LinkedList<Room>();
 	
 	/**
@@ -184,6 +184,7 @@ public class Connection extends Composite {
 				}
 			}
 		});	
+		
 		//FAKE TOOLTIP STUFF
 		final Listener labelListener = new Listener () {
 			public void handleEvent (Event event) {

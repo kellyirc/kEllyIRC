@@ -20,8 +20,6 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
@@ -218,6 +216,10 @@ public class Room extends Composite {
 
 	private int roomLayout;
 
+	//first item is the newest
+	private LinkedList<String> lastMessages;
+	private int listIndex;
+	
 	// variables used with the tool tip
 	private int userCount;
 	private String lastMessage;
@@ -232,6 +234,8 @@ public class Room extends Composite {
 		this.cChannel = new CustomChannel(tree, channelstr, newConnection,
 				channel, this);
 		roomLayout = layout;
+		lastMessages = new LinkedList<String>();
+		listIndex = -1;
 		instantiate(layout);
 	}
 
@@ -305,8 +309,26 @@ public class Room extends Composite {
 							serverConnection.getBot().sendMessage(
 									channelName,
 									input.getText().replaceAll("\r\n", ""));
+							lastMessages.addFirst(input.getText());
+							listIndex = -1;
 						}
 						input.setText("");
+						
+					}
+					if(e.keyCode == SWT.ARROW_UP && !lastMessage.isEmpty())
+					{
+						listIndex++;
+						if(listIndex>=lastMessages.size())
+							listIndex=0;
+						input.setText(lastMessages.get(listIndex));
+					}
+					if(e.keyCode == SWT.ARROW_DOWN && !lastMessage.isEmpty())
+					{
+						listIndex--;
+						if(listIndex<0)
+							listIndex = lastMessages.size()-1;
+						input.setText(lastMessages.get(listIndex));
+						
 					}
 										
 					if(e.stateMask == SWT.CTRL) {
