@@ -20,6 +20,8 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
@@ -42,6 +44,7 @@ import scripting.Script;
 import scripting.ScriptManager;
 import shared.ControlCodeParser;
 import shared.RoomManager;
+import shared.SWTResourceManager;
 import connection.Connection;
 import connection.KEllyBot;
 
@@ -263,6 +266,7 @@ public class Room extends Composite {
 			// set up the output window
 			output = new StyledText(this, SWT.BORDER | SWT.V_SCROLL | SWT.WRAP
 					| SWT.MULTI);
+			output.setFont(SWTResourceManager.getFont("Courier New", 9,	SWT.NORMAL));
 			output.setEditable(false);
 			output.addWordMovementListener(linkClickListener);
 			//if key pressed while output box selected, move to input box
@@ -281,7 +285,7 @@ public class Room extends Composite {
 
 			// set up the input box and it's enter-key listener
 			input = new StyledText(this, SWT.BORDER);
-			
+			input.setFont(SWTResourceManager.getFont("Courier New", 9,	SWT.NORMAL));
 			input.addVerifyKeyListener(new VerifyKeyListener() {
 				@Override
 				public void verifyKey(VerifyEvent e) {
@@ -347,6 +351,25 @@ public class Room extends Composite {
 			});
 		}
 
+//attempt to pass on the Ctrl+Tab and Ctrl+Shift+Tab traversal to the channel list
+//BUH THIS DOESN'T WORK SOMEONE ELSE TRY IT.
+//		TraverseListener tabSwitcher = new TraverseListener(){
+//			public void keyTraversed(TraverseEvent e) {
+//					if(e.detail == SWT.TRAVERSE_TAB_NEXT)
+//					{
+//						Tree chanList = serverConnection.getChanList();
+//						chanList.traverse(SWT.TRAVERSE_ARROW_NEXT);
+//					}
+//					else if(e.detail == SWT.TRAVERSE_TAB_PREVIOUS)
+//					{
+//						Tree chanList = serverConnection.getChanList();
+//						chanList.traverse(SWT.TRAVERSE_ARROW_PREVIOUS);
+//					}
+//			}}};
+//			input.addTraverseListener(tabSwitcher);
+//			output.addTraverseListener(tabSwitcher);
+		
+		
 		if ((layout & WHO) != 0) {
 			who = new Tree(this, SWT.BORDER);
 			updateWhoListener();
