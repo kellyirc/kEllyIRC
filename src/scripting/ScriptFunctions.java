@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Random;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.FileDialog;
 import org.pircbotx.Channel;
 import org.pircbotx.User;
 import org.wishray.copernicus.NeptuneCore;
@@ -17,6 +19,7 @@ import org.wishray.copernicus.SoundReference;
 
 import shared.Message;
 import shared.RoomManager;
+import connection.KEllyBot;
 
 public final class ScriptFunctions {
 
@@ -186,4 +189,13 @@ public final class ScriptFunctions {
 		}
 	}
 	
+	public final String openFileDialog()
+	{
+		return new FileDialog(RoomManager.getMain().getShell(),SWT.OPEN).open();
+	}
+	
+	public final String saveFileDialog()
+	{
+		return new FileDialog(RoomManager.getMain().getShell(),SWT.SAVE).open();
+	}
 }

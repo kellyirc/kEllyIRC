@@ -338,3 +338,29 @@ function mode(connection, sargs) {
 		connection.setMode(global.currentChannel(), sargs);
 	}
 }
+
+
+function sendFile(filename, nick, timeout)
+{
+	importClass(java.io.File);
+	var f = new File(filename);
+	var u = global.currentConnection().getUser(nick);
+	if(f.exists() && f.isFile())
+		global.currentConnection().dccSendFile(f, u, Integer.parseInt(timeout));
+	else
+		util.error("Your file either does not exist, or is not a file");
+}
+//send a file via DCC. Usage: /dccSend [filename] [user] [timeout]
+//timeout is optional
+function dccSend(connection, sargs)
+{
+//TODO: make the invokes work
+	if(util.checkArgs(sargs, 3)) {
+		var args = util.getArgs(sargs, 3);
+		sendFile(args[0], args[1], args[3]);
+	} else if(util.checkArgs(sargs, 2)) {
+		var args = util.getArgs(sargs, 2);
+		sendFile(args[0], args[1], 30);
+	}
+}
+
