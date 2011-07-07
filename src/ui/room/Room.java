@@ -40,6 +40,7 @@ import org.pircbotx.User;
 
 import scripting.Script;
 import scripting.ScriptManager;
+import scripting.ScriptVars;
 import shared.ControlCodeParser;
 import shared.RoomManager;
 import shared.SWTResourceManager;
@@ -207,6 +208,7 @@ public class Room extends Composite {
 	private CustomChannel cChannel;
 	private Connection serverConnection;
 	private KEllyBot bot;
+	private TreeItem chanListItem;
 
 	// make clickable links by changing the style and the data of the individual
 	// messages
@@ -216,6 +218,10 @@ public class Room extends Composite {
 
 	private int roomLayout;
 
+	//determines color of TreeItem in the channel list
+	private int status;
+	public static final int NORMAL = 0, NEW_IRC_INFO = 1, NEW_MESSAGE = 2, NAME_CALLED = 3;
+	
 	//first item is the newest
 	private LinkedList<String> lastMessages;
 	private int listIndex;
@@ -236,6 +242,17 @@ public class Room extends Composite {
 		roomLayout = layout;
 		lastMessages = new LinkedList<String>();
 		listIndex = -1;
+		
+		for(TreeItem i:tree.getItems())
+		{
+			if(i.getData()==this)
+			{
+				chanListItem = i;
+				break;
+			}
+		}
+		
+		changeStatus(NORMAL);
 		instantiate(layout);
 	}
 
@@ -393,7 +410,7 @@ public class Room extends Composite {
 		
 		
 		if ((layout & WHO) != 0) {
-			who = new Tree(this, SWT.BORDER);
+			who = new Tree(this, SWT.BORDER | SWT.V_SCROLL);
 			updateWhoListener();
 			who.addListener(SWT.MouseDoubleClick, new Listener() {
 
@@ -616,4 +633,28 @@ public class Room extends Composite {
 			}
 		});
 	}
+	
+	public void changeStatus(int status)
+	{
+		//if currently in focus, change back to normal;
+		if(serverConnection.getScrolledComposite().getContent()==this)
+			status = NORMAL;
+		switch(status)
+		{
+		case NORMAL:
+			chanListItem.setForeground(getDisplay().getSystemColor(SWT.COLOR_BLACK)); break;
+		case NEW_IRC_INFO:
+			if(this.status < status) // if the new status is higher priority
+				chanListItem.setForeground(getDisplay().getSystemColor(SWT.COLOR_DARK_MAGENTA)); break;
+		case NEW_MESSAGE:
+			if(this.status < status)
+				chanListItem.setForeground(getDisplay().getSystemColor(SWT.COLOR_RED)); break;
+		case NAME_CALLED:
+			if(this.status < status)
+				chanListItem.setForeground(getDisplay().getSystemColor(SWT.COLOR_GREEN)); break;
+		}
+		
+		this.status = status;
+	}
+	
 }

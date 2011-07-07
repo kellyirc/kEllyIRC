@@ -275,6 +275,7 @@ public class Connection extends Composite {
 		scrolledComposite.setContent(c);
 		ScriptVars.curChannel = c.getCChannel().getChannel();
 		ScriptVars.curConnection = c.getBot();
+		c.changeStatus(Room.NORMAL);
 		c.updateTopic();
 		c.updateWho();
 		c.getInput().setFocus();

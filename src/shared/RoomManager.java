@@ -89,10 +89,41 @@ public class RoomManager {
 						{
 						//TODO: Make PM and NOTICE and CONSOLE types do what they're supposed to do.
 						case Message.MSG:
+							r.updateLastMessage("<" + m.getSender() + "> " + strippedLine);
+							r.getOutput().append("<" + m.getSender() + "> " + strippedLine); 
+							if(strippedLine.toLowerCase().contains(m.getBot().getNick().toLowerCase()))
+								r.changeStatus(Room.NAME_CALLED);
+							else
+								r.changeStatus(Room.NEW_MESSAGE);
+							break;
 						case Message.PM:
-						case Message.NOTICE: r.updateLastMessage("<" + m.getSender() + "> " + strippedLine);
-						case Message.CONSOLE: r.getOutput().append("<" + m.getSender() + "> " + strippedLine); break;
-						case Message.ACTION: r.getOutput().append("*** " + m.getSender() + " " + strippedLine); break;
+							r.updateLastMessage("<" + m.getSender() + "> " + strippedLine);
+							r.getOutput().append("<" + m.getSender() + "> " + strippedLine);
+							if(strippedLine.toLowerCase().contains(m.getBot().getNick().toLowerCase()))
+								r.changeStatus(Room.NAME_CALLED);
+							else
+								r.changeStatus(Room.NEW_MESSAGE);
+							break;
+						case Message.NOTICE: 
+							r.updateLastMessage("<" + m.getSender() + "> " + strippedLine);
+							r.getOutput().append("<" + m.getSender() + "> " + strippedLine);
+							if(strippedLine.toLowerCase().contains(m.getBot().getNick().toLowerCase()))
+								r.changeStatus(Room.NAME_CALLED);
+							else
+								r.changeStatus(Room.NEW_MESSAGE);
+							break;
+						case Message.CONSOLE: 
+							r.getOutput().append("<" + m.getSender() + "> " + strippedLine);
+							r.changeStatus(Room.NEW_IRC_INFO);
+							break;
+						case Message.ACTION:
+							r.updateLastMessage("<" + m.getSender() + "> " + strippedLine);
+							r.getOutput().append("*** " + m.getSender() + " " + strippedLine);
+							if(strippedLine.toLowerCase().contains(m.getBot().getNick().toLowerCase()))
+								r.changeStatus(Room.NAME_CALLED);
+							else
+								r.changeStatus(Room.NEW_MESSAGE);
+							break;
 						
 						}
 						
@@ -125,4 +156,5 @@ public class RoomManager {
 			});
 		}
 	}
+	
 }
