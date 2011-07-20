@@ -2,6 +2,7 @@ package ui.room;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -23,6 +24,7 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
@@ -40,12 +42,14 @@ import org.pircbotx.User;
 
 import scripting.Script;
 import scripting.ScriptManager;
-import scripting.ScriptVars;
 import shared.ControlCodeParser;
+import shared.Customs;
+import shared.Message;
 import shared.RoomManager;
 import shared.SWTResourceManager;
 import connection.Connection;
 import connection.KEllyBot;
+import connection.Settings;
 
 
 @Data
@@ -217,10 +221,12 @@ public class Room extends Composite {
 	private Tree who;
 
 	private int roomLayout;
+	
+	private Customs customs;
 
 	//determines color of TreeItem in the channel list
 	private int status;
-	public static final int NORMAL = 0, NEW_IRC_INFO = 1, NEW_MESSAGE = 2, NAME_CALLED = 3;
+	public static final int NORMAL = 0, NEW_IRC_EVENT = 1, NEW_MESSAGE = 2, NAME_CALLED = 3;
 	
 	//first item is the newest
 	private LinkedList<String> lastMessages;
@@ -239,6 +245,7 @@ public class Room extends Composite {
 		this.setBot(newConnection.getBot());
 		this.cChannel = new CustomChannel(tree, channelstr, newConnection,
 				channel, this);
+		customs = new Customs();
 		roomLayout = layout;
 		lastMessages = new LinkedList<String>();
 		listIndex = -1;
@@ -288,6 +295,8 @@ public class Room extends Composite {
 			output = new StyledText(this, SWT.BORDER | SWT.V_SCROLL | SWT.WRAP
 					| SWT.MULTI);
 			output.setFont(SWTResourceManager.getFont("Courier New", 9,	SWT.NORMAL));
+			output.setForeground(customs.colors.get(Settings.getSettings().getOutputColors().get(Message.MSG)));
+			output.setBackground(customs.colors.get(Settings.getSettings().getOutputColors().get(Settings.BACKGROUND)));
 			output.setEditable(false);
 			output.addWordMovementListener(linkClickListener);
 			//if key pressed while output box selected, move to input box
@@ -307,6 +316,8 @@ public class Room extends Composite {
 			// set up the input box and it's enter-key listener
 			input = new StyledText(this, SWT.BORDER);
 			input.setFont(SWTResourceManager.getFont("Courier New", 9,	SWT.NORMAL));
+			input.setForeground(customs.colors.get(Settings.getSettings().getOutputColors().get(Message.MSG)));
+			input.setBackground(customs.colors.get(Settings.getSettings().getOutputColors().get(Settings.BACKGROUND)));
 			input.addVerifyKeyListener(new VerifyKeyListener() {
 				@Override
 				public void verifyKey(VerifyEvent e) {
@@ -636,23 +647,25 @@ public class Room extends Composite {
 	
 	public void changeStatus(int status)
 	{
+		HashMap<Integer,RGB> roomColors = Settings.getSettings().getRoomStatusColors();
 		//if currently in focus, change back to normal;
 		if(serverConnection.getScrolledComposite().getContent()==this)
 			status = NORMAL;
-		switch(status)
-		{
-		case NORMAL:
-			chanListItem.setForeground(getDisplay().getSystemColor(SWT.COLOR_BLACK)); break;
-		case NEW_IRC_INFO:
-			if(this.status < status) // if the new status is higher priority
-				chanListItem.setForeground(getDisplay().getSystemColor(SWT.COLOR_DARK_MAGENTA)); break;
-		case NEW_MESSAGE:
-			if(this.status < status)
-				chanListItem.setForeground(getDisplay().getSystemColor(SWT.COLOR_RED)); break;
-		case NAME_CALLED:
-			if(this.status < status)
-				chanListItem.setForeground(getDisplay().getSystemColor(SWT.COLOR_GREEN)); break;
-		}
+//		switch(status)
+//		{
+//		case NORMAL:
+//			chanListItem.setForeground(getDisplay().getSystemColor(SWT.COLOR_BLACK)); break;
+//		case NEW_IRC_EVENT:
+//			if(this.status < status) // if the new status is higher priority
+//				chanListItem.setForeground(getDisplay().getSystemColor(SWT.COLOR_DARK_MAGENTA)); break;
+//		case NEW_MESSAGE:
+//			if(this.status < status)
+//				chanListItem.setForeground(getDisplay().getSystemColor(SWT.COLOR_RED)); break;
+//		case NAME_CALLED:
+//			if(this.status < status)
+//				chanListItem.setForeground(getDisplay().getSystemColor(SWT.COLOR_GREEN)); break;
+//		}
+		chanListItem.setForeground(SWTResourceManager.getColor(roomColors.get(status)));
 		
 		this.status = status;
 	}

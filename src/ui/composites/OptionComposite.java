@@ -51,6 +51,10 @@ public class OptionComposite extends Composite {
 		setLayout(groupLayout);
 		
 		TreeItem treeItem = new TreeItem(tree, SWT.NONE);
+		treeItem.setText("Colors");
+		treeItem.setData("ui.composites.ColorComposite");
+		
+		treeItem = new TreeItem(tree, SWT.NONE);
 		treeItem.setText("Connections");
 		treeItem.setData("ui.composites.ConnectionComposite");
 		

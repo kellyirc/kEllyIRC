@@ -26,7 +26,7 @@ public class RoomManager {
 	@Getter
 	private static MainWindow main;
 
-	public static Customs colorset;
+	public static Customs colorset = new Customs();
 
 	public static void enQueue(Message mes) {
 		filterMessage(mes);
@@ -79,7 +79,21 @@ public class RoomManager {
 					
 					if(Settings.getSettings().getNicksIgnored().contains(m.getSender()))
 							return;
-					String strippedLine = Colors.removeFormattingAndColors(m.getContent());
+					
+					//use this so the nick tags <MyNick> get colored too. 
+					String msgWithNick;
+					if(m.getType() == Message.ACTION)
+						msgWithNick = "*** " + m.getSender() + " " + m.getContent();
+					else
+						msgWithNick = "<" + m.getSender() + "> " + m.getContent();
+					
+					//apply color for each type of message, except MSG because that's already default
+					if(m.getType() != Message.MSG)
+					{
+						String colorStr = Settings.getSettings().getOutputColors().get(m.getType());
+						msgWithNick = colorset.ircColorsStr.get(colorStr) + msgWithNick;
+					}
+					String strippedLine = Colors.removeFormattingAndColors(msgWithNick);
 			
 					if (r.getOutput() != null) {
 						int scrollPos = r.getOutput().getTopPixel();
@@ -89,36 +103,36 @@ public class RoomManager {
 						{
 						//TODO: Make PM and NOTICE and CONSOLE types do what they're supposed to do.
 						case Message.MSG:
-							r.updateLastMessage("<" + m.getSender() + "> " + strippedLine);
-							r.getOutput().append("<" + m.getSender() + "> " + strippedLine); 
+							r.updateLastMessage(strippedLine);
+							r.getOutput().append(strippedLine); 
 							if(strippedLine.toLowerCase().contains(m.getBot().getNick().toLowerCase()))
 								r.changeStatus(Room.NAME_CALLED);
 							else
 								r.changeStatus(Room.NEW_MESSAGE);
 							break;
 						case Message.PM:
-							r.updateLastMessage("<" + m.getSender() + "> " + strippedLine);
-							r.getOutput().append("<" + m.getSender() + "> " + strippedLine);
+							r.updateLastMessage(strippedLine);
+							r.getOutput().append(strippedLine);
 							if(strippedLine.toLowerCase().contains(m.getBot().getNick().toLowerCase()))
 								r.changeStatus(Room.NAME_CALLED);
 							else
 								r.changeStatus(Room.NEW_MESSAGE);
 							break;
 						case Message.NOTICE: 
-							r.updateLastMessage("<" + m.getSender() + "> " + strippedLine);
-							r.getOutput().append("<" + m.getSender() + "> " + strippedLine);
+							r.updateLastMessage(strippedLine);
+							r.getOutput().append(strippedLine);
 							if(strippedLine.toLowerCase().contains(m.getBot().getNick().toLowerCase()))
 								r.changeStatus(Room.NAME_CALLED);
 							else
 								r.changeStatus(Room.NEW_MESSAGE);
 							break;
 						case Message.CONSOLE: 
-							r.getOutput().append("<" + m.getSender() + "> " + strippedLine);
-							r.changeStatus(Room.NEW_IRC_INFO);
+							r.getOutput().append(strippedLine);
+							r.changeStatus(Room.NEW_IRC_EVENT);
 							break;
 						case Message.ACTION:
-							r.updateLastMessage("<" + m.getSender() + "> " + strippedLine);
-							r.getOutput().append("*** " + m.getSender() + " " + strippedLine);
+							r.updateLastMessage(strippedLine);
+							r.getOutput().append(strippedLine);
 							if(strippedLine.toLowerCase().contains(m.getBot().getNick().toLowerCase()))
 								r.changeStatus(Room.NAME_CALLED);
 							else
@@ -130,7 +144,7 @@ public class RoomManager {
 						if(scrollDown) r.getOutput().setSelection(r.getOutput().getText().length()); // scroll the output down
 					}
 					
-					List<StyleRange> styleRanges = ControlCodeParser.parseControlCodes(m.getContent(),
+					List<StyleRange> styleRanges = ControlCodeParser.parseControlCodes(msgWithNick,
 							r.getOutput().getText().length() - strippedLine.length() );
 					
 					for(StyleRange styleRange : styleRanges.toArray(new StyleRange[styleRanges.size()]))

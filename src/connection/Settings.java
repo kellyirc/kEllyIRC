@@ -5,13 +5,19 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
-
-import org.eclipse.swt.SWT;
-
-import shared.NSAlertBox;
+import java.util.HashMap;
 
 import lombok.Getter;
 import lombok.Setter;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.RGB;
+import org.pircbotx.Colors;
+
+import shared.Message;
+import shared.NSAlertBox;
+import shared.SWTResourceManager;
+import ui.room.Room;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.reflection.Sun14ReflectionProvider;
@@ -28,21 +34,38 @@ public class Settings {
 	static Settings settings = Settings.readFromFile();
 	
 	//This keeps the list of servers the user has saved.
-	@Getter 
-	@Setter 
-	ArrayList<ConnectionSettings> connSettings;
+	@Getter @Setter ArrayList<ConnectionSettings> connSettings;
 	
 	//Other variables/objects to hold settings/preferences go here 
-	@Getter
-	@Setter
-	ArrayList<String> nicksIgnored;
+	@Getter @Setter ArrayList<String> nicksIgnored;
+	@Getter @Setter HashMap<Short,String> outputColors;
+	@Getter @Setter HashMap<Integer,RGB> roomStatusColors;
 	
 	
+	//Other static variables
+	public static final short BACKGROUND = -1;
 	//creates default settings
 	public Settings()
 	{
 		connSettings = new ArrayList<ConnectionSettings>();
 		nicksIgnored = new ArrayList<String>();
+		
+		
+		outputColors = new HashMap<Short,String>();
+		//These correspond to the types of Message
+		outputColors.put(Message.CONSOLE, "dark gray");
+		outputColors.put(Message.MSG, "black");
+		outputColors.put(Message.NOTICE, "red");
+		outputColors.put(Message.ACTION, "purple");
+		outputColors.put(Message.PM, "black");
+		outputColors.put(Settings.BACKGROUND, "white");
+		
+		roomStatusColors = new HashMap<Integer,RGB>();
+		//These correspond to the statuses of Room
+		roomStatusColors.put(Room.NORMAL, SWTResourceManager.getColor(SWT.COLOR_BLACK).getRGB());
+		roomStatusColors.put(Room.NEW_IRC_EVENT, SWTResourceManager.getColor(SWT.COLOR_MAGENTA).getRGB());
+		roomStatusColors.put(Room.NEW_MESSAGE, SWTResourceManager.getColor(SWT.COLOR_RED).getRGB());
+		roomStatusColors.put(Room.NAME_CALLED, SWTResourceManager.getColor(SWT.COLOR_GREEN).getRGB());
 	}
 	
 	public static void writeToFile()

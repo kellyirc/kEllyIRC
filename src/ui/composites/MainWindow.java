@@ -70,7 +70,6 @@ public class MainWindow extends ApplicationWindow {
 		c.setControl(new OptionComposite(container, SWT.NONE));
 		ArrayList<ConnectionSettings> list = Settings.getSettings().getConnSettings();
 		
-		//TODO: Make use of other settings in ConnectionSettings
 		for(ConnectionSettings cs:list)
 		{
 			if(cs.isConnectOnStart())
