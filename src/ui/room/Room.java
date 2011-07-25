@@ -651,23 +651,22 @@ public class Room extends Composite {
 		//if currently in focus, change back to normal;
 		if(serverConnection.getScrolledComposite().getContent()==this)
 			status = NORMAL;
-//		switch(status)
-//		{
-//		case NORMAL:
-//			chanListItem.setForeground(getDisplay().getSystemColor(SWT.COLOR_BLACK)); break;
-//		case NEW_IRC_EVENT:
-//			if(this.status < status) // if the new status is higher priority
-//				chanListItem.setForeground(getDisplay().getSystemColor(SWT.COLOR_DARK_MAGENTA)); break;
-//		case NEW_MESSAGE:
-//			if(this.status < status)
-//				chanListItem.setForeground(getDisplay().getSystemColor(SWT.COLOR_RED)); break;
-//		case NAME_CALLED:
-//			if(this.status < status)
-//				chanListItem.setForeground(getDisplay().getSystemColor(SWT.COLOR_GREEN)); break;
-//		}
-		chanListItem.setForeground(SWTResourceManager.getColor(roomColors.get(status)));
-		
-		this.status = status;
+		switch(status)
+		{
+		case NORMAL:
+			chanListItem.setForeground(SWTResourceManager.getColor(roomColors.get(NORMAL))); break;
+		case NEW_IRC_EVENT:
+			if(this.status < status) // if the new status is higher priority
+				chanListItem.setForeground(SWTResourceManager.getColor(roomColors.get(NEW_IRC_EVENT))); break;
+		case NEW_MESSAGE:
+			if(this.status < status)
+				chanListItem.setForeground(SWTResourceManager.getColor(roomColors.get(NEW_MESSAGE))); break;
+		case NAME_CALLED:
+			if(this.status < status)
+				chanListItem.setForeground(SWTResourceManager.getColor(roomColors.get(NAME_CALLED))); break;
+		}
+//		if(this.status < status)
+			this.status = status;
 	}
 	
 }
