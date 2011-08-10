@@ -1,6 +1,7 @@
 package connection;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
 
 import javax.net.ssl.SSLSocketFactory;
@@ -61,6 +62,14 @@ public class Connection extends Composite {
 			bot.setName(cs.getNickname());
 			bot.setLogin(cs.getIdent());
 			bot.setMessageDelay(0);
+			
+			//fix special characters not showing up
+			try {
+				bot.setEncoding("utf-8");
+			} catch (UnsupportedEncodingException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			
 			ListenerManager<PircBotX> l = bot.getListenerManager();
 			l.addListener(this);
