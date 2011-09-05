@@ -228,11 +228,14 @@ public class ColorComposite extends Composite {
 				
 				ColorDialog cd = new ColorDialog(RoomManager.getMain().getShell());
 				RGB rgb = cd.open();
+				if(rgb != null)
+				{
 				Button btn = (Button)e.widget;
 				HashMap<Integer,RGB> statusColors = Settings.getSettings().getRoomStatusColors();
 				statusColors.put((Integer)btn.getData(), rgb);
 				Settings.getSettings().setRoomStatusColors(statusColors);
 				Settings.writeToFile();
+				}
 			}
 
 			public void widgetDefaultSelected(SelectionEvent e) {
