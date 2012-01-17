@@ -42,18 +42,18 @@ public final class ScriptFunctions {
 	}
 
 	public final void writeln(String s) {
-		write(s+"\n");
+		write(s + "\n");
 	}
 
 	public final void write(String s) {
 		System.out.print(s);
 	}
-	
-	public final void print(String s){
+
+	public final void print(String s) {
 		write(s);
 	}
-	
-	public final void println(String s){
+
+	public final void println(String s) {
 		writeln(s);
 	}
 
@@ -74,7 +74,8 @@ public final class ScriptFunctions {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(f));
 			bw.close();
 		} catch (IOException ex) {
-			org.apache.log4j.Logger fLog = org.apache.log4j.Logger.getLogger("log.script.scriptfunctions");
+			org.apache.log4j.Logger fLog = org.apache.log4j.Logger
+					.getLogger("log.script.scriptfunctions");
 			fLog.error("string2file failed.", ex);
 		}
 		return false;
@@ -95,8 +96,9 @@ public final class ScriptFunctions {
 						System.getProperty("line.separator"));
 			}
 			reader.close();
-		} catch (Exception e){
-			org.apache.log4j.Logger fLog = org.apache.log4j.Logger.getLogger("log.script.scriptfunctions");
+		} catch (Exception e) {
+			org.apache.log4j.Logger fLog = org.apache.log4j.Logger
+					.getLogger("log.script.scriptfunctions");
 			fLog.error("file2string failed.", e);
 		}
 
@@ -106,16 +108,16 @@ public final class ScriptFunctions {
 	public final Channel findChannel(String name) {
 		return ScriptVars.curConnection.getChannel(name);
 	}
-	
+
 	public final User findUser(String name) {
-		for(User u : ScriptVars.curChannel.getUsers()){
-			if(u.getNick().toLowerCase().equals(name.toLowerCase())){
+		for (User u : ScriptVars.curChannel.getUsers()) {
+			if (u.getNick().toLowerCase().equals(name.toLowerCase())) {
 				return u;
 			}
 		}
 		return null;
 	}
-	
+
 	public final String[] getArgs(String s, int args) {
 		String[] temp = s.split(" ");
 		String[] rVal = new String[args];
@@ -130,7 +132,7 @@ public final class ScriptFunctions {
 	}
 
 	public final boolean checkArgs(String s, int args) {
-		if(s.length()==0)
+		if (s.length() == 0)
 			return false;
 		return s.split(" ").length >= args;
 	}
@@ -139,63 +141,72 @@ public final class ScriptFunctions {
 		RoomManager.getMain().getDisplay().beep();
 	}
 
-	public final File[] flist(String path){
+	public final File[] flist(String path) {
 		return Paths.get(path).toFile().listFiles();
 	}
-	
+
 	public final void error(String err) {
-		error("System",err);
+		error("System", err);
 	}
 
 	public final void error(String sender, String err) {
-		RoomManager.enQueue(new Message(ScriptVars.curConnection, err,
-				sender, ScriptVars.curChannel.getName(), Message.CONSOLE));
+		RoomManager.enQueue(new Message(ScriptVars.curConnection, err, sender,
+				ScriptVars.curChannel.getName(), Message.CONSOLE));
 	}
-	
-	public final void invoke(String script, String function, String args){
-		for(Script s : ScriptManager.scripts){
-			if(s.getFunctions().contains(function)){
+
+	public final void invoke(String script, String function, String args) {
+		for (Script s : ScriptManager.scripts) {
+			if (s.getFunctions().contains(function)
+					&& s.getName().equals(script)) {
 				s.invoke(function, args);
 			}
 		}
 	}
-	
-	public final boolean playSound(String path){
+
+	public final void invokefrom(String script, String function, String args) {
+		invoke(script, function, args);
+	}
+
+	public final boolean playSound(String path) {
 		File f = new File(path);
-		if(!f.exists()) return false;
-		
+		if (!f.exists())
+			return false;
+
 		SoundData.curSound = new Sound();
 		SoundData.curSound.Load(path);
-		if(SoundData.curSound.GetError() != null ) return false;
-		
+		if (SoundData.curSound.GetError() != null)
+			return false;
+
 		SoundData.curId = NeptuneCore.PlaySound(SoundData.curSound);
 		SoundData.soundRef = new SoundReference(SoundData.curId);
 		SoundData.isPaused = false;
-		
+
 		return true;
 	}
-	
+
 	public final void stopSound() {
-		if(SoundData.soundRef == null) return;
+		if (SoundData.soundRef == null)
+			return;
 		SoundData.soundRef.Stop();
 	}
-	
+
 	public final void pauseSound() {
-		if(SoundData.soundRef == null) return;
-		if(SoundData.isPaused){
+		if (SoundData.soundRef == null)
+			return;
+		if (SoundData.isPaused) {
 			SoundData.soundRef.Play();
 		} else {
 			SoundData.soundRef.Pause();
 		}
 	}
-	
-	public final String openFileDialog()
-	{
-		return new FileDialog(RoomManager.getMain().getShell(),SWT.OPEN).open();
+
+	public final String openFileDialog() {
+		return new FileDialog(RoomManager.getMain().getShell(), SWT.OPEN)
+				.open();
 	}
-	
-	public final String saveFileDialog()
-	{
-		return new FileDialog(RoomManager.getMain().getShell(),SWT.SAVE).open();
+
+	public final String saveFileDialog() {
+		return new FileDialog(RoomManager.getMain().getShell(), SWT.SAVE)
+				.open();
 	}
 }

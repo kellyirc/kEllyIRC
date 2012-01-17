@@ -41,7 +41,8 @@ public final class Script implements Comparable<Script> {
 	private ConcurrentSkipListSet<String> functions = new ConcurrentSkipListSet<String>();
 	@Getter
 	private ConcurrentSkipListSet<String> descriptFunctions = new ConcurrentSkipListSet<String>();
-	
+	@Getter
+	private String name;
 	
 	private static final String nl = System.getProperty("line.separator");
 	private ScriptEngineManager manager = new ScriptEngineManager();
@@ -64,6 +65,7 @@ public final class Script implements Comparable<Script> {
 	
 	public Script(File f) {
 		this.reference = f;
+		this.name = f.getName();
 		
 		String s = reference.getName().substring(reference.getName().indexOf('.'));
 
