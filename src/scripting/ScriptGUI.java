@@ -20,52 +20,52 @@ public final class ScriptGUI {
 	
 	//wrapping NotiferDialog.notify()
 	public static void window(String message) {
-		NotifierDialog.window("", message, null, NotifierSettings.getTextColor(),
-				NotifierSettings.getTitleColor(),
-				NotifierSettings.getBorderColor(),
-				NotifierSettings.getBackgroundTopGradient(),
-				NotifierSettings.getBackgroundBottomGradient());
+		NotifierDialog.window("", message, null, NotifierSettings.textColor,
+				NotifierSettings.titleColor,
+				NotifierSettings.borderColor,
+				NotifierSettings.backgroundTopGradient,
+				NotifierSettings.backgroundBottomGradient);
 	}
 	
 	public static void window(String message, String title) {
-		NotifierDialog.window(message, title, null, NotifierSettings.getTextColor(),
-				NotifierSettings.getTitleColor(),
-				NotifierSettings.getBorderColor(),
-				NotifierSettings.getBackgroundTopGradient(),
-				NotifierSettings.getBackgroundBottomGradient());
+		NotifierDialog.window(message, title, null, NotifierSettings.textColor,
+				NotifierSettings.titleColor,
+				NotifierSettings.borderColor,
+				NotifierSettings.backgroundTopGradient,
+				NotifierSettings.backgroundBottomGradient);
 	}
 	
 	public static void window(String message, String title,
 			NotificationType type) {
-		NotifierDialog.window(message, title, type, NotifierSettings.getTextColor(),
-				NotifierSettings.getTitleColor(),
-				NotifierSettings.getBorderColor(),
-				NotifierSettings.getBackgroundTopGradient(),
-				NotifierSettings.getBackgroundBottomGradient());
+		NotifierDialog.window(message, title, type, NotifierSettings.textColor,
+				NotifierSettings.titleColor,
+				NotifierSettings.borderColor,
+				NotifierSettings.backgroundTopGradient,
+				NotifierSettings.backgroundBottomGradient);
 	}
 	
 	public static void window(String message, String title,
 			NotificationType type, Color textColor) {
 		NotifierDialog.window(message, title, type, textColor,
-				NotifierSettings.getTitleColor(),
-				NotifierSettings.getBorderColor(),
-				NotifierSettings.getBackgroundTopGradient(),
-				NotifierSettings.getBackgroundBottomGradient());
+				NotifierSettings.titleColor,
+				NotifierSettings.borderColor,
+				NotifierSettings.backgroundTopGradient,
+				NotifierSettings.backgroundBottomGradient);
 	}
 	
 	public static void window(String message, String title,
 			NotificationType type, Color textColor, Color titleColor) {
 		NotifierDialog.window(message, title, type, textColor, titleColor,
-				NotifierSettings.getBorderColor(),
-				NotifierSettings.getBackgroundTopGradient(),
-				NotifierSettings.getBackgroundBottomGradient());
+				NotifierSettings.borderColor,
+				NotifierSettings.backgroundTopGradient,
+				NotifierSettings.backgroundBottomGradient);
 	}
 	
 	public static void window(String message, String title,
 			NotificationType type, Color textColor, Color titleColor, Color borderColor) {
 		NotifierDialog.window(message, title, type, textColor, titleColor, borderColor, 
-				NotifierSettings.getBackgroundTopGradient(),
-				NotifierSettings.getBackgroundBottomGradient());
+				NotifierSettings.backgroundTopGradient,
+				NotifierSettings.backgroundBottomGradient);
 	}
 	
 	public static void window(String message, String title,

@@ -17,7 +17,8 @@ import org.eclipse.wb.swt.layout.grouplayout.LayoutStyle;
 
 public class OptionComposite extends Composite {
 
-	@Getter
+	public static Composite getCurrentComposite() { return currentComposite; }
+	
 	private static Composite currentComposite;
 	private final ScrolledComposite scrolledComposite;
 	

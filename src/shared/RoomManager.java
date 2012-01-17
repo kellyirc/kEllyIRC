@@ -23,7 +23,8 @@ import connection.Settings;
 
 public class RoomManager {
 
-	@Getter
+	public static MainWindow getMain() {return main;}
+	
 	private static MainWindow main;
 
 	public static Customs colorset = new Customs();

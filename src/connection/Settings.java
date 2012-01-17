@@ -30,7 +30,7 @@ public class Settings {
 	static XStream xstream = new XStream(new Sun14ReflectionProvider( ), new DomDriver( ));
 	
 	//the sole Settings instance
-	@Getter 
+	public static Settings getSettings() { return settings; }
 	static Settings settings = Settings.readFromFile();
 	
 	//This keeps the list of servers the user has saved.
