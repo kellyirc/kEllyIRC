@@ -57,7 +57,6 @@ public class Connection extends Composite {
 		private KEllyBot bot;
 		private ConnectionSettings cs;
 
-		@SuppressWarnings("unchecked")
 		public ConnectionData(final KEllyBot bot, final ConnectionSettings cs,
 				final Connection nc) {
 

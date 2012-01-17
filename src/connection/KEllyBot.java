@@ -11,7 +11,6 @@ import scripting.ScriptManager;
 import scripting.ScriptVars;
 import shared.Message;
 import shared.RoomManager;
-import ui.room.Room;
 
 public class KEllyBot extends PircBotX {
 	

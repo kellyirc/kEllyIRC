@@ -2,8 +2,6 @@ package shared;
 
 import java.util.List;
 
-import lombok.Getter;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Color;

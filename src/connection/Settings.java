@@ -12,7 +12,6 @@ import lombok.Setter;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
-import org.pircbotx.Colors;
 
 import shared.Message;
 import shared.NSAlertBox;

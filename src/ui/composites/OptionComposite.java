@@ -2,8 +2,6 @@ package ui.composites;
 
 import java.lang.reflect.Constructor;
 
-import lombok.Getter;
-
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
