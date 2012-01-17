@@ -74,7 +74,6 @@ public class Connection extends Composite {
 			bot.setName(cs.getNickname());
 			bot.setLogin(cs.getIdent());
 			bot.setMessageDelay(0);
-			System.out.println("passed second");
 
 			final ConnectionData conndat = this;
 			new Thread(new Runnable() {
@@ -83,13 +82,13 @@ public class Connection extends Composite {
 				public void run() {
 					// fix special characters not showing up
 					try {
-						bot.setEncoding("utf-8");
+						bot.setEncoding("UTF-8");
 					} catch (UnsupportedEncodingException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 
-					ListenerManager<PircBotX> l = bot.getListenerManager();
+					ListenerManager<? extends PircBotX> l = bot.getListenerManager();
 					l.addListener(conndat);
 					l.addListener(new RoomListener(nc));
 					l.addListener(new ServerListener(nc));

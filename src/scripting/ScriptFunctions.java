@@ -19,7 +19,6 @@ import org.wishray.copernicus.SoundReference;
 
 import shared.Message;
 import shared.RoomManager;
-import connection.KEllyBot;
 
 public final class ScriptFunctions {
 
