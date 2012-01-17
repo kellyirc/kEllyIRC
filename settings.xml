@@ -14,6 +14,20 @@
         <string>#DGR</string>
       </autoJoin>
     </connection.ConnectionSettings>
+    <connection.ConnectionSettings>
+      <connectionName>freenode</connectionName>
+      <server>irc.freenode.net</server>
+      <port>6667</port>
+      <serverPassword></serverPassword>
+      <ssl>true</ssl>
+      <connectOnStart>false</connectOnStart>
+      <nickname>seiyria</nickname>
+      <nickPassword></nickPassword>
+      <ident>IDENITFY</ident>
+      <autoJoin>
+        <string>#ellyment</string>
+      </autoJoin>
+    </connection.ConnectionSettings>
   </connSettings>
   <nicksIgnored/>
   <outputColors>

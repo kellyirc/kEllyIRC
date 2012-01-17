@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.pircbotx.PircBotX;
 
 import scripting.Script;
+import scripting.ScriptGUI;
 import scripting.ScriptManager;
 import scripting.ScriptVars;
 import shared.Message;
@@ -65,7 +66,7 @@ public class KEllyBot extends PircBotX {
 	}
 
 	public void doCommand(String line) {
-		String command = line.split(" ")[0];
+		String command = line.split(" ")[0].trim();
 		
 		boolean found=false;
 
@@ -81,8 +82,7 @@ public class KEllyBot extends PircBotX {
 		}
 		
 		if(!found){
-			Room r = (Room) connection.getScrolledComposite().getContent();
-			RoomManager.enQueue(new Message(connection, command + " is not a valid alias. Please define it.", "System", r.getChannelName(), Message.CONSOLE));
+			ScriptGUI.window(command+" is not a valid alias.");
 		}
 		
 	}

@@ -146,7 +146,7 @@ public class MainWindow extends ApplicationWindow {
 		super.configureShell(newShell);
 		newShell.setText("kEllyIRC");
 		newShell.setImage(new Image(getDisplay(), "icon.png"));
-		newShell.setMinimumSize(800, 480); 
+		newShell.setMinimumSize(getInitialSize()); 
 	}
 
 	/**
@@ -154,7 +154,7 @@ public class MainWindow extends ApplicationWindow {
 	 */
 	@Override
 	protected Point getInitialSize() {
-		return new Point(800, 480);
+		return new Point(850, 500);
 	}
 
 }
