@@ -171,7 +171,7 @@ public class ControlCodeParser {
 		
 		styleRanges.add(current);
 		
-		current.length = (input.length()+dispos) - offset - 2 - current.start;
+		current.length = (input.length()+dispos) - offset - Message.NEW_LINE.length() - current.start;
 				
 		return styleRanges;
 	}

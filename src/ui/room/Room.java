@@ -336,7 +336,7 @@ public class Room extends Composite {
 						if (cChannel != null && serverConnection != null) {
 							serverConnection.getBot().sendMessage(
 									channelName,
-									input.getText().replaceAll("\r\n", ""));
+									input.getText().replaceAll(Message.NEW_LINE, ""));
 							lastMessages.addFirst(input.getText());
 							listIndex = -1;
 						}
@@ -395,7 +395,7 @@ public class Room extends Composite {
 						((StyledText) e.widget).setText((text.substring(0,
 								e.start) + e.replacedText + text
 								.substring(e.start))
-								.replaceAll("\r\n", ""));
+								.replaceAll(Message.NEW_LINE, ""));
 					
 				}
 			});

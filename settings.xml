@@ -5,8 +5,8 @@
       <server>irc.esper.net</server>
       <port>6667</port>
       <serverPassword></serverPassword>
-      <ssl>true</ssl>
-      <connectOnStart>false</connectOnStart>
+      <ssl>false</ssl>
+      <connectOnStart>true</connectOnStart>
       <nickname>IRCFreek</nickname>
       <nickPassword></nickPassword>
       <ident>IRCFreek</ident>

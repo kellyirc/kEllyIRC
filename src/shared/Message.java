@@ -14,6 +14,8 @@ public class Message {
 	public static final short NOTICE = 2;
 	public static final short ACTION = 3;
 	public static final short PM = 4;
+	
+	public static final String NEW_LINE = System.getProperty("line.separator");
 
 	private String content, sender, channel;
 	private KEllyBot bot;
@@ -22,7 +24,8 @@ public class Message {
 	public Message(KEllyBot kEllyBot, String message, String nick,
 			String target, short type) {
 		this.setBot(kEllyBot);
-		this.setContent(message+(message.contains("\r\n") ? "" : "\r\n"));
+		
+		this.setContent(message+(message.contains(NEW_LINE) ? "" : NEW_LINE));
 		this.setSender(nick);
 		this.setChannel(target);
 		this.type = type;

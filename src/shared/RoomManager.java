@@ -144,7 +144,7 @@ public class RoomManager {
 					}
 					
 					List<StyleRange> styleRanges = ControlCodeParser.parseControlCodes(msgWithNick,
-							r.getOutput().getText().length() - strippedLine.length() );
+							r.getOutput().getText().length() - strippedLine.length());
 					
 					for(StyleRange styleRange : styleRanges.toArray(new StyleRange[styleRanges.size()]))
 						r.getOutput().setStyleRange(styleRange);
