@@ -83,7 +83,6 @@ public class Connection extends Composite {
 					try {
 						bot.setEncoding("UTF-8");
 					} catch (UnsupportedEncodingException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 

@@ -1,4 +1,7 @@
-
+/*
+comment
+*/
+//META<inuse=false>
 
 function fact(connection, sargs) {
 	var nick = global.currentConnection().getNick();

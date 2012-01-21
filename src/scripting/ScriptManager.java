@@ -29,15 +29,21 @@ public final class ScriptManager {
 
 	public static final String[] validExt = {".js",".rb",".py",".lua"};
 	
+	public static final String[] globalKeywords = {"gui","util","in","global","print","println","sound"};
+	
 	public static final String[] jsKeywords = {"break","case","catch","continue","default","do",
-			"else","false","finally","for","if","new","null","return","switch",
-			"true","try","while","function","var","gui","util","in","global","print","println","sound","importPackage","importClass"
+		"else","false","finally","for","if","new","null","return","switch",
+		"true","try","while","function","var",
+		
+		"importPackage","importClass"
 	};
 	
 	public static final String[] rbKeywords = {"alias","and","BEGIN","break","case","class","def","defined",
 		"do","else","elsif","END","end","ensure","false","for","if","in","module","next","nil","not","or",
 		"redo","rescue","retry","return","self","super","then","true","undef","unless","until","when","while",
-		"yield","require"
+		"yield","require",
+		
+		"java_import","import"
 	};
 	
 	public static final String[] pyKeywords = {"and","as","assert","break","class","continue","def","del","elif",

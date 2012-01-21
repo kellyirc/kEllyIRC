@@ -48,7 +48,7 @@
             <zipfileset dir="C:\Program Files\eclipse\plugins" includes="org.eclipse.ui.forms_3.5.100.v20110425.jar"/>
             <zipfileset dir="C:\Users\Kyle Kemp\workspace\kEllyIRClient\libs" includes="lombok-0.10.0-BETA2.jar"/>
             <zipfileset dir="C:\Users\Kyle Kemp\workspace\kEllyIRClient\libs" includes="images.jar"/>
-            <zipfileset dir="C:\Users\Kyle Kemp\workspace\kEllyIRClient\libs" includes="pircbotx-1.3-20110616.191550-4.jar"/>
+            <zipfileset dir="C:\Users\Kyle Kemp\workspace\kEllyIRClient\libs" includes="pircbotx-1.z.jar"/>
             <zipfileset dir="C:\Users\Kyle Kemp\workspace\kEllyIRClient\libs" includes="log4j-1.2.16.jar"/>
         </jar>
 

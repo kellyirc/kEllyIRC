@@ -1,10 +1,13 @@
 package ui.composites;
 
+import java.awt.BorderLayout;
+import java.awt.Frame;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
+
+import javax.swing.JScrollPane;
 
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
@@ -13,6 +16,7 @@ import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.awt.SWT_AWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.ExtendedModifyEvent;
@@ -47,6 +51,9 @@ import shared.NSAlertBox;
 import shared.RoomManager;
 import shared.SWTResourceManager;
 import org.eclipse.swt.widgets.Label;
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+
+//TODO show file headers in scripts otherwise line numbers will be off
 
 public class ScriptComposite extends Composite {
 
@@ -78,13 +85,11 @@ public class ScriptComposite extends Composite {
 		}
 	}
 
-	//TODO: show when a file is modified by changing the title of the tab to contain an asterisk
-	StyledText curTextBox;
+	ScriptEditor curEditor;
 	Script curScript;
 	CTabFolder tabs;
 	Tree tree;
-	//RubyLineStyler lineStyler = new RubyLineStyler();
-	HashMap<Integer, LineStyler> stylers = new HashMap<Integer, LineStyler>();
+	
 	private Combo combo;
 
 	/**
@@ -95,11 +100,13 @@ public class ScriptComposite extends Composite {
 	 */
 	public ScriptComposite(final Composite parent, int style) {
 		super(parent, style);
+		System.setProperty("sun.awt.noerasebackground", "true");
 		
+		buildLayout(parent);
+	}
+
+	private void buildLayout(final Composite parent) {
 		setLayout(new GridLayout(3,false));
-		
-		stylers.put(Script.JAVASCRIPT, new JavaLineStyler());
-		stylers.put(Script.RUBY, new RubyLineStyler());
 
 		final CheckboxTreeViewer checkboxTreeViewer = new CheckboxTreeViewer(
 				this, SWT.BORDER);
@@ -112,18 +119,7 @@ public class ScriptComposite extends Composite {
 
 		updateTreeItems();
 		
-		combo = new Combo(this, SWT.NONE);
-		combo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		combo.setEnabled(false);
-		combo.setBounds(140, 9, 196, 23);
-		combo.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				curTextBox.setSelection(curTextBox.getText().indexOf(
-						combo.getText()));
-			}
-		});
+		buildCombo();
 
 		ToolBar toolBar = new ToolBar(this, SWT.FLAT | SWT.RIGHT);
 		toolBar.setBounds(342, 9, 306, 23);
@@ -157,27 +153,7 @@ public class ScriptComposite extends Composite {
 
 		buttonListeners(parent, tltmNew, tltmSave, tltmCut, tltmCopy, tltmPaste, tltmDelete, tltmRename);
 		
-
-		
-		tabs = new CTabFolder(this, SWT.BORDER);
-		tabs.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
-		tabs.setSimple(false);
-		tabs.setBounds(140, 38, 508, 340);
-		tabs.setSelectionBackground(Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
-		new Label(this, SWT.NONE);
-		
-		
-		tabs.addSelectionListener(new SelectionListener(){
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				enableTopBar(tltmSave, tltmCut, tltmCopy, tltmPaste);
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				
-			}});
+		buildTabFolder(tltmSave, tltmCut, tltmCopy, tltmPaste);
 
 		checkboxTreeViewer.getTree().addListener(SWT.MouseDoubleClick,
 				new Listener() {
@@ -193,20 +169,28 @@ public class ScriptComposite extends Composite {
 							if(!createNewTab(s)) {
 								return;
 							}
-							curTextBox.setText(s.getScript());
-							curTextBox.addExtendedModifyListener(new ExtendedModifyListener(){
-
-								@Override
-								public void modifyText(ExtendedModifyEvent event) {
-									CTabItem currentTab = tabs.getSelection();
-									if(!currentTab.getText().startsWith("*")){
-										currentTab.setText("*"+currentTab.getText());
-									}
-									
-								}});
-							
-							stylers.get(s.getScriptType()).parseBlockComments(s.getScript());
+							showTab(s);
 						}
+					}
+
+					private void showTab(final Script s) {
+						curEditor.setText(s.getScript());
+						buildTextModifyListener(s);
+					}
+
+					private void buildTextModifyListener(final Script s) {
+						//TODO modified listener for rsyntaxtextarea
+						/*curTextBox.addExtendedModifyListener(new ExtendedModifyListener(){
+
+							@Override
+							public void modifyText(ExtendedModifyEvent event) {
+								CTabItem currentTab = tabs.getSelection();
+								if(!currentTab.getText().startsWith("*")){
+									currentTab.setText("*"+currentTab.getText());
+								}
+								
+								
+							}});*/
 					}
 
 					private boolean createNewTab(Script s) {
@@ -237,19 +221,33 @@ public class ScriptComposite extends Composite {
 								tltmPaste.setEnabled(false);
 								
 							}});
-						StyledText st = new StyledText(tabs, SWT.MULTI|SWT.V_SCROLL);
-						st.setWordWrap(true);
-						curTextBox = st;
-						newItem.setControl(st);
+						
+						
+						
+						//final StyledText st = new StyledText(tabs, SWT.MULTI|SWT.V_SCROLL);
+						//st.setWordWrap(true);
+						//curTextBox = st;
+						//newItem.setControl(st);
+					    
+					    ScriptEditor se = new ScriptEditor(parent);
+					    curEditor = se;
+						
 						changeTab(newItem);
-						st.setFont(SWTResourceManager.getFont("Courier New", 9,
-								SWT.NORMAL));
-						st.addLineStyleListener(stylers.get(s.getScriptType()));
+						//st.setFont(SWTResourceManager.getFont("Courier New", 9,	SWT.NORMAL));
+						//buildTabStyler(s, st);
+						enableTopBar(tltmSave, tltmCut, tltmCopy, tltmPaste);
+						return true;
+					}
+/*
+					private void buildTabStyler(Script s, final StyledText st) {
+						final LineStyler styler = stylers.get(s.getScriptType());
+						st.addLineStyleListener(styler);
 						
 						st.addKeyListener(new KeyListener() {
 
 							@Override
 							public void keyPressed(KeyEvent e) {
+								styler.parseBlockComments(st.getText());
 								if ((e.stateMask & SWT.CTRL) != 0) {
 									switch (e.keyCode) {
 									case 'a':
@@ -266,6 +264,7 @@ public class ScriptComposite extends Composite {
 										break;
 									}
 								}
+								
 							}
 
 							@Override
@@ -273,10 +272,9 @@ public class ScriptComposite extends Composite {
 
 							}
 						});
-						enableTopBar(tltmSave, tltmCut, tltmCopy, tltmPaste);
-						return true;
-					}
+					}*/
 				});
+		
 		checkboxTreeViewer.addCheckStateListener(new ICheckStateListener() {
 
 			@Override
@@ -286,6 +284,47 @@ public class ScriptComposite extends Composite {
 
 			}
 		});
+	}
+
+	private void buildTabFolder(final ToolItem tltmSave,
+			final ToolItem tltmCut, final ToolItem tltmCopy,
+			final ToolItem tltmPaste) {
+		tabs = new CTabFolder(this, SWT.BORDER);
+		tabs.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
+		tabs.setSimple(false);
+		tabs.setBounds(140, 38, 508, 340);
+		tabs.setSelectionBackground(Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
+		new Label(this, SWT.NONE);
+		
+		
+		tabs.addSelectionListener(new SelectionListener(){
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				enableTopBar(tltmSave, tltmCut, tltmCopy, tltmPaste);
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				
+			}});
+	}
+
+	private void buildCombo() {
+		combo = new Combo(this, SWT.NONE);
+		combo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		combo.setEnabled(false);
+		combo.setBounds(140, 9, 196, 23);
+		// TODO jump to method box
+		/*
+		combo.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				curTextBox.setSelection(curTextBox.getText().indexOf(
+						combo.getText()));
+			}
+		});*/
 	}
 
 	private void buttonListeners(final Composite parent, ToolItem tltmNew,
@@ -379,12 +418,12 @@ public class ScriptComposite extends Composite {
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}});
-		
+		/*
 		tltmCut.addSelectionListener(new SelectionListener() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				curTextBox.cut();
+				curEditor.cut();
 			}
 
 			@Override
@@ -395,7 +434,7 @@ public class ScriptComposite extends Composite {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				curTextBox.copy();
+				curEditor.copy();
 			}
 
 			@Override
@@ -406,12 +445,12 @@ public class ScriptComposite extends Composite {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				curTextBox.paste();
+				curEditor.paste();
 			}
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {				
-			}});
+			}});*/
 	}
 
 	public void updateTreeItems() {
@@ -443,7 +482,7 @@ public class ScriptComposite extends Composite {
 		}
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(curScript.getReference()));
-			bw.write(curTextBox.getText());
+			bw.write(curEditor.getText());
 			bw.close();
 		} catch (IOException ex) {
 			org.apache.log4j.Logger fLog = org.apache.log4j.Logger.getLogger("log.ui.composites.script");
@@ -462,7 +501,7 @@ public class ScriptComposite extends Composite {
 
 	private void enableTopBar(final ToolItem tltmSave, final ToolItem tltmCut,
 			final ToolItem tltmCopy, final ToolItem tltmPaste) {
-		curTextBox = (StyledText) tabs.getSelection().getControl();
+		//curTextBox = (StyledText) tabs.getSelection().getControl();
 		combo.setEnabled(true);
 		Script s = (Script)tabs.getSelection().getData();
 		curScript = s;

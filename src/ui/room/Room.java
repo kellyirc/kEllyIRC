@@ -1,5 +1,6 @@
 package ui.room;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -75,36 +76,38 @@ public class Room extends Composite {
 				}
 			}
 
-			//TODO: make this support multiple context scripts
 			private void customItems(final TreeItem item, Menu m) {
-				final Script contextScript = findContextScript();
-				if(contextScript == null) return;
-				Object[] arr = contextScript.invoke("getContextCommands");
-				for(final Object s : arr){
-					MenuItem mitem = new MenuItem(m, SWT.PUSH);
-					mitem.setText((String)s);
-					mitem.addSelectionListener(new SelectionListener() {
+				final Script[] contextScripts = findContextScript();
+				if(contextScripts == null || contextScripts.length==0) return;
+				for(final Script contextScript : contextScripts) {
+					Object[] arr = contextScript.invoke("getContextCommands");
+					for(final Object s : arr){
+						MenuItem mitem = new MenuItem(m, SWT.PUSH);
+						mitem.setText((String)s);
+						mitem.addSelectionListener(new SelectionListener() {
 
-						@Override
-						public void widgetDefaultSelected(
-								SelectionEvent arg0) {
-						}
+							@Override
+							public void widgetDefaultSelected(
+									SelectionEvent arg0) {
+							}
 
-						@Override
-						public void widgetSelected(SelectionEvent arg0) {
-							contextScript.invoke((String)s, getBot(), item.getData(), cChannel.getChannel());
-						}
-					});
+							@Override
+							public void widgetSelected(SelectionEvent arg0) {
+								contextScript.invoke((String)s, getBot(), item.getData(), cChannel.getChannel());
+							}
+						});
+					}
 				}
 			}
 
-			private Script findContextScript() {
+			private Script[] findContextScript() {
+				ArrayList<Script> scripts = new ArrayList<Script>();
 				for(Script s : ScriptManager.scripts){
 					if(s.getFunctions().contains("getContextCommands")){
-						return s;
+						scripts.add(s);
 					}
 				}
-				return null;
+				return scripts.toArray(new Script[0]);
 			}
 
 			private void ctcpItems(TreeItem item, Menu m) {

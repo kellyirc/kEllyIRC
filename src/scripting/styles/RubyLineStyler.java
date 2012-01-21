@@ -123,7 +123,7 @@ public class RubyLineStyler extends LineStyler {
 						unread(c);
 						return WHITE;
 					}
-					if (Character.isJavaIdentifierStart((char) c)) {
+					if (Character.isJavaIdentifierStart((char) c) && c!='=') {
 						fBuffer.setLength(0);
 						do {
 							fBuffer.append((char) c);

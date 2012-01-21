@@ -93,12 +93,12 @@ public final class Script implements Comparable<Script> {
 				jsEngine.eval(jsBase+script);
 				break;
 			case RUBY:
-		        rbEngine.eval(rbBase+"puts 'hello world'");
+		        rbEngine.eval(rbBase+script);
 		        break;
 			}
 		} catch (ScriptException e) {
 
-			new NSAlertBox("Script Read Error", reference.getName()+" has an error. Due to error reporting methods, I can not help you narrow down the issue.", SWT.ICON_ERROR);
+			new NSAlertBox("Script Read Error", reference.getName()+" has an error. Due to error reporting methods, I can not help you narrow down the issue. Here is a stack trace:\n"+e.getMessage(), SWT.ICON_ERROR);
 
 			org.apache.log4j.Logger fLog = org.apache.log4j.Logger.getLogger("log.script.scripts");
 			fLog.error("Script initialization failed: "+reference.getName()+" at line #"+e.getLineNumber());
