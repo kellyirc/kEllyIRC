@@ -1,13 +1,10 @@
 package ui.composites;
 
-import java.awt.BorderLayout;
-import java.awt.Frame;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import javax.swing.JScrollPane;
 
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
@@ -16,17 +13,10 @@ import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.awt.SWT_AWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.custom.ExtendedModifyEvent;
-import org.eclipse.swt.custom.ExtendedModifyListener;
-import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
@@ -44,14 +34,9 @@ import org.eclipse.swt.widgets.TreeItem;
 
 import scripting.Script;
 import scripting.ScriptManager;
-import scripting.styles.JavaLineStyler;
-import scripting.styles.LineStyler;
-import scripting.styles.RubyLineStyler;
 import shared.NSAlertBox;
 import shared.RoomManager;
-import shared.SWTResourceManager;
 import org.eclipse.swt.widgets.Label;
-import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 
 //TODO show file headers in scripts otherwise line numbers will be off
 
@@ -228,9 +213,9 @@ public class ScriptComposite extends Composite {
 						//st.setWordWrap(true);
 						//curTextBox = st;
 						//newItem.setControl(st);
-
+						
 						Composite comp = new Composite(tabs, SWT.EMBEDDED | SWT.NO_BACKGROUND);
-					    ScriptEditor se = new ScriptEditor(comp);
+					    ScriptEditor se = new ScriptEditor(comp, s);
 					    curEditor = se;
 						newItem.setControl(comp);
 						

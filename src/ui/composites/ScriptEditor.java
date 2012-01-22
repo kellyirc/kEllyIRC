@@ -5,6 +5,7 @@ import java.awt.Frame;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
@@ -18,9 +19,15 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
+import scripting.Script;
 import scripting.ScriptManager;
 
 public class ScriptEditor extends JPanel {
+
+	//TODO get beta rsyntaxarea for code folding
+	//TODO make ctrl space work
+	//TODO periodically check for updates to get member finding functionality
+	//TODO custom script parser to show errors at problematic lines
 
 	/**
 	 * 
@@ -29,7 +36,7 @@ public class ScriptEditor extends JPanel {
 	
 	RSyntaxTextArea textArea;
 	
-	public ScriptEditor(Composite parent) {
+	public ScriptEditor(Composite parent, Script s) {
 		
 	    Frame frame = SWT_AWT.new_Frame(parent);
 
@@ -44,7 +51,11 @@ public class ScriptEditor extends JPanel {
 
 		this.setLayout(new BorderLayout());
 		textArea = new RSyntaxTextArea();
-		this.add(new RTextScrollPane(textArea));
+		textArea.setText(s.getScript());
+		//textArea.setLineWrap(true);
+		//textArea.setWrapStyleWord(true);
+		RTextScrollPane pane = new RTextScrollPane(textArea);
+		this.add(pane);
 
 		textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT);
 	    
@@ -52,12 +63,26 @@ public class ScriptEditor extends JPanel {
 	    frame.add(scroll, BorderLayout.CENTER);
 	}
 	
-	public void changeSyntaxStyle(String s) {
-		textArea.setSyntaxEditingStyle(s);
-		CompletionProvider provider = createCompletionProvider(s);
+	public void changeSyntaxStyle(Script s) {
+		textArea.setSyntaxEditingStyle(determineScriptType(s));
+		CompletionProvider provider = createCompletionProvider(s.getScript());
 
 		AutoCompletion ac = new AutoCompletion(provider);
 		ac.install(textArea);
+		
+	}
+
+	private String determineScriptType(Script s) {
+		switch(s.getScriptType()) {
+		case Script.JAVASCRIPT:
+			return SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT;
+		case Script.RUBY:
+			return SyntaxConstants.SYNTAX_STYLE_RUBY;
+		case Script.PYTHON:
+			return SyntaxConstants.SYNTAX_STYLE_PYTHON;
+		default:
+			return SyntaxConstants.SYNTAX_STYLE_NONE;
+		}
 	}
 
 	private CompletionProvider createCompletionProvider(String s) {

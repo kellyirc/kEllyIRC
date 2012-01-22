@@ -28,7 +28,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
@@ -54,8 +53,8 @@ import connection.KEllyBot;
 import connection.Settings;
 
 
-@Data
 @EqualsAndHashCode(callSuper = false)
+@Data
 public class Room extends Composite {
 
 	private WhoListener curListener;

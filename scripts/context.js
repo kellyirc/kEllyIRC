@@ -18,8 +18,7 @@ function Poke(connection, targetUser, targetChannel){
 function DCCSend(connection, targetUser, targetChannel){
 	var filename = util.openFileDialog();
 	util.error(filename);
-//TODO: Make this invoke work.
-//	util.invoke("DCC.js", "sendFile"(filename, targetUser.getNick(), 30);
+	util.invoke("DCC.js", "sendFile"(filename, targetUser.getNick()), 30);
 }
 
 

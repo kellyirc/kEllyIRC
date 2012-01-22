@@ -28,6 +28,9 @@ public final class Script implements Comparable<Script> {
 	public static final int JAVASCRIPT = 1;
 	public static final int RUBY = 2;
 	
+	//XXX not supported yet
+	public static final int PYTHON = 3;
+	
 	@Getter
 	private int scriptType=0;
 	
@@ -92,6 +95,7 @@ public final class Script implements Comparable<Script> {
 			case JAVASCRIPT:
 				jsEngine.eval(jsBase+script);
 				break;
+				//TODO fix ruby scripts breaking on windows
 			case RUBY:
 		        rbEngine.eval(rbBase+script);
 		        break;

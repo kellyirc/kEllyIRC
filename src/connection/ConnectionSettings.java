@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-@Data
 @EqualsAndHashCode
+@Data
 public class ConnectionSettings {
 	private String connectionName;
 	private String server;
