@@ -74,6 +74,7 @@ public class TextBoxComposite extends Composite
 			public void widgetSelected(SelectionEvent e) {
 				Settings.getSettings().setTimestampsEnabled(btnEnableTimestamps.getSelection());
 				Settings.getSettings().setTimestampFormatPattern(timestampFormatText.getText());
+				Settings.writeToFile();
 			}
 		});
 		btnSave.setLayoutData(new GridData(SWT.RIGHT, SWT.BOTTOM, false, true, 1, 1));
