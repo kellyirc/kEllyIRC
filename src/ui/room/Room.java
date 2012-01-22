@@ -28,6 +28,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
@@ -290,7 +291,45 @@ public class Room extends Composite {
 		
 		if ((layout & TOPIC) != 0) {
 			topicBox = new StyledText(this, SWT.BORDER | SWT.WRAP);
-			topicBox.setEditable(false);
+			topicBox.setEditable(true);
+			topicBox.setWordWrap(false);
+			topicBox.addVerifyKeyListener(new VerifyKeyListener() {
+				
+				@Override
+				public void verifyKey(VerifyEvent e)
+				{
+					//on pressing Enter, attempt to set the topic
+					if (e.character == SWT.CR) {
+						bot.setTopic(Room.this.getCChannel().getChannel(), topicBox.getText());
+						e.doit = false;
+					}
+					//or add control codes
+					if(e.stateMask == SWT.CTRL) {
+						switch(e.keyCode) {
+						//Key combinations
+							case 'O': case 'o': //Insert Normal (kills all formatting)
+								insertCode("\u000f"); break;
+							case 'B': case 'b': //Insert Bold
+								insertCode("\u0002"); break;
+							case 'U': case 'u': //Insert Underlin
+								insertCode("\u001f"); break;
+							case 'I': case 'i': //Insert Italic
+								insertCode("\u0016"); break; 
+							case 'K': case 'k': //Insert Color
+								insertCode("\u0003"); break;
+								
+							case 'A': case 'a': //Select all
+								input.selectAll(); break;
+						}
+					}
+				}
+				private void insertCode(String insertCode)
+				{
+					int insertPos = topicBox.getCaretOffset();
+					topicBox.replaceTextRange(insertPos,0,insertCode);
+					topicBox.setCaretOffset(insertPos+1);
+				}
+			});
 			topicBox.addWordMovementListener(linkClickListener);
 		}
 		if ((layout & IO) != 0) {
@@ -301,6 +340,7 @@ public class Room extends Composite {
 			output.setForeground(customs.colors.get(Settings.getSettings().getOutputColors().get(Message.MSG)));
 			output.setBackground(customs.colors.get(Settings.getSettings().getOutputColors().get(Settings.BACKGROUND)));
 			output.setEditable(false);
+			
 			output.addWordMovementListener(linkClickListener);
 			//if key pressed while output box selected, move to input box
 			output.addKeyListener(new KeyAdapter() {
@@ -312,6 +352,7 @@ public class Room extends Composite {
 						input.append(""+e.character);
 						input.setSelection(input.getText().length());
 						input.setFocus();
+						
 					}
 				}
 			});
@@ -446,7 +487,7 @@ public class Room extends Composite {
 		SequentialGroup ss = gl_composite.createSequentialGroup();
 		ParallelGroup p2 = gl_composite
 				.createParallelGroup(GroupLayout.LEADING);
-
+		
 		if ((layout & TOPIC) != 0) {
 			p2.add(topicBox, GroupLayout.DEFAULT_SIZE, 496, Short.MAX_VALUE);
 		}
@@ -482,7 +523,8 @@ public class Room extends Composite {
 		gl_composite.setVerticalGroup(p);
 
 		this.setLayout(gl_composite);
-
+		
+		
 		// initial tab tool tip text setting
 		userCount = cChannel.getChannel() != null ? cChannel.getChannel()
 				.getUsers().size() : 0;
@@ -507,7 +549,7 @@ public class Room extends Composite {
 		RoomManager.getMain().getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				topicBox.setText(strippedTopic);
-				
+	
 				List<StyleRange> styleRanges = ControlCodeParser.parseControlCodes(topic,
 						topicBox.getText().length() - strippedTopic.length() );
 				

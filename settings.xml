@@ -11,7 +11,7 @@
       <nickPassword></nickPassword>
       <ident>IRCFreek</ident>
       <autoJoin>
-        <string>#DGR</string>
+        <string>#kellyirc</string>
       </autoJoin>
     </connection.ConnectionSettings>
     <connection.ConnectionSettings>
