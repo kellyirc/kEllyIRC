@@ -1,6 +1,14 @@
 package ui.composites;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
@@ -13,7 +21,13 @@ import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.wb.swt.layout.grouplayout.LayoutStyle;
 
-public class OptionComposite extends Composite {
+import shared.ClassFinder;
+
+/**
+ * @author Kyle Kemp
+ *
+ */
+public class OptionCompositeContainer extends Composite {
 
 	public static Composite getCurrentComposite() { return currentComposite; }
 	
@@ -25,7 +39,7 @@ public class OptionComposite extends Composite {
 	 * @param parent
 	 * @param style
 	 */
-	public OptionComposite(Composite parent, int style) {
+	public OptionCompositeContainer(Composite parent, int style) {
 		super(parent, style);
 		
 		final Tree tree = new Tree(this, SWT.BORDER);
@@ -49,13 +63,33 @@ public class OptionComposite extends Composite {
 		);
 		setLayout(groupLayout);
 		
-		TreeItem treeItem = new TreeItem(tree, SWT.NONE);
-		treeItem.setText("Colors");
-		treeItem.setData("ui.composites.ColorComposite");
+		TreeItem treeItem;
+		try {
+			for(Class<?> c : ClassFinder.getClasses("ui.composites")) {
+				String name = c.getCanonicalName();
+				if(name!=null && name.endsWith("Composite")) {
+					treeItem = new TreeItem(tree, SWT.NONE);
+					String compname = name.substring(14, name.indexOf("Composite"));
+					String[] arrName = compname.split("(?=\\p{Upper})");
+					treeItem.setText(Arrays.asList(arrName).toString().replaceAll(",","").replaceAll("^\\[|\\]$", "").trim());
+					treeItem.setData(c.getCanonicalName());
+				}
+			}
+		} catch (ClassNotFoundException | IOException e1) {
+			e1.printStackTrace();
+		}
+		/*
+		treeItem = new TreeItem(tree, SWT.NONE);
+		treeItem.setText("General");
+		treeItem.setData("ui.composites.GeneralComposite");
 		
 		treeItem = new TreeItem(tree, SWT.NONE);
 		treeItem.setText("Connections");
 		treeItem.setData("ui.composites.ConnectionComposite");
+
+		treeItem = new TreeItem(tree, SWT.NONE);
+		treeItem.setText("Colors");
+		treeItem.setData("ui.composites.ColorComposite");
 		
 		treeItem = new TreeItem(tree, SWT.NONE);
 		treeItem.setText("Ignore List");
@@ -68,6 +102,8 @@ public class OptionComposite extends Composite {
 		treeItem = new TreeItem(tree, SWT.NONE);
 		treeItem.setText("Scripting");
 		treeItem.setData("ui.composites.ScriptComposite");
+		*/
+		//TODO make this dynamically change
 
 		tree.addListener(SWT.MouseDown, new Listener () {
 			@Override

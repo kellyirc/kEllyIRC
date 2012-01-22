@@ -28,9 +28,9 @@ import ui.room.Room;
 import connection.Connection;
 import connection.Settings;
 
-public class ColorComposite extends Composite {
+public class ColorsComposite extends Composite {
 
-	public ColorComposite(Composite parent, int style) {
+	public ColorsComposite(Composite parent, int style) {
 		super(parent, style);
 		setLayout(null);
 

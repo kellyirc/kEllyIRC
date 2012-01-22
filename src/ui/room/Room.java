@@ -46,6 +46,7 @@ import scripting.ScriptManager;
 import shared.ControlCodeParser;
 import shared.Customs;
 import shared.Message;
+import shared.Quicklinks;
 import shared.RoomManager;
 import shared.SWTResourceManager;
 import connection.Connection;
@@ -278,6 +279,8 @@ public class Room extends Composite {
 					
 					if (s.contains("://")) {
 						Program.launch(s);
+					} else if(Quicklinks.hasQuicklink(s)) {
+						Program.launch(Quicklinks.getLink(s));
 					}
 				}
 			}
@@ -713,4 +716,8 @@ public class Room extends Composite {
 			this.status = status;
 	}
 	
+	public String toString() {
+		return channelName;
+		
+	}
 }

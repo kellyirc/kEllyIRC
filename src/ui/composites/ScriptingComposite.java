@@ -40,7 +40,7 @@ import org.eclipse.swt.widgets.Label;
 
 //TODO show file headers in scripts otherwise line numbers will be off
 
-public class ScriptComposite extends Composite {
+public class ScriptingComposite extends Composite {
 
 	private final class ValidFileName implements IInputValidator {
 		@Override
@@ -83,7 +83,7 @@ public class ScriptComposite extends Composite {
 	 * @param parent
 	 * @param style
 	 */
-	public ScriptComposite(final Composite parent, int style) {
+	public ScriptingComposite(final Composite parent, int style) {
 		super(parent, style);
 		System.setProperty("sun.awt.noerasebackground", "true");
 		

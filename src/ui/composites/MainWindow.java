@@ -14,6 +14,8 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FormLayout;
@@ -67,7 +69,7 @@ public class MainWindow extends ApplicationWindow {
 		CTabItem c = new CTabItem(container, SWT.NONE);
 		c.setText("Options");
 
-		c.setControl(new OptionComposite(container, SWT.NONE));
+		c.setControl(new OptionCompositeContainer(container, SWT.NONE));
 		ArrayList<ConnectionSettings> list = Settings.getSettings().getConnSettings();
 		
 		for(ConnectionSettings cs:list)
@@ -137,7 +139,7 @@ public class MainWindow extends ApplicationWindow {
 	 * @param newShell
 	 */
 	@Override
-	protected void configureShell(Shell newShell) {
+	protected void configureShell(final Shell newShell) {
 		newShell.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent arg0) {
 				Initializer.quit();
@@ -147,6 +149,24 @@ public class MainWindow extends ApplicationWindow {
 		newShell.setText("kEllyIRC");
 		newShell.setImage(new Image(getDisplay(), "icon.png"));
 		newShell.setMinimumSize(getInitialSize()); 
+		newShell.addShellListener(new ShellListener(){
+
+			@Override
+			public void shellActivated(ShellEvent arg0) {}
+
+			@Override
+			public void shellClosed(ShellEvent arg0) {}
+
+			@Override
+			public void shellDeactivated(ShellEvent arg0) {}
+
+			@Override
+			public void shellDeiconified(ShellEvent arg0) {}
+
+			@Override
+			public void shellIconified(ShellEvent arg0) {
+				
+			}});
 	}
 
 	/**

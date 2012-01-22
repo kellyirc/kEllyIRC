@@ -27,7 +27,7 @@ import connection.Connection;
 import connection.ConnectionSettings;
 import connection.Settings;
 
-public class ConnectionComposite extends Composite {
+public class ConnectionsComposite extends Composite {
 	private Table table;
 	private Text textConnName;
 	private Text textServer;
@@ -49,7 +49,7 @@ public class ConnectionComposite extends Composite {
 	 * @param parent
 	 * @param style
 	 */
-	public ConnectionComposite(Composite parent, int style) {
+	public ConnectionsComposite(Composite parent, int style) {
 		super(parent, style);
 		setLayout(new GridLayout(2, false));
 

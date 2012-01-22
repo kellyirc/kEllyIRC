@@ -11,8 +11,8 @@ import java.nio.file.WatchService;
 import java.util.HashMap;
 import java.util.Map;
 
-import ui.composites.OptionComposite;
-import ui.composites.ScriptComposite;
+import ui.composites.OptionCompositeContainer;
+import ui.composites.ScriptingComposite;
 import static java.nio.file.StandardWatchEventKinds.*;
 
 public final class ScriptWatcher implements Runnable {
@@ -58,8 +58,8 @@ public final class ScriptWatcher implements Runnable {
 
 		}
 		
-		if(OptionComposite.getCurrentComposite() instanceof ScriptComposite){
-			ScriptComposite c = (ScriptComposite) OptionComposite.getCurrentComposite();
+		if(OptionCompositeContainer.getCurrentComposite() instanceof ScriptingComposite){
+			ScriptingComposite c = (ScriptingComposite) OptionCompositeContainer.getCurrentComposite();
 			c.updateTreeItems();
 		}
 	}

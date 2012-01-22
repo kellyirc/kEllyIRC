@@ -21,6 +21,7 @@
 	<classpathentry kind="lib" path="swt-grouplayout.jar"/>
 	<classpathentry kind="lib" path="libs/pircbotx-1.6.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/SWT"/>
-	<classpathentry kind="lib" path="libs/rsyntax_autocomplete_i18n.jar"/>
+	<classpathentry kind="lib" path="libs/rsyntaxtextarea.jar"/>
+	<classpathentry kind="lib" path="libs/autocomplete.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
