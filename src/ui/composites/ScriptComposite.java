@@ -228,9 +228,11 @@ public class ScriptComposite extends Composite {
 						//st.setWordWrap(true);
 						//curTextBox = st;
 						//newItem.setControl(st);
-					    
-					    ScriptEditor se = new ScriptEditor(parent);
+
+						Composite comp = new Composite(tabs, SWT.EMBEDDED | SWT.NO_BACKGROUND);
+					    ScriptEditor se = new ScriptEditor(comp);
 					    curEditor = se;
+						newItem.setControl(comp);
 						
 						changeTab(newItem);
 						//st.setFont(SWTResourceManager.getFont("Courier New", 9,	SWT.NORMAL));

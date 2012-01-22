@@ -8,7 +8,6 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.awt.SWT_AWT;
 import org.eclipse.swt.widgets.Composite;
 import org.fife.ui.autocomplete.AutoCompletion;
@@ -32,8 +31,7 @@ public class ScriptEditor extends JPanel {
 	
 	public ScriptEditor(Composite parent) {
 		
-		Composite comp = new Composite(parent, SWT.EMBEDDED | SWT.NO_BACKGROUND);
-	    Frame frame = SWT_AWT.new_Frame(comp);
+	    Frame frame = SWT_AWT.new_Frame(parent);
 
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {

@@ -10,3 +10,7 @@ function fact(connection, sargs) {
 
 	connection.sendMessage(global.currentChannel(), nick);
 }
+
+function test() {
+	var poop = 0;
+}
