@@ -43,6 +43,12 @@ public class Settings {
 	
 	//Other static variables
 	public static final short BACKGROUND = -1;
+	
+	//TextBoxComposite settings
+	@Getter @Setter boolean timestampsEnabled;
+	@Getter @Setter String timestampFormatPattern;
+	
+	
 	//creates default settings
 	public Settings()
 	{
@@ -65,6 +71,8 @@ public class Settings {
 		roomStatusColors.put(Room.NEW_IRC_EVENT, SWTResourceManager.getColor(SWT.COLOR_MAGENTA).getRGB());
 		roomStatusColors.put(Room.NEW_MESSAGE, SWTResourceManager.getColor(SWT.COLOR_RED).getRGB());
 		roomStatusColors.put(Room.NAME_CALLED, SWTResourceManager.getColor(SWT.COLOR_GREEN).getRGB());
+		
+		timestampFormatPattern = "";
 	}
 	
 	public static void writeToFile()

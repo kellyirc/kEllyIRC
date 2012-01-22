@@ -1,8 +1,11 @@
 package shared;
 
-import org.pircbotx.Channel;
+import java.util.Date;
 
 import lombok.Data;
+
+import org.pircbotx.Channel;
+
 import connection.Connection;
 import connection.KEllyBot;
 
@@ -20,11 +23,11 @@ public class Message {
 	private String content, sender, channel;
 	private KEllyBot bot;
 	private short type;
-	
+	private Date date;
 	public Message(KEllyBot kEllyBot, String message, String nick,
 			String target, short type) {
+		this.setDate(new Date());
 		this.setBot(kEllyBot);
-		
 		this.setContent(message+(message.contains(NEW_LINE) ? "" : NEW_LINE));
 		this.setSender(nick);
 		this.setChannel(target);

@@ -62,6 +62,10 @@ public class OptionComposite extends Composite {
 		treeItem.setData("ui.composites.IgnoreListComposite");
 		
 		treeItem = new TreeItem(tree, SWT.NONE);
+		treeItem.setText("Text Box");
+		treeItem.setData("ui.composites.TextBoxComposite");
+		
+		treeItem = new TreeItem(tree, SWT.NONE);
 		treeItem.setText("Scripting");
 		treeItem.setData("ui.composites.ScriptComposite");
 

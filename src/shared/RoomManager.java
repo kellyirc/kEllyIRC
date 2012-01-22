@@ -1,5 +1,6 @@
 package shared;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
@@ -85,7 +86,9 @@ public class RoomManager {
 						msgWithNick = "*** " + m.getSender() + " " + m.getContent();
 					else
 						msgWithNick = "<" + m.getSender() + "> " + m.getContent();
-					
+					SimpleDateFormat sdf = new SimpleDateFormat(Settings.getSettings().getTimestampFormatPattern());
+					if(Settings.getSettings().isTimestampsEnabled())
+						msgWithNick = sdf.format(m.getDate()) + " " + msgWithNick;
 					//apply color for each type of message, except MSG because that's already default
 					if(m.getType() != Message.MSG)
 					{
