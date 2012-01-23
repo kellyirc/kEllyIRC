@@ -23,7 +23,6 @@ import scripting.ScriptManager;
 
 public class ScriptEditor extends JPanel {
 
-	//TODO get beta rsyntaxarea for code folding
 	//TODO make ctrl space work
 	//TODO custom script parser to show errors at problematic lines
 

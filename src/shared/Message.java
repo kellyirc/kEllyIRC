@@ -34,7 +34,6 @@ public class Message {
 		this.setChannel(target);
 		this.type = type;
 	}
-	//TODO: pass in the actual User object instead of a string
 	
 	public Message(Connection nc, String content, String sender, String channel, short type){
 		this(nc.getBot(), content, sender, channel, type);

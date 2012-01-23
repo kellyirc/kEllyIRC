@@ -23,7 +23,8 @@ public class Initializer {
 	public static void main(String args[]) {
 		checkVersion();
 		//TODO: load basic UI separate from connection so the UI shows right away
-		//TODO: first time setup stuff if properties file not found
+		//TODO: first time setup stuff if properties file not found (download scripts from repository, and basic_settings file that hasn't  been made yet)
+		//the basic settings file should contain basic quicklinks (google, others), and other presets that are deemed important
 
 		Display.setAppName("kEllyIRC");
 		final Display disp = Display.getDefault();
