@@ -207,8 +207,6 @@ public class Room extends Composite {
 	// TODO: change to booleans
 	public static final int WHO = 1, TOPIC = 2, IO = 4;
 
-	// TODO make html logs pretty
-
 	private CustomChannel cChannel;
 	private Connection serverConnection;
 	private KEllyBot bot;
@@ -250,7 +248,7 @@ public class Room extends Composite {
 		roomLayout = layout;
 		lastMessages = new LinkedList<String>();
 		listIndex = -1;
-		this.logMessage("Session started at "+new java.util.Date());
+		this.logMessage("\nSession started at "+new java.util.Date()+"\n");
 
 		for (TreeItem i : tree.getItems()) {
 			if (i.getData() == this) {
@@ -777,6 +775,11 @@ public class Room extends Composite {
 		
 		new File("logs/").mkdir();
 		new File("logs/"+getServerConnection().getBot().getServer()+"/").mkdir();
+		
+		logMessageTxt(s);
+	}
+	
+	private void logMessageTxt(String s) {
 		File file = new File("logs/"+getServerConnection().getBot().getServer()+"/"+getChannelName()+".txt");
 
 		createIfNotExist(file);
@@ -787,15 +790,33 @@ public class Room extends Composite {
 			e.printStackTrace();
 		}
 	}
+	
+	private void logMessageHtml(String s) {
 
-	private void createIfNotExist(File logs) {
+		File file = new File("logs/"+getServerConnection().getBot().getServer()+"/"+getChannelName()+".html");
+
+		if(createIfNotExist(file)) {
+			
+		}
+
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, true))) {
+			writer.write("["+new java.util.Date() + "] " + s);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+
+	private boolean createIfNotExist(File logs) {
 		if(!logs.exists()) {
 			try {
 				logs.createNewFile();
+				return true;
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
+		return false;
 	}
 
 	public void newMessage(String s) {

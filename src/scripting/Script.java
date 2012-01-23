@@ -48,12 +48,12 @@ public final class Script implements Comparable<Script> {
 	private String name;
 	
 	private static final String nl = System.getProperty("line.separator");
-	private ScriptEngineManager manager = new ScriptEngineManager();
-	private ScriptEngine jsEngine = manager.getEngineByName("JavaScript");
-	private ScriptEngine rbEngine = manager.getEngineByName("jruby");
-	private Invocable jsInvocable = (Invocable) jsEngine;
-	private Invocable rbInvocable = (Invocable) rbEngine;
-	private Bindings bindings = jsEngine.getBindings(ScriptContext.ENGINE_SCOPE);
+	private static ScriptEngineManager manager = new ScriptEngineManager();
+	private static ScriptEngine jsEngine = manager.getEngineByName("JavaScript");
+	private static ScriptEngine rbEngine = manager.getEngineByName("jruby");
+	private static Invocable jsInvocable = (Invocable) jsEngine;
+	private static Invocable rbInvocable = (Invocable) rbEngine;
+	private static Bindings bindings = jsEngine.getBindings(ScriptContext.ENGINE_SCOPE);
 	
 	private String rbBase = "require \"java\""+nl;
 	

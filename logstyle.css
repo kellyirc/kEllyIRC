@@ -1,0 +1,27 @@
+body {
+background-color: #FFC;
+}
+.session {
+}
+.message {
+background-color: #FFD;
+}
+.message-alt {
+background-color: #FFB;
+}
+.timestamp {
+font-weight: bold;
+}
+.nick {
+color: #380;
+}
+.nick-me {
+color: #94c;
+}
+.fold {
+background-color: #0f0;
+}
+.system {
+}
+.system-msg {
+}
