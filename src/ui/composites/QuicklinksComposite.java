@@ -20,67 +20,70 @@ public class QuicklinksComposite extends Composite {
 
 	/**
 	 * Create the composite.
+	 * 
 	 * @param parent
 	 * @param style
 	 */
 	public QuicklinksComposite(Composite parent, int style) {
 		super(parent, style);
-		
+
 		table = new Table(this, SWT.BORDER | SWT.FULL_SELECTION);
 		table.setBounds(10, 10, 430, 227);
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
-		
+
 		TableColumn tblclmnQuicklinkId = new TableColumn(table, SWT.NONE);
 		tblclmnQuicklinkId.setWidth(89);
 		tblclmnQuicklinkId.setText("Quicklink ID");
-		
+
 		TableColumn tblclmnQuicklinkUrl = new TableColumn(table, SWT.NONE);
 		tblclmnQuicklinkUrl.setWidth(319);
 		tblclmnQuicklinkUrl.setText("Quicklink URL");
-		
+
 		name = new Text(this, SWT.BORDER);
 		name.setBounds(10, 269, 135, 21);
-		
+
 		url = new Text(this, SWT.BORDER);
 		url.setBounds(151, 269, 249, 21);
-		
+
 		Button btnAdd = new Button(this, SWT.NONE);
 		btnAdd.setBounds(406, 265, 34, 25);
 		btnAdd.setText("Add");
-		btnAdd.addSelectionListener(new SelectionListener(){
+		btnAdd.addSelectionListener(new SelectionListener() {
 
 			@Override
-			public void widgetDefaultSelected(SelectionEvent arg0) {}
+			public void widgetDefaultSelected(SelectionEvent arg0) {
+			}
 
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				if(name.getText()!="" && url.getText()!="") {
+				if (name.getText() != "" && url.getText() != "") {
 					addQuickLink(name.getText(), url.getText());
 				}
 			}
 
 			private void addQuickLink(String text, String text2) {
 				Quicklinks.addLink(text, text2);
-				for(TableItem ti : table.getItems()) {
-					if(ti.getData().equals(text)) {
+				for (TableItem ti : table.getItems()) {
+					if (ti.getData().equals(text)) {
 						table.remove(table.indexOf(ti));
 					}
 				}
 				loadTable();
-			}});
-		
+			}
+		});
+
 		Label lblQuicklinkPreface = new Label(this, SWT.NONE);
 		lblQuicklinkPreface.setBounds(10, 248, 102, 15);
 		lblQuicklinkPreface.setText("Quicklink Preface");
-		
+
 		Label lblUrlmarkUser = new Label(this, SWT.NONE);
 		lblUrlmarkUser.setText("URL (mark user input with %INPUT%)");
 		lblUrlmarkUser.setBounds(151, 248, 249, 15);
 
 		loadTable();
 	}
-	
+
 	private void loadTable() {
 		for (String cs : Quicklinks.getQuicklinks().keySet()) {
 			TableItem i = new TableItem(table, SWT.NONE);

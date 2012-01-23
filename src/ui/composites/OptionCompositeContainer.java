@@ -1,6 +1,5 @@
 package ui.composites;
 
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
 
@@ -15,7 +14,7 @@ import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.wb.swt.layout.grouplayout.LayoutStyle;
 
-import shared.ClassFinder;
+import shared.ClassDiscovery;
 
 /**
  * @author Kyle Kemp
@@ -57,26 +56,17 @@ public class OptionCompositeContainer extends Composite {
 		);
 		setLayout(groupLayout);
 		
-		//FIXME this needs to work for jar builds!
 		TreeItem treeItem;
-		try {
-			for(Class<?> c : ClassFinder.getClasses("ui.composites")) {
-				String name = c.getCanonicalName();
-				if(name!=null && name.endsWith("Composite")) {
-					treeItem = new TreeItem(tree, SWT.NONE);
-					String compname = name.substring(14, name.indexOf("Composite"));
-					String[] arrName = compname.split("(?=\\p{Upper})");
-					treeItem.setText(Arrays.asList(arrName).toString().replaceAll(",","").replaceAll("^\\[|\\]$", "").trim());
-					treeItem.setData(c.getCanonicalName());
-				}
+		for(Class<?> c : ClassDiscovery.DiscoverClasses(ui.composites.MainWindow.class, null, null)) {
+			String name = c.getCanonicalName();
+			if(name!=null && name.endsWith("Composite")) {
+				treeItem = new TreeItem(tree, SWT.NONE);
+				String compname = name.substring(14, name.indexOf("Composite"));
+				String[] arrName = compname.split("(?=\\p{Upper})");
+				treeItem.setText(Arrays.asList(arrName).toString().replaceAll(",","").replaceAll("^\\[|\\]$", "").trim());
+				treeItem.setData(name);
 			}
-		} catch (ClassNotFoundException | IOException e1) {
-			e1.printStackTrace();
 		}
-		
-		treeItem = new TreeItem(tree, SWT.NONE);
-		treeItem.setText("Scripting");
-		treeItem.setData("ui.composites.ScriptingComposite");
 		
 		tree.addListener(SWT.MouseDown, new Listener () {
 			@Override
