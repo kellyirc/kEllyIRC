@@ -49,9 +49,9 @@ import ui.room.Room;
 @EqualsAndHashCode(callSuper = false)
 public class Connection extends Composite {
 
-	static LinkedList<ConnectionData> connections = new LinkedList<>();
+	public static LinkedList<ConnectionData> connections = new LinkedList<>();
 
-	private class ConnectionData extends ListenerAdapter<KEllyBot> {
+	public class ConnectionData extends ListenerAdapter<KEllyBot> {
 
 		@Getter
 		private KEllyBot bot;
@@ -253,10 +253,6 @@ public class Connection extends Composite {
 					Event e = new Event();
 					e.item = (TreeItem) label.getData("_TREEITEM");
 					chanList.setSelection((TreeItem) e.item);
-					// TODO: Somehow pass the event down to chanList
-					// so we can later handle rightclicking
-					// for menus
-					// chanList.notifyListeners (SWT.MouseDown, e);
 					if (e.item != null && e.item.getData() != null)
 						switchComposite((Room) e.item.getData());
 					shell.dispose();

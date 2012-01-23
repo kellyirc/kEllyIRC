@@ -25,7 +25,6 @@ public class ScriptEditor extends JPanel {
 
 	//TODO get beta rsyntaxarea for code folding
 	//TODO make ctrl space work
-	//TODO periodically check for updates to get member finding functionality
 	//TODO custom script parser to show errors at problematic lines
 
 	/**

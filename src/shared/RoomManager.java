@@ -183,8 +183,6 @@ public class RoomManager {
 						r.changeStatus(Room.NEW_MESSAGE);
 				}
 
-				// TODO: make this conform to the global list, and make the
-				// global list work
 				private void linkify(Room r, String strippedLine, String s) {
 					Color blue = new Color(r.getOutput().getDisplay(), 0, 0,
 							255);

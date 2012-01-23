@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 
+import connection.Connection;
 import connection.KEllyBot;
 
 import ui.composites.MainWindow;
@@ -59,7 +60,11 @@ public class Initializer {
 	// called when the program exits
 	public static void quit() {
 		RoomManager.getMain().getDisplay().getSystemTray().dispose();
-		//TODO: make connections quit here
+
+		for(Connection.ConnectionData c : Connection.connections) {
+			c.getBot().quitServer();
+		}
+		
 		System.exit(0);
 	}
 

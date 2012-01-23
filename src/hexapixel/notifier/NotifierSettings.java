@@ -4,7 +4,6 @@ import org.eclipse.swt.graphics.Color;
 
 import hexapixel.cache.ColorCache;
 
-//TODO push this into an interface
 public class NotifierSettings {
 
 	// title foreground color

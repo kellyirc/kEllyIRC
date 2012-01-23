@@ -29,7 +29,8 @@ import hexapixel.cache.FontCache;
 
 public class NotifierDialog {
 
-	// TODO: extract these to options
+
+	
 	// how long the the tray popup is displayed after fading in (in
 	// milliseconds)
 	private static final int DISPLAY_TIME = 4500;
