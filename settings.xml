@@ -78,6 +78,12 @@
       </org.eclipse.swt.graphics.RGB>
     </entry>
   </roomStatusColors>
+  <quicklinks>
+    <entry>
+      <string>google</string>
+      <string>google.ca</string>
+    </entry>
+  </quicklinks>
   <timestampsEnabled>false</timestampsEnabled>
   <timestampFormatPattern></timestampFormatPattern>
 </connection.Settings>

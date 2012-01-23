@@ -121,7 +121,6 @@ public class Room extends Composite {
 			MenuItem mitem = new MenuItem(m, SWT.CASCADE);
 			mitem.setText("CTCP");
 			mitem.setMenu(parent);
-			// TODO: make this a smarter list per person based on CLIENTINFO
 			createCTCP(tUser, parent, "CLIENTINFO");
 			createCTCP(tUser, parent, "FINGER");
 			createCTCP(tUser, parent, "PING");
@@ -174,9 +173,7 @@ public class Room extends Composite {
 					mitem.addSelectionListener(new SelectionListener() {
 
 						@Override
-						public void widgetDefaultSelected(SelectionEvent arg0) {
-							// TODO: write this
-						}
+						public void widgetDefaultSelected(SelectionEvent arg0) {}
 
 						@Override
 						public void widgetSelected(SelectionEvent arg0) {
@@ -191,9 +188,7 @@ public class Room extends Composite {
 					mitem.addSelectionListener(new SelectionListener() {
 
 						@Override
-						public void widgetDefaultSelected(SelectionEvent arg0) {
-							// TODO: write this
-						}
+						public void widgetDefaultSelected(SelectionEvent arg0) {}
 
 						@Override
 						public void widgetSelected(SelectionEvent arg0) {
@@ -591,24 +586,26 @@ public class Room extends Composite {
 					topicBox.setStyleRange(styleRange);
 
 				for (String s : strippedTopic.split(" ")) {
-					if (s.contains("://")) {
-						// TODO: make this conform to the global list, and make the
-						// global list work
-						Color blue = new Color(topicBox.getDisplay(), 0, 0, 255);
-						StyleRange styleRange = new StyleRange();
-						styleRange.start = topicBox.getCharCount()
-								- strippedTopic.length()
-								+ strippedTopic.indexOf(s);
-						styleRange.length = s.length();
-						styleRange.foreground = blue;
-						styleRange.data = s;
-						styleRange.underline = true;
-						styleRange.underlineStyle = SWT.UNDERLINE_LINK;
-						topicBox.setStyleRange(styleRange);
+					if (s.contains("://") || Quicklinks.hasQuicklink(s)) {
+						linkify(strippedTopic, s);
 					}
 				}
 
 				topicBox.setToolTipText(topic);
+			}
+
+			private void linkify(final String strippedTopic, String s) {
+				Color blue = new Color(topicBox.getDisplay(), 0, 0, 255);
+				StyleRange styleRange = new StyleRange();
+				styleRange.start = topicBox.getCharCount()
+						- strippedTopic.length()
+						+ strippedTopic.indexOf(s);
+				styleRange.length = s.length();
+				styleRange.foreground = blue;
+				styleRange.data = s;
+				styleRange.underline = true;
+				styleRange.underlineStyle = SWT.UNDERLINE_LINK;
+				topicBox.setStyleRange(styleRange);
 			}
 		});
 	}

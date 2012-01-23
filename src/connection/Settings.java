@@ -42,6 +42,7 @@ public class Settings {
 	@Getter @Setter ArrayList<String> nicksIgnored;
 	@Getter @Setter HashMap<Short,String> outputColors;
 	@Getter @Setter HashMap<Integer,RGB> roomStatusColors;
+	@Getter @Setter HashMap<String,String> quicklinks;
 	
 	
 	//Other static variables
