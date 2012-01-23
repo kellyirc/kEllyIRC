@@ -33,6 +33,7 @@ public class Initializer {
 			h.setTitle(KEllyBot.VERSION+ " Error Log");
 			h.setLocationInfo(true);
 			BasicConfigurator.configure(new FileAppender(h, "error_log.html",true));
+			
 			window = new MainWindow(disp);
 			window.setBlockOnOpen(true);
 			window.open();

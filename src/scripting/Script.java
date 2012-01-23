@@ -106,7 +106,11 @@ public final class Script implements Comparable<Script> {
 
 			org.apache.log4j.Logger fLog = org.apache.log4j.Logger.getLogger("log.script.scripts");
 			fLog.error("Script initialization failed: "+reference.getName()+" at line #"+e.getLineNumber());
+		} catch(Exception e) {
+			org.apache.log4j.Logger fLog = org.apache.log4j.Logger.getLogger("log.script.scripts");
+			fLog.error("Script initialization failed: "+e.getStackTrace());
 		}
+		
 	}
 
 	private void initBindings() {

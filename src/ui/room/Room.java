@@ -1,5 +1,9 @@
 package ui.room;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -53,166 +57,163 @@ import connection.Connection;
 import connection.KEllyBot;
 import connection.Settings;
 
-
 @EqualsAndHashCode(callSuper = false)
 @Data
 public class Room extends Composite {
 
 	private WhoListener curListener;
-	
+
 	private class WhoListener implements Listener {
-			public void handleEvent(Event event) {
-				Point point = new Point(event.x, event.y);
-				final TreeItem item = who.getItem(point);
-	
-				if (item != null && item.getData() != null
-						&& item.getData() instanceof User) {
-					Menu m = new Menu(item.getParent().getShell(),
-							SWT.POP_UP);
-					basicItems(item, m);
-					ctcpItems(item, m);
-					operatorItems(item, m);
-					customItems(item, m);
-					item.getParent().setMenu(m);
-				}
+		public void handleEvent(Event event) {
+			Point point = new Point(event.x, event.y);
+			final TreeItem item = who.getItem(point);
+
+			if (item != null && item.getData() != null
+					&& item.getData() instanceof User) {
+				Menu m = new Menu(item.getParent().getShell(), SWT.POP_UP);
+				basicItems(item, m);
+				ctcpItems(item, m);
+				operatorItems(item, m);
+				customItems(item, m);
+				item.getParent().setMenu(m);
 			}
+		}
 
-			private void customItems(final TreeItem item, Menu m) {
-				final Script[] contextScripts = findContextScript();
-				if(contextScripts == null || contextScripts.length==0) return;
-				for(final Script contextScript : contextScripts) {
-					Object[] arr = contextScript.invoke("getContextCommands");
-					for(final Object s : arr){
-						MenuItem mitem = new MenuItem(m, SWT.PUSH);
-						mitem.setText((String)s);
-						mitem.addSelectionListener(new SelectionListener() {
+		private void customItems(final TreeItem item, Menu m) {
+			final Script[] contextScripts = findContextScript();
+			if (contextScripts == null || contextScripts.length == 0)
+				return;
+			for (final Script contextScript : contextScripts) {
+				Object[] arr = contextScript.invoke("getContextCommands");
+				for (final Object s : arr) {
+					MenuItem mitem = new MenuItem(m, SWT.PUSH);
+					mitem.setText((String) s);
+					mitem.addSelectionListener(new SelectionListener() {
 
-							@Override
-							public void widgetDefaultSelected(
-									SelectionEvent arg0) {
-							}
+						@Override
+						public void widgetDefaultSelected(SelectionEvent arg0) {
+						}
 
-							@Override
-							public void widgetSelected(SelectionEvent arg0) {
-								contextScript.invoke((String)s, getBot(), item.getData(), cChannel.getChannel());
-							}
-						});
-					}
-				}
-			}
-
-			private Script[] findContextScript() {
-				ArrayList<Script> scripts = new ArrayList<Script>();
-				for(Script s : ScriptManager.scripts){
-					if(s.getFunctions().contains("getContextCommands")){
-						scripts.add(s);
-					}
-				}
-				return scripts.toArray(new Script[0]);
-			}
-
-			private void ctcpItems(TreeItem item, Menu m) {
-				final User tUser = (User) item.getData();
-				
-				Menu parent = new Menu(m);
-				MenuItem mitem = new MenuItem(m, SWT.CASCADE);
-				mitem.setText("CTCP");
-				mitem.setMenu(parent);
-				//TODO: make this a smarter list per person based on CLIENTINFO
-				createCTCP(tUser, parent, "CLIENTINFO");
-				createCTCP(tUser, parent, "FINGER");
-				createCTCP(tUser, parent, "PING");
-				createCTCP(tUser, parent, "TIME");
-				createCTCP(tUser, parent, "USERINFO");
-				createCTCP(tUser, parent, "VERSION");
-			}
-
-			private void createCTCP(final User tUser, Menu parent, final String command) {
-				MenuItem mitem = new MenuItem(parent, SWT.PUSH);
-				mitem.setText(command);
-				mitem.addSelectionListener(new SelectionListener() {
-
-					@Override
-					public void widgetDefaultSelected(
-							SelectionEvent arg0) {
-					}
-
-					@Override
-					public void widgetSelected(SelectionEvent arg0) {
-						bot.sendCTCPCommand(tUser, command);
-					}
-				});
-			}
-
-			private void basicItems(final TreeItem item, Menu m) {
-				MenuItem mitem = new MenuItem(m, SWT.PUSH);
-				mitem.setText("Query");
-				mitem.addSelectionListener(new SelectionListener() {
-
-					@Override
-					public void widgetDefaultSelected(
-							SelectionEvent arg0) {
-					}
-
-					@Override
-					public void widgetSelected(SelectionEvent arg0) {
-						serverConnection.createRoom(item.getText(), IO);
-
-					}
-				});
-			}
-			
-			private void operatorItems(final TreeItem item, Menu m) {
-				final Channel thisChan = cChannel.getChannel();
-				final User tUser = (User) item.getData();
-				if(bot.getUserBot().getChannelsOpIn().contains(thisChan)){
-					if(!tUser.getChannelsOpIn().contains(thisChan)){
-						MenuItem mitem = new MenuItem(m, SWT.PUSH);
-						mitem.setText("Op");
-						mitem.addSelectionListener(new SelectionListener() {
-
-							@Override
-							public void widgetDefaultSelected(
-									SelectionEvent arg0) {
-								//TODO: write this
-							}
-
-							@Override
-							public void widgetSelected(SelectionEvent arg0) {
-								bot.op(thisChan, tUser);
-
-							}
-						});
-					}
-					if(!tUser.getChannelsVoiceIn().contains(thisChan)){
-						MenuItem mitem = new MenuItem(m, SWT.PUSH);
-						mitem.setText("Voice");
-						mitem.addSelectionListener(new SelectionListener() {
-
-							@Override
-							public void widgetDefaultSelected(
-									SelectionEvent arg0) {
-								//TODO: write this
-							}
-
-							@Override
-							public void widgetSelected(SelectionEvent arg0) {
-								bot.voice(thisChan, tUser);
-
-							}
-						});
-					}
+						@Override
+						public void widgetSelected(SelectionEvent arg0) {
+							contextScript.invoke((String) s, getBot(),
+									item.getData(), cChannel.getChannel());
+						}
+					});
 				}
 			}
 		}
-	
-	// TODO: fake tooltips (http://dev.eclipse.org/viewcvs/viewvc.cgi/org.eclipse.swt.snippets/src/org/eclipse/swt/snippets/Snippet125.java?view=co)
-	
+
+		private Script[] findContextScript() {
+			ArrayList<Script> scripts = new ArrayList<Script>();
+			for (Script s : ScriptManager.scripts) {
+				if (s.getFunctions().contains("getContextCommands")) {
+					scripts.add(s);
+				}
+			}
+			return scripts.toArray(new Script[0]);
+		}
+
+		private void ctcpItems(TreeItem item, Menu m) {
+			final User tUser = (User) item.getData();
+
+			Menu parent = new Menu(m);
+			MenuItem mitem = new MenuItem(m, SWT.CASCADE);
+			mitem.setText("CTCP");
+			mitem.setMenu(parent);
+			// TODO: make this a smarter list per person based on CLIENTINFO
+			createCTCP(tUser, parent, "CLIENTINFO");
+			createCTCP(tUser, parent, "FINGER");
+			createCTCP(tUser, parent, "PING");
+			createCTCP(tUser, parent, "TIME");
+			createCTCP(tUser, parent, "USERINFO");
+			createCTCP(tUser, parent, "VERSION");
+		}
+
+		private void createCTCP(final User tUser, Menu parent,
+				final String command) {
+			MenuItem mitem = new MenuItem(parent, SWT.PUSH);
+			mitem.setText(command);
+			mitem.addSelectionListener(new SelectionListener() {
+
+				@Override
+				public void widgetDefaultSelected(SelectionEvent arg0) {
+				}
+
+				@Override
+				public void widgetSelected(SelectionEvent arg0) {
+					bot.sendCTCPCommand(tUser, command);
+				}
+			});
+		}
+
+		private void basicItems(final TreeItem item, Menu m) {
+			MenuItem mitem = new MenuItem(m, SWT.PUSH);
+			mitem.setText("Query");
+			mitem.addSelectionListener(new SelectionListener() {
+
+				@Override
+				public void widgetDefaultSelected(SelectionEvent arg0) {
+				}
+
+				@Override
+				public void widgetSelected(SelectionEvent arg0) {
+					serverConnection.createRoom(item.getText(), IO);
+
+				}
+			});
+		}
+
+		private void operatorItems(final TreeItem item, Menu m) {
+			final Channel thisChan = cChannel.getChannel();
+			final User tUser = (User) item.getData();
+			if (bot.getUserBot().getChannelsOpIn().contains(thisChan)) {
+				if (!tUser.getChannelsOpIn().contains(thisChan)) {
+					MenuItem mitem = new MenuItem(m, SWT.PUSH);
+					mitem.setText("Op");
+					mitem.addSelectionListener(new SelectionListener() {
+
+						@Override
+						public void widgetDefaultSelected(SelectionEvent arg0) {
+							// TODO: write this
+						}
+
+						@Override
+						public void widgetSelected(SelectionEvent arg0) {
+							bot.op(thisChan, tUser);
+
+						}
+					});
+				}
+				if (!tUser.getChannelsVoiceIn().contains(thisChan)) {
+					MenuItem mitem = new MenuItem(m, SWT.PUSH);
+					mitem.setText("Voice");
+					mitem.addSelectionListener(new SelectionListener() {
+
+						@Override
+						public void widgetDefaultSelected(SelectionEvent arg0) {
+							// TODO: write this
+						}
+
+						@Override
+						public void widgetSelected(SelectionEvent arg0) {
+							bot.voice(thisChan, tUser);
+
+						}
+					});
+				}
+			}
+		}
+	}
+
+	// TODO: fake tooltips
+	// (http://dev.eclipse.org/viewcvs/viewvc.cgi/org.eclipse.swt.snippets/src/org/eclipse/swt/snippets/Snippet125.java?view=co)
+
 	// TODO: change to booleans
 	public static final int WHO = 1, TOPIC = 2, IO = 4;
-	
-	
-	
+
+	// TODO make html logs pretty
+
 	private CustomChannel cChannel;
 	private Connection serverConnection;
 	private KEllyBot bot;
@@ -225,17 +226,18 @@ public class Room extends Composite {
 	private Tree who;
 
 	private int roomLayout;
-	
+
 	private Customs customs;
 
-	//determines color of TreeItem in the channel list
+	// determines color of TreeItem in the channel list
 	private int status;
-	public static final int NORMAL = 0, NEW_IRC_EVENT = 1, NEW_MESSAGE = 2, NAME_CALLED = 3;
-	
-	//first item is the newest
+	public static final int NORMAL = 0, NEW_IRC_EVENT = 1, NEW_MESSAGE = 2,
+			NAME_CALLED = 3;
+
+	// first item is the newest
 	private LinkedList<String> lastMessages;
 	private int listIndex;
-	
+
 	// variables used with the tool tip
 	private int userCount;
 	private String lastMessage;
@@ -253,16 +255,15 @@ public class Room extends Composite {
 		roomLayout = layout;
 		lastMessages = new LinkedList<String>();
 		listIndex = -1;
-		
-		for(TreeItem i:tree.getItems())
-		{
-			if(i.getData()==this)
-			{
+		this.logMessage("Session started at "+new java.util.Date());
+
+		for (TreeItem i : tree.getItems()) {
+			if (i.getData() == this) {
 				chanListItem = i;
 				break;
 			}
 		}
-		
+
 		changeStatus(NORMAL);
 		instantiate(layout);
 	}
@@ -274,12 +275,13 @@ public class Room extends Composite {
 				String[] message = arg0.lineText.split(" ");
 				int offset = arg0.offset - arg0.lineOffset;
 				for (String s : message) {
-					if (arg0.lineText.indexOf(s) > offset || arg0.lineText.indexOf(s)+s.length() < offset)
+					if (arg0.lineText.indexOf(s) > offset
+							|| arg0.lineText.indexOf(s) + s.length() < offset)
 						continue;
-					
+
 					if (s.contains("://")) {
 						Program.launch(s);
-					} else if(Quicklinks.hasQuicklink(s)) {
+					} else if (Quicklinks.hasQuicklink(s)) {
 						Program.launch(Quicklinks.getLink(s));
 					}
 				}
@@ -290,46 +292,58 @@ public class Room extends Composite {
 
 			}
 		};
-		
+
 		if ((layout & TOPIC) != 0) {
 			topicBox = new StyledText(this, SWT.BORDER | SWT.WRAP);
 			topicBox.setEditable(true);
 			topicBox.setWordWrap(false);
 			topicBox.addVerifyKeyListener(new VerifyKeyListener() {
-				
+
 				@Override
-				public void verifyKey(VerifyEvent e)
-				{
-					//on pressing Enter, attempt to set the topic
+				public void verifyKey(VerifyEvent e) {
+					// on pressing Enter, attempt to set the topic
 					if (e.character == SWT.CR) {
-						bot.setTopic(Room.this.getCChannel().getChannel(), topicBox.getText());
+						bot.setTopic(Room.this.getCChannel().getChannel(),
+								topicBox.getText());
 						e.doit = false;
 					}
-					//or add control codes
-					if(e.stateMask == SWT.CTRL) {
-						switch(e.keyCode) {
-						//Key combinations
-							case 'O': case 'o': //Insert Normal (kills all formatting)
-								insertCode("\u000f"); break;
-							case 'B': case 'b': //Insert Bold
-								insertCode("\u0002"); break;
-							case 'U': case 'u': //Insert Underlin
-								insertCode("\u001f"); break;
-							case 'I': case 'i': //Insert Italic
-								insertCode("\u0016"); break; 
-							case 'K': case 'k': //Insert Color
-								insertCode("\u0003"); break;
-								
-							case 'A': case 'a': //Select all
-								input.selectAll(); break;
+					// or add control codes
+					if (e.stateMask == SWT.CTRL) {
+						switch (e.keyCode) {
+						// Key combinations
+						case 'O':
+						case 'o': // Insert Normal (kills all formatting)
+							insertCode("\u000f");
+							break;
+						case 'B':
+						case 'b': // Insert Bold
+							insertCode("\u0002");
+							break;
+						case 'U':
+						case 'u': // Insert Underlin
+							insertCode("\u001f");
+							break;
+						case 'I':
+						case 'i': // Insert Italic
+							insertCode("\u0016");
+							break;
+						case 'K':
+						case 'k': // Insert Color
+							insertCode("\u0003");
+							break;
+
+						case 'A':
+						case 'a': // Select all
+							input.selectAll();
+							break;
 						}
 					}
 				}
-				private void insertCode(String insertCode)
-				{
+
+				private void insertCode(String insertCode) {
 					int insertPos = topicBox.getCaretOffset();
-					topicBox.replaceTextRange(insertPos,0,insertCode);
-					topicBox.setCaretOffset(insertPos+1);
+					topicBox.replaceTextRange(insertPos, 0, insertCode);
+					topicBox.setCaretOffset(insertPos + 1);
 				}
 			});
 			topicBox.addWordMovementListener(linkClickListener);
@@ -338,134 +352,150 @@ public class Room extends Composite {
 			// set up the output window
 			output = new StyledText(this, SWT.BORDER | SWT.V_SCROLL | SWT.WRAP
 					| SWT.MULTI);
-			output.setFont(SWTResourceManager.getFont("Courier New", 9,	SWT.NORMAL));
-			output.setForeground(customs.colors.get(Settings.getSettings().getOutputColors().get(Message.MSG)));
-			output.setBackground(customs.colors.get(Settings.getSettings().getOutputColors().get(Settings.BACKGROUND)));
+			output.setFont(SWTResourceManager.getFont("Courier New", 9,
+					SWT.NORMAL));
+			output.setForeground(customs.colors.get(Settings.getSettings()
+					.getOutputColors().get(Message.MSG)));
+			output.setBackground(customs.colors.get(Settings.getSettings()
+					.getOutputColors().get(Settings.BACKGROUND)));
 			output.setEditable(false);
-			
+
 			output.addWordMovementListener(linkClickListener);
-			//if key pressed while output box selected, move to input box
+			// if key pressed while output box selected, move to input box
 			output.addKeyListener(new KeyAdapter() {
 				public void keyPressed(KeyEvent e) {
-					//TODO: Make this accept more than letters and digits,
-					//		without letting it put weird characters in
-					if(e.stateMask != SWT.CTRL && e.stateMask != SWT.ALT && e.character != 0 && e.character != SWT.CR)
-					{
-						input.append(""+e.character);
+					// TODO: Make this accept more than letters and digits,
+					// without letting it put weird characters in
+					if (e.stateMask != SWT.CTRL && e.stateMask != SWT.ALT
+							&& e.character != 0 && e.character != SWT.CR) {
+						input.append("" + e.character);
 						input.setSelection(input.getText().length());
 						input.setFocus();
-						
+
 					}
 				}
 			});
 
 			// set up the input box and it's enter-key listener
 			input = new StyledText(this, SWT.BORDER);
-			input.setFont(SWTResourceManager.getFont("Courier New", 9,	SWT.NORMAL));
-			input.setForeground(customs.colors.get(Settings.getSettings().getOutputColors().get(Message.MSG)));
-			input.setBackground(customs.colors.get(Settings.getSettings().getOutputColors().get(Settings.BACKGROUND)));
+			input.setFont(SWTResourceManager.getFont("Courier New", 9,
+					SWT.NORMAL));
+			input.setForeground(customs.colors.get(Settings.getSettings()
+					.getOutputColors().get(Message.MSG)));
+			input.setBackground(customs.colors.get(Settings.getSettings()
+					.getOutputColors().get(Settings.BACKGROUND)));
 			input.addVerifyKeyListener(new VerifyKeyListener() {
 				@Override
 				public void verifyKey(VerifyEvent e) {
-					if(e.stateMask == SWT.CTRL && //Ignore adding an indent when hitting
-							(e.keyCode == 'I' || e.keyCode == 'i')) //Ctrl + I
+					if (e.stateMask == SWT.CTRL && // Ignore adding an indent when hitting
+							(e.keyCode == 'I' || e.keyCode == 'i')) // Ctrl + I
 						e.doit = false;
 				}
 			});
-			
+
 			input.addKeyListener(new KeyAdapter() {
 				@Override
 				public void keyPressed(KeyEvent e) {
 					// CR == Carriage Return == Enter
 					if (e.character == SWT.CR) {
-						if(input.getText().equals("")) return;
+						if (input.getText().equals(""))
+							return;
 						if (cChannel != null && serverConnection != null) {
 							serverConnection.getBot().sendMessage(
 									channelName,
-									input.getText().replaceAll(Message.NEW_LINE, ""));
+									input.getText().replaceAll(
+											Message.NEW_LINE, ""));
 							lastMessages.addFirst(input.getText());
 							listIndex = -1;
 						}
 						input.setText("");
-						
+
 					}
-					if(e.keyCode == SWT.ARROW_UP && !lastMessage.isEmpty())
-					{
+					if (e.keyCode == SWT.ARROW_UP && !lastMessage.isEmpty()) {
 						listIndex++;
-						if(listIndex>=lastMessages.size())
-							listIndex=0;
+						if (listIndex >= lastMessages.size())
+							listIndex = 0;
 						input.setText(lastMessages.get(listIndex));
 					}
-					if(e.keyCode == SWT.ARROW_DOWN && !lastMessage.isEmpty())
-					{
+					if (e.keyCode == SWT.ARROW_DOWN && !lastMessage.isEmpty()) {
 						listIndex--;
-						if(listIndex<0)
-							listIndex = lastMessages.size()-1;
+						if (listIndex < 0)
+							listIndex = lastMessages.size() - 1;
 						input.setText(lastMessages.get(listIndex));
-						
+
 					}
-										
-					if(e.stateMask == SWT.CTRL) {
-						switch(e.keyCode) {
-						//Key combinations
-							case 'O': case 'o': //Insert Normal (kills all formatting)
-								insertCode("\u000f"); break;
-							case 'B': case 'b': //Insert Bold
-								insertCode("\u0002"); break;
-							case 'U': case 'u': //Insert Underlin
-								insertCode("\u001f"); break;
-							case 'I': case 'i': //Insert Italic
-								insertCode("\u0016"); break; 
-							case 'K': case 'k': //Insert Color
-								insertCode("\u0003"); break;
-								
-							case 'A': case 'a': //Select all
-								input.selectAll(); break;
+
+					if (e.stateMask == SWT.CTRL) {
+						switch (e.keyCode) {
+						// Key combinations
+						case 'O':
+						case 'o': // Insert Normal (kills all formatting)
+							insertCode("\u000f");
+							break;
+						case 'B':
+						case 'b': // Insert Bold
+							insertCode("\u0002");
+							break;
+						case 'U':
+						case 'u': // Insert Underlin
+							insertCode("\u001f");
+							break;
+						case 'I':
+						case 'i': // Insert Italic
+							insertCode("\u0016");
+							break;
+						case 'K':
+						case 'k': // Insert Color
+							insertCode("\u0003");
+							break;
+
+						case 'A':
+						case 'a': // Select all
+							input.selectAll();
+							break;
 						}
 					}
 				}
-				
-				private void insertCode(String insertCode)
-				{
+
+				private void insertCode(String insertCode) {
 					int insertPos = input.getCaretOffset();
-					input.replaceTextRange(insertPos,0,insertCode);
-					input.setCaretOffset(insertPos+1);
+					input.replaceTextRange(insertPos, 0, insertCode);
+					input.setCaretOffset(insertPos + 1);
 				}
 			});
-			//prevent selected text from disappearing when you hit enter
-			input.addExtendedModifyListener(new ExtendedModifyListener(){
+			// prevent selected text from disappearing when you hit enter
+			input.addExtendedModifyListener(new ExtendedModifyListener() {
 
 				public void modifyText(ExtendedModifyEvent e) {
-					String text = ((StyledText)e.widget).getText();
-					if(text.contains(""+SWT.CR))
+					String text = ((StyledText) e.widget).getText();
+					if (text.contains("" + SWT.CR))
 						((StyledText) e.widget).setText((text.substring(0,
 								e.start) + e.replacedText + text
-								.substring(e.start))
-								.replaceAll(Message.NEW_LINE, ""));
-					
+								.substring(e.start)).replaceAll(
+								Message.NEW_LINE, ""));
+
 				}
 			});
 		}
 
-//attempt to pass on the Ctrl+Tab and Ctrl+Shift+Tab traversal to the channel list
-//BUH THIS DOESN'T WORK SOMEONE ELSE TRY IT.
-//		TraverseListener tabSwitcher = new TraverseListener(){
-//			public void keyTraversed(TraverseEvent e) {
-//					if(e.detail == SWT.TRAVERSE_TAB_NEXT)
-//					{
-//						Tree chanList = serverConnection.getChanList();
-//						chanList.traverse(SWT.TRAVERSE_ARROW_NEXT);
-//					}
-//					else if(e.detail == SWT.TRAVERSE_TAB_PREVIOUS)
-//					{
-//						Tree chanList = serverConnection.getChanList();
-//						chanList.traverse(SWT.TRAVERSE_ARROW_PREVIOUS);
-//					}
-//			}}};
-//			input.addTraverseListener(tabSwitcher);
-//			output.addTraverseListener(tabSwitcher);
-		
-		
+		// attempt to pass on the Ctrl+Tab and Ctrl+Shift+Tab traversal to the channel list
+		// BUH THIS DOESN'T WORK SOMEONE ELSE TRY IT.
+		// TraverseListener tabSwitcher = new TraverseListener(){
+		// public void keyTraversed(TraverseEvent e) {
+		// if(e.detail == SWT.TRAVERSE_TAB_NEXT)
+		// {
+		// Tree chanList = serverConnection.getChanList();
+		// chanList.traverse(SWT.TRAVERSE_ARROW_NEXT);
+		// }
+		// else if(e.detail == SWT.TRAVERSE_TAB_PREVIOUS)
+		// {
+		// Tree chanList = serverConnection.getChanList();
+		// chanList.traverse(SWT.TRAVERSE_ARROW_PREVIOUS);
+		// }
+		// }}};
+		// input.addTraverseListener(tabSwitcher);
+		// output.addTraverseListener(tabSwitcher);
+
 		if ((layout & WHO) != 0) {
 			who = new Tree(this, SWT.BORDER | SWT.V_SCROLL);
 			updateWhoListener();
@@ -489,7 +519,7 @@ public class Room extends Composite {
 		SequentialGroup ss = gl_composite.createSequentialGroup();
 		ParallelGroup p2 = gl_composite
 				.createParallelGroup(GroupLayout.LEADING);
-		
+
 		if ((layout & TOPIC) != 0) {
 			p2.add(topicBox, GroupLayout.DEFAULT_SIZE, 496, Short.MAX_VALUE);
 		}
@@ -525,19 +555,18 @@ public class Room extends Composite {
 		gl_composite.setVerticalGroup(p);
 
 		this.setLayout(gl_composite);
-		
-		
+
 		// initial tab tool tip text setting
 		userCount = cChannel.getChannel() != null ? cChannel.getChannel()
 				.getUsers().size() : 0;
 		lastMessage = "N/A";
 		channelName = cChannel.getChannelString();
-		
+
 		serverConnection.switchComposite(this);
 	}
-	
+
 	private void updateWhoListener() {
-		if(curListener!=null){
+		if (curListener != null) {
 			who.removeListener(SWT.MouseDown, curListener);
 		}
 		curListener = new WhoListener();
@@ -545,19 +574,22 @@ public class Room extends Composite {
 	}
 
 	public void updateTopic() {
-		if(topicBox==null)return;
+		if (topicBox == null)
+			return;
 		final String topic = this.getCChannel().getChannel().getTopic();
 		final String strippedTopic = Colors.removeFormattingAndColors(topic);
 		RoomManager.getMain().getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				topicBox.setText(strippedTopic);
-	
-				List<StyleRange> styleRanges = ControlCodeParser.parseControlCodes(topic,
-						topicBox.getText().length() - strippedTopic.length() );
-				
-				for(StyleRange styleRange : styleRanges.toArray(new StyleRange[styleRanges.size()]))
+
+				List<StyleRange> styleRanges = ControlCodeParser
+						.parseControlCodes(topic, topicBox.getText().length()
+								- strippedTopic.length());
+
+				for (StyleRange styleRange : styleRanges
+						.toArray(new StyleRange[styleRanges.size()]))
 					topicBox.setStyleRange(styleRange);
-				
+
 				for (String s : strippedTopic.split(" ")) {
 					if (s.contains("://")) {
 						// TODO: make this conform to the global list, and make the
@@ -565,7 +597,8 @@ public class Room extends Composite {
 						Color blue = new Color(topicBox.getDisplay(), 0, 0, 255);
 						StyleRange styleRange = new StyleRange();
 						styleRange.start = topicBox.getCharCount()
-								- strippedTopic.length() + strippedTopic.indexOf(s);
+								- strippedTopic.length()
+								+ strippedTopic.indexOf(s);
 						styleRange.length = s.length();
 						styleRange.foreground = blue;
 						styleRange.data = s;
@@ -574,7 +607,7 @@ public class Room extends Composite {
 						topicBox.setStyleRange(styleRange);
 					}
 				}
-				
+
 				topicBox.setToolTipText(topic);
 			}
 		});
@@ -582,8 +615,8 @@ public class Room extends Composite {
 
 	public String getToolTipText() {
 		String output = "";
-		output +="Room: " + channelName;
-		if((roomLayout & Room.WHO)!= 0)
+		output += "Room: " + channelName;
+		if ((roomLayout & Room.WHO) != 0)
 			output += "\nCurrent Users: " + userCount;
 		output += "\nLast Message: " + lastMessage;
 		return output;
@@ -598,31 +631,33 @@ public class Room extends Composite {
 	}
 
 	public void updateWho() {
-		if(who==null)return;
+		if (who == null)
+			return;
 		final Room c = this;
 		RoomManager.getMain().getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				updateUserCount();
-				
+
 				getWho().removeAll();
-		
+
 				Channel chan = c.getCChannel().getChannel();
-				
+
 				Comparator<User> nickOrder = new Comparator<User>() {
 					@Override
-					public int compare(User u1, User u2) {;
+					public int compare(User u1, User u2) {
+						;
 						return u1.getNick().compareTo(u2.getNick());
 					}
 				};
-				
+
 				if (chan.getOwners().size() > 0) {
 					TreeItem t = new TreeItem(c.getWho(), SWT.NONE);
 					t.setText("Owners");
 					List<User> users = new LinkedList<User>(chan.getOwners());
-					Collections.sort(users,nickOrder);
+					Collections.sort(users, nickOrder);
 					for (User u : users) {
-						UserTreeItem i = new UserTreeItem(t, SWT.NONE, u,
-								c.getCChannel());
+						UserTreeItem i = new UserTreeItem(t, SWT.NONE, u, c
+								.getCChannel());
 						i.getTree().setText(u.getNick());
 					}
 					t.setExpanded(true);
@@ -631,10 +666,10 @@ public class Room extends Composite {
 					TreeItem t = new TreeItem(c.getWho(), SWT.NONE);
 					t.setText("Super-Ops");
 					List<User> users = new LinkedList<User>(chan.getSuperOps());
-					Collections.sort(users,nickOrder);
+					Collections.sort(users, nickOrder);
 					for (User u : users) {
-						UserTreeItem i = new UserTreeItem(t, SWT.NONE, u,
-								c.getCChannel());
+						UserTreeItem i = new UserTreeItem(t, SWT.NONE, u, c
+								.getCChannel());
 						i.getTree().setText(u.getNick());
 					}
 					t.setExpanded(true);
@@ -643,10 +678,10 @@ public class Room extends Composite {
 					TreeItem t = new TreeItem(c.getWho(), SWT.NONE);
 					t.setText("Ops");
 					List<User> users = new LinkedList<User>(chan.getOps());
-					Collections.sort(users,nickOrder);
+					Collections.sort(users, nickOrder);
 					for (User u : users) {
-						UserTreeItem i = new UserTreeItem(t, SWT.NONE, u,
-								c.getCChannel());
+						UserTreeItem i = new UserTreeItem(t, SWT.NONE, u, c
+								.getCChannel());
 						i.getTree().setText(u.getNick());
 					}
 					t.setExpanded(true);
@@ -655,10 +690,10 @@ public class Room extends Composite {
 					TreeItem t = new TreeItem(c.getWho(), SWT.NONE);
 					t.setText("Half-Ops");
 					List<User> users = new LinkedList<User>(chan.getHalfOps());
-					Collections.sort(users,nickOrder);
+					Collections.sort(users, nickOrder);
 					for (User u : users) {
-						UserTreeItem i = new UserTreeItem(t, SWT.NONE, u,
-								c.getCChannel());
+						UserTreeItem i = new UserTreeItem(t, SWT.NONE, u, c
+								.getCChannel());
 						i.getTree().setText(u.getNick());
 					}
 					t.setExpanded(true);
@@ -667,23 +702,24 @@ public class Room extends Composite {
 					TreeItem t = new TreeItem(c.getWho(), SWT.NONE);
 					t.setText("Voices");
 					List<User> users = new LinkedList<User>(chan.getVoices());
-					Collections.sort(users,nickOrder);
+					Collections.sort(users, nickOrder);
 					for (User u : users) {
-						UserTreeItem i = new UserTreeItem(t, SWT.NONE, u,
-								c.getCChannel());
+						UserTreeItem i = new UserTreeItem(t, SWT.NONE, u, c
+								.getCChannel());
 						i.getTree().setText(u.getNick());
 					}
 					t.setExpanded(true);
 				}
-				
+
 				if (chan.getNormalUsers().size() > 0) {
 					TreeItem t = new TreeItem(c.getWho(), SWT.NONE);
 					t.setText("Normal");
-					List<User> users = new LinkedList<User>(chan.getNormalUsers());
-					Collections.sort(users,nickOrder);
+					List<User> users = new LinkedList<User>(chan
+							.getNormalUsers());
+					Collections.sort(users, nickOrder);
 					for (User u : users) {
-						UserTreeItem i = new UserTreeItem(t, SWT.NONE, u,
-								c.getCChannel());
+						UserTreeItem i = new UserTreeItem(t, SWT.NONE, u, c
+								.getCChannel());
 						i.getTree().setText(u.getNick());
 					}
 					t.setExpanded(true);
@@ -691,33 +727,82 @@ public class Room extends Composite {
 			}
 		});
 	}
-	
-	public void changeStatus(int status)
-	{
-		HashMap<Integer,RGB> roomColors = Settings.getSettings().getRoomStatusColors();
-		//if currently in focus, change back to normal;
-		if(serverConnection.getScrolledComposite().getContent()==this)
+
+	public void changeStatus(int status) {
+		HashMap<Integer, RGB> roomColors = Settings.getSettings()
+				.getRoomStatusColors();
+		// if currently in focus, change back to normal;
+		if (serverConnection.getScrolledComposite().getContent() == this)
 			status = NORMAL;
-		switch(status)
-		{
+		switch (status) {
 		case NORMAL:
-			chanListItem.setForeground(SWTResourceManager.getColor(roomColors.get(NORMAL))); break;
+			chanListItem.setForeground(SWTResourceManager.getColor(roomColors
+					.get(NORMAL)));
+			break;
 		case NEW_IRC_EVENT:
-			if(this.status < status) // if the new status is higher priority
-				chanListItem.setForeground(SWTResourceManager.getColor(roomColors.get(NEW_IRC_EVENT))); break;
+			if (this.status < status) // if the new status is higher priority
+				chanListItem.setForeground(SWTResourceManager
+						.getColor(roomColors.get(NEW_IRC_EVENT)));
+			break;
 		case NEW_MESSAGE:
-			if(this.status < status)
-				chanListItem.setForeground(SWTResourceManager.getColor(roomColors.get(NEW_MESSAGE))); break;
+			if (this.status < status)
+				chanListItem.setForeground(SWTResourceManager
+						.getColor(roomColors.get(NEW_MESSAGE)));
+			break;
 		case NAME_CALLED:
-			if(this.status < status)
-				chanListItem.setForeground(SWTResourceManager.getColor(roomColors.get(NAME_CALLED))); break;
+			if (this.status < status)
+				chanListItem.setForeground(SWTResourceManager
+						.getColor(roomColors.get(NAME_CALLED)));
+			break;
 		}
-//		if(this.status < status)
-			this.status = status;
+		// if(this.status < status)
+		this.status = status;
 	}
-	
+
 	public String toString() {
 		return channelName;
-		
+
 	}
+
+	public void newMessage(String s, boolean update) {
+		output.append(s);
+		if (update) {
+			logMessage(s);
+			updateLastMessage(s);
+		}
+	}
+
+	//TODO show timestamps
+	
+	private void logMessage(String s) {
+		if (!Settings.getSettings().isChatLogs())
+			return;
+		
+		new File("logs/").mkdir();
+		new File("logs/"+getServerConnection().getBot().getServer()+"/").mkdir();
+		File file = new File("logs/"+getServerConnection().getBot().getServer()+"/"+getChannelName()+".txt");
+
+		createIfNotExist(file);
+
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, true))) {
+			writer.write("["+new java.util.Date() + "] " + s);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void createIfNotExist(File logs) {
+		if(!logs.exists()) {
+			try {
+				logs.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public void newMessage(String s) {
+		newMessage(s, false);
+	}
+
 }

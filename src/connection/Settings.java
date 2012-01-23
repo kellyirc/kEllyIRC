@@ -35,8 +35,8 @@ public class Settings {
 	//This keeps the list of servers the user has saved.
 	@Getter @Setter ArrayList<ConnectionSettings> connSettings;
 	
-	@Getter @Setter Boolean chatLogs;
-	@Getter @Setter Boolean minimizeTray;
+	@Getter @Setter boolean chatLogs;
+	@Getter @Setter boolean minimizeTray;
 	
 	//Other variables/objects to hold settings/preferences go here 
 	@Getter @Setter ArrayList<String> nicksIgnored;
@@ -48,7 +48,7 @@ public class Settings {
 	public static final short BACKGROUND = -1;
 	
 	//TextBoxComposite settings
-	@Getter @Setter Boolean timestampsEnabled;
+	@Getter @Setter boolean timestampsEnabled;
 	@Getter @Setter String timestampFormatPattern;
 	
 	

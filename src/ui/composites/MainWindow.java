@@ -1,6 +1,8 @@
 package ui.composites;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -41,6 +43,8 @@ public class MainWindow extends ApplicationWindow {
 	@Getter @Setter
 	private CTabFolder container;
 
+	//TODO look into blinking http://stackoverflow.com/questions/2773364/make-jface-window-blink-in-taskbar-or-get-users-attention
+	
 	/**
 	 * Create the application window.
 	 */
@@ -147,8 +151,15 @@ public class MainWindow extends ApplicationWindow {
 		});
 		super.configureShell(newShell);
 		newShell.setText("kEllyIRC");
-		newShell.setImage(new Image(getDisplay(), "icon.png"));
 		newShell.setMinimumSize(getInitialSize()); 
+
+		try {
+			Image image = new Image(getDisplay(), "icon.png");
+			newShell.setImage(image);
+		} catch (Exception e) {
+			Logger log = Logger.getLogger("logs.init");
+			log.log(Level.WARNING, "icon.png not found");
+		}
 		newShell.addShellListener(new ShellListener(){
 
 			@Override

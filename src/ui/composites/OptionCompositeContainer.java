@@ -1,14 +1,8 @@
 package ui.composites;
 
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
@@ -63,6 +57,7 @@ public class OptionCompositeContainer extends Composite {
 		);
 		setLayout(groupLayout);
 		
+		//FIXME this needs to work for jar builds!
 		TreeItem treeItem;
 		try {
 			for(Class<?> c : ClassFinder.getClasses("ui.composites")) {
@@ -78,33 +73,11 @@ public class OptionCompositeContainer extends Composite {
 		} catch (ClassNotFoundException | IOException e1) {
 			e1.printStackTrace();
 		}
-		/*
-		treeItem = new TreeItem(tree, SWT.NONE);
-		treeItem.setText("General");
-		treeItem.setData("ui.composites.GeneralComposite");
-		
-		treeItem = new TreeItem(tree, SWT.NONE);
-		treeItem.setText("Connections");
-		treeItem.setData("ui.composites.ConnectionComposite");
-
-		treeItem = new TreeItem(tree, SWT.NONE);
-		treeItem.setText("Colors");
-		treeItem.setData("ui.composites.ColorComposite");
-		
-		treeItem = new TreeItem(tree, SWT.NONE);
-		treeItem.setText("Ignore List");
-		treeItem.setData("ui.composites.IgnoreListComposite");
-		
-		treeItem = new TreeItem(tree, SWT.NONE);
-		treeItem.setText("Text Box");
-		treeItem.setData("ui.composites.TextBoxComposite");
 		
 		treeItem = new TreeItem(tree, SWT.NONE);
 		treeItem.setText("Scripting");
-		treeItem.setData("ui.composites.ScriptComposite");
-		*/
-		//TODO make this dynamically change
-
+		treeItem.setData("ui.composites.ScriptingComposite");
+		
 		tree.addListener(SWT.MouseDown, new Listener () {
 			@Override
 			public void handleEvent (Event event) {

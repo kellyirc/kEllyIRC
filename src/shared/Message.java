@@ -24,6 +24,7 @@ public class Message {
 	private KEllyBot bot;
 	private short type;
 	private Date date;
+	
 	public Message(KEllyBot kEllyBot, String message, String nick,
 			String target, short type) {
 		this.setDate(new Date());
@@ -34,9 +35,11 @@ public class Message {
 		this.type = type;
 	}
 	//TODO: pass in the actual User object instead of a string
+	
 	public Message(Connection nc, String content, String sender, String channel, short type){
 		this(nc.getBot(), content, sender, channel, type);
 	}
+	
 	public Message(Connection nc, String message, String nick, Channel channel, short type) {
 		this(nc, message, nick, channel == null ? "Console" : channel.getName(), type);
 	}

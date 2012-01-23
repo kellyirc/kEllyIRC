@@ -33,7 +33,7 @@ public class TextBoxComposite extends Composite
 		
 		final Button btnEnableTimestamps = new Button(this, SWT.CHECK);
 		btnEnableTimestamps.setText("Enable timestamps");
-		btnEnableTimestamps.setSelection(Settings.getSettings().getTimestampsEnabled());
+		btnEnableTimestamps.setSelection(Settings.getSettings().isTimestampsEnabled());
 		new Label(this, SWT.NONE);
 		new Label(this, SWT.NONE);
 		

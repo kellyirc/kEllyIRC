@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -206,14 +205,7 @@ public class ScriptingComposite extends Composite {
 								tltmPaste.setEnabled(false);
 								
 							}});
-						
-						
-						
-						//final StyledText st = new StyledText(tabs, SWT.MULTI|SWT.V_SCROLL);
-						//st.setWordWrap(true);
-						//curTextBox = st;
-						//newItem.setControl(st);
-						
+												
 						Composite comp = new Composite(tabs, SWT.EMBEDDED | SWT.NO_BACKGROUND);
 					    ScriptEditor se = new ScriptEditor(comp, s);
 					    curEditor = se;

@@ -81,7 +81,7 @@ public class RoomManager {
 
 				@Override
 				public void widgetSelected(SelectionEvent arg0) {
-					if (Settings.getSettings().getMinimizeTray()) {
+					if (Settings.getSettings().isMinimizeTray()) {
 						main.getParent().setVisible(
 								!main.getParent().isVisible());
 					}
@@ -118,7 +118,7 @@ public class RoomManager {
 								+ m.getContent();
 					SimpleDateFormat sdf = new SimpleDateFormat(Settings
 							.getSettings().getTimestampFormatPattern());
-					if (Settings.getSettings().getTimestampsEnabled())
+					if (Settings.getSettings().isTimestampsEnabled())
 						msgWithNick = sdf.format(m.getDate()) + " "
 								+ msgWithNick;
 					// apply color for each type of message, except MSG because that's already
@@ -138,49 +138,16 @@ public class RoomManager {
 						boolean scrollDown = (scrollPos > (r.getOutput()
 								.getVerticalBar().getMaximum() - ySize));
 						switch (m.getType()) {
-						// TODO: Make PM and NOTICE and CONSOLE types do what they're supposed to
-						// do.
+						case Message.ACTION:
 						case Message.MSG:
-							r.updateLastMessage(strippedLine);
-							r.getOutput().append(strippedLine);
-							if (strippedLine.toLowerCase().contains(
-									m.getBot().getNick().toLowerCase()))
-								r.changeStatus(Room.NAME_CALLED);
-							else
-								r.changeStatus(Room.NEW_MESSAGE);
-							break;
 						case Message.PM:
-							r.updateLastMessage(strippedLine);
-							r.getOutput().append(strippedLine);
-							if (strippedLine.toLowerCase().contains(
-									m.getBot().getNick().toLowerCase()))
-								r.changeStatus(Room.NAME_CALLED);
-							else
-								r.changeStatus(Room.NEW_MESSAGE);
-							break;
 						case Message.NOTICE:
-							r.updateLastMessage(strippedLine);
-							r.getOutput().append(strippedLine);
-							if (strippedLine.toLowerCase().contains(
-									m.getBot().getNick().toLowerCase()))
-								r.changeStatus(Room.NAME_CALLED);
-							else
-								r.changeStatus(Room.NEW_MESSAGE);
+							sendMessageToRoom(m, r, strippedLine);
 							break;
 						case Message.CONSOLE:
-							r.getOutput().append(strippedLine);
+							r.newMessage(strippedLine);
 							r.changeStatus(Room.NEW_IRC_EVENT);
 							break;
-						case Message.ACTION:
-							r.updateLastMessage(strippedLine);
-							r.getOutput().append(strippedLine);
-							if (strippedLine.toLowerCase().contains(
-									m.getBot().getNick().toLowerCase()))
-								r.changeStatus(Room.NAME_CALLED);
-							else
-								r.changeStatus(Room.NEW_MESSAGE);
-							break;
-
 						}
 
 						if (scrollDown)
@@ -202,6 +169,18 @@ public class RoomManager {
 							linkify(r, strippedLine, s);
 						}
 					}
+				}
+
+				private void sendMessageToRoom(final Message m, Room r,
+						String strippedLine) {
+					r.newMessage(strippedLine, true);
+
+					// TODO make a room function to handle this
+					if (strippedLine.toLowerCase().contains(
+							m.getBot().getNick().toLowerCase()))
+						r.changeStatus(Room.NAME_CALLED);
+					else
+						r.changeStatus(Room.NEW_MESSAGE);
 				}
 
 				// TODO: make this conform to the global list, and make the

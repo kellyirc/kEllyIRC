@@ -15,6 +15,8 @@
       </autoJoin>
     </connection.ConnectionSettings>
   </connSettings>
+  <chatLogs>true</chatLogs>
+  <minimizeTray>false</minimizeTray>
   <nicksIgnored/>
   <outputColors>
     <entry>

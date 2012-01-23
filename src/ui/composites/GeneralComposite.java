@@ -14,41 +14,51 @@ public class GeneralComposite extends Composite {
 
 	/**
 	 * Create the composite.
+	 * 
 	 * @param parent
 	 * @param style
 	 */
 	public GeneralComposite(Composite parent, int style) {
 		super(parent, style);
-		
-		
+
 		final Button btnMinimizeToSystem = new Button(this, SWT.CHECK);
-		btnMinimizeToSystem.setBounds(0, 0, 151, 16);
+		btnMinimizeToSystem.setBounds(10, 10, 151, 16);
 		btnMinimizeToSystem.setText("Minimize to System Tray");
-		if(RoomManager.getMain().getDisplay().getSystemTray() == null) btnMinimizeToSystem.setEnabled(false);
-		btnMinimizeToSystem.setSelection(Settings.getSettings().getMinimizeTray());
-		btnMinimizeToSystem.addSelectionListener(new SelectionListener(){
+		btnMinimizeToSystem.setSelection(Settings.getSettings()
+				.isMinimizeTray());
+		if (RoomManager.getMain().getDisplay().getSystemTray() == null) {
+			btnMinimizeToSystem.setEnabled(false);
+			btnMinimizeToSystem.setSelection(false);
+		}
+		btnMinimizeToSystem.addSelectionListener(new SelectionListener() {
 
 			@Override
-			public void widgetDefaultSelected(SelectionEvent arg0) {}
+			public void widgetDefaultSelected(SelectionEvent arg0) {
+			}
 
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				Settings.getSettings().setMinimizeTray(btnMinimizeToSystem.getSelection());
-			}});
-		
+				Settings.getSettings().setMinimizeTray(
+						btnMinimizeToSystem.getSelection());
+			}
+		});
+
 		final Button btnGenerateChatLogs = new Button(this, SWT.CHECK);
-		btnGenerateChatLogs.setBounds(0, 22, 151, 16);
+		btnGenerateChatLogs.setBounds(10, 32, 151, 16);
 		btnGenerateChatLogs.setText("Generate Chat Logs");
-		btnMinimizeToSystem.setSelection(Settings.getSettings().getChatLogs());
-		btnGenerateChatLogs.addSelectionListener(new SelectionListener(){
+		// btnGenerateChatLogs.setSelection(Settings.getSettings().getChatLogs());
+		btnGenerateChatLogs.addSelectionListener(new SelectionListener() {
 
 			@Override
-			public void widgetDefaultSelected(SelectionEvent arg0) {}
+			public void widgetDefaultSelected(SelectionEvent arg0) {
+			}
 
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				Settings.getSettings().setMinimizeTray(btnGenerateChatLogs.getSelection());
-			}});
+				Settings.getSettings().setChatLogs(
+						btnGenerateChatLogs.getSelection());
+			}
+		});
 
 	}
 
