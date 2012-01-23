@@ -21,6 +21,7 @@ import shared.NSAlertBox;
 public class TextBoxComposite extends Composite
 {
 	private Text timestampFormatText;
+	private Button btnEnableTimestamps;
 
 	/**
 	 * Create the composite.
@@ -38,7 +39,7 @@ public class TextBoxComposite extends Composite
 		new Label(this, SWT.NONE);
 		new Label(this, SWT.NONE);
 		
-		final Button btnEnableTimestamps = new Button(this, SWT.CHECK);
+		btnEnableTimestamps = new Button(this, SWT.CHECK);
 		btnEnableTimestamps.setText("Enable timestamps");
 		btnEnableTimestamps.setSelection(Settings.getSettings().isTimestampsEnabled());
 		new Label(this, SWT.NONE);
@@ -103,18 +104,25 @@ public class TextBoxComposite extends Composite
 		new Label(this, SWT.NONE);
 		new Label(this, SWT.NONE);
 		
-		Button btnSave = new Button(this, SWT.NONE);
-		btnSave.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				Settings.getSettings().setTimestampsEnabled(btnEnableTimestamps.getSelection());
-				Settings.getSettings().setTimestampFormatPattern(timestampFormatText.getText());
-				Settings.writeToFile();
-			}
-		});
-		btnSave.setLayoutData(new GridData(SWT.RIGHT, SWT.BOTTOM, false, true, 1, 1));
-		btnSave.setText("Save");
+//		Button btnSave = new Button(this, SWT.NONE);
+//		btnSave.addSelectionListener(new SelectionAdapter() {
+//			@Override
+//			public void widgetSelected(SelectionEvent e) {
+//				
+//			}
+//		});
+//		btnSave.setLayoutData(new GridData(SWT.RIGHT, SWT.BOTTOM, false, true, 1, 1));
+//		btnSave.setText("Save");
 
+	}
+
+	@Override
+	public void dispose()
+	{
+		Settings.getSettings().setTimestampsEnabled(btnEnableTimestamps.getSelection());
+		Settings.getSettings().setTimestampFormatPattern(timestampFormatText.getText());
+		Settings.writeToFile();
+		super.dispose();
 	}
 
 	@Override

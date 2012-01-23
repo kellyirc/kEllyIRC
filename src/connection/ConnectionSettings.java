@@ -4,9 +4,11 @@ import java.util.ArrayList;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @EqualsAndHashCode
 @Data
+@ToString
 public class ConnectionSettings {
 	private String connectionName;
 	private String server;

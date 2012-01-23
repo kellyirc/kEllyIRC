@@ -12,6 +12,9 @@ import connection.Settings;
 
 public class GeneralComposite extends Composite {
 
+	Button btnMinimizeToSystem;
+	Button btnGenerateChatLogs;
+
 	/**
 	 * Create the composite.
 	 * 
@@ -21,7 +24,7 @@ public class GeneralComposite extends Composite {
 	public GeneralComposite(Composite parent, int style) {
 		super(parent, style);
 
-		final Button btnMinimizeToSystem = new Button(this, SWT.CHECK);
+		btnMinimizeToSystem = new Button(this, SWT.CHECK);
 		btnMinimizeToSystem.setBounds(10, 10, 151, 16);
 		btnMinimizeToSystem.setText("Minimize to System Tray");
 		btnMinimizeToSystem.setSelection(Settings.getSettings()
@@ -43,10 +46,10 @@ public class GeneralComposite extends Composite {
 			}
 		});
 
-		final Button btnGenerateChatLogs = new Button(this, SWT.CHECK);
+		btnGenerateChatLogs = new Button(this, SWT.CHECK);
 		btnGenerateChatLogs.setBounds(10, 32, 151, 16);
 		btnGenerateChatLogs.setText("Generate Chat Logs");
-		// btnGenerateChatLogs.setSelection(Settings.getSettings().getChatLogs());
+		 btnGenerateChatLogs.setSelection(Settings.getSettings().isChatLogs());
 		btnGenerateChatLogs.addSelectionListener(new SelectionListener() {
 
 			@Override
@@ -62,6 +65,17 @@ public class GeneralComposite extends Composite {
 
 	}
 
+	@Override
+	public void dispose()
+	{
+		Settings.getSettings().setMinimizeTray(
+				btnMinimizeToSystem.getSelection());
+		Settings.getSettings().setChatLogs(
+				btnGenerateChatLogs.getSelection());
+		Settings.writeToFile();
+		super.dispose();
+	}
+	
 	@Override
 	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components

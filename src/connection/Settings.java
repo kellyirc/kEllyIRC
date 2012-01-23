@@ -76,6 +76,8 @@ public class Settings {
 		roomStatusColors.put(Room.NAME_CALLED, SWTResourceManager.getColor(SWT.COLOR_GREEN).getRGB());
 		
 		timestampFormatPattern = "";
+		chatLogs=false;
+		minimizeTray=false;
 	}
 	
 	public static void writeToFile()
