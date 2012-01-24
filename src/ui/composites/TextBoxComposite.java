@@ -54,9 +54,11 @@ public class TextBoxComposite extends Composite
 		timestampFormatText.setText(Settings.getSettings().getTimestampFormatPattern());
 		
 		Button btnTimestampHelp = new Button(this, SWT.NONE);
-		btnTimestampHelp.setImage(ImageCache.getImage("info.png"));
+		btnTimestampHelp.setImage(ImageCache.getImage("info_small.png"));
 		GridData gd_btnNewButton = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_btnNewButton.widthHint = 37;
+		gd_btnNewButton.heightHint = 28;
+		gd_btnNewButton.widthHint = 28;
+		gd_btnNewButton.verticalIndent = -1; //one pixel up because Darkblizer
 		btnTimestampHelp.setLayoutData(gd_btnNewButton);
 		btnTimestampHelp.addSelectionListener(new SelectionAdapter(){
 			@Override
@@ -69,6 +71,7 @@ public class TextBoxComposite extends Composite
 			}
 		});
 		
+		new Label(this, SWT.NONE);
 		new Label(this, SWT.NONE);
 		new Label(this, SWT.NONE);
 		new Label(this, SWT.NONE);
@@ -131,3 +134,4 @@ public class TextBoxComposite extends Composite
 		// Disable the check that prevents subclassing of SWT components
 	}
 }
+
