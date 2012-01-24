@@ -1,6 +1,8 @@
 package ui.room;
 
 import java.io.BufferedWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -41,6 +43,11 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.wb.swt.layout.grouplayout.GroupLayout;
 import org.eclipse.wb.swt.layout.grouplayout.GroupLayout.ParallelGroup;
 import org.eclipse.wb.swt.layout.grouplayout.GroupLayout.SequentialGroup;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Attributes;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.parser.Tag;
 import org.pircbotx.Channel;
 import org.pircbotx.Colors;
 import org.pircbotx.User;
@@ -173,7 +180,8 @@ public class Room extends Composite {
 					mitem.addSelectionListener(new SelectionListener() {
 
 						@Override
-						public void widgetDefaultSelected(SelectionEvent arg0) {}
+						public void widgetDefaultSelected(SelectionEvent arg0) {
+						}
 
 						@Override
 						public void widgetSelected(SelectionEvent arg0) {
@@ -188,7 +196,8 @@ public class Room extends Composite {
 					mitem.addSelectionListener(new SelectionListener() {
 
 						@Override
-						public void widgetDefaultSelected(SelectionEvent arg0) {}
+						public void widgetDefaultSelected(SelectionEvent arg0) {
+						}
 
 						@Override
 						public void widgetSelected(SelectionEvent arg0) {
@@ -236,6 +245,10 @@ public class Room extends Composite {
 	private String lastMessage;
 	private String channelName;
 
+	// TODO extract logging logic into separate class
+	private long session = 0;
+	private boolean alternateMessage = false;
+
 	public Room(Composite c, int style, int layout, Tree tree,
 			String channelstr, Connection newConnection, Channel channel) {
 		super(c, style);
@@ -248,7 +261,7 @@ public class Room extends Composite {
 		roomLayout = layout;
 		lastMessages = new LinkedList<String>();
 		listIndex = -1;
-		this.logMessage("\nSession started at "+new java.util.Date()+"\n");
+		this.logMessage("\nSession started at " + new java.util.Date() + "\n");
 
 		for (TreeItem i : tree.getItems()) {
 			if (i.getData() == this) {
@@ -596,8 +609,7 @@ public class Room extends Composite {
 				Color blue = new Color(topicBox.getDisplay(), 0, 0, 255);
 				StyleRange styleRange = new StyleRange();
 				styleRange.start = topicBox.getCharCount()
-						- strippedTopic.length()
-						+ strippedTopic.indexOf(s);
+						- strippedTopic.length() + strippedTopic.indexOf(s);
 				styleRange.length = s.length();
 				styleRange.foreground = blue;
 				styleRange.data = s;
@@ -767,48 +779,66 @@ public class Room extends Composite {
 		}
 	}
 
-	//TODO show timestamps
-	
+	// TODO show timestamps
+
 	private void logMessage(String s) {
 		if (!Settings.getSettings().isChatLogs())
 			return;
-		
+
 		new File("logs/").mkdir();
-		new File("logs/"+getServerConnection().getBot().getServer()+"/").mkdir();
-		
+		new File("logs/" + getServerConnection().getBot().getServer() + "/")
+				.mkdir();
+
 		logMessageTxt(s);
+		logMessageHtml(s);
 	}
-	
+
 	private void logMessageTxt(String s) {
-		File file = new File("logs/"+getServerConnection().getBot().getServer()+"/"+getChannelName()+".txt");
+		File file = new File(getDefaultLogPath() + ".txt");
 
 		createIfNotExist(file);
 
-		try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, true))) {
-			writer.write("["+new java.util.Date() + "] " + s);
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(file,
+				true))) {
+			writer.write("[" + new java.util.Date() + "] " + s);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private String getDefaultLogPath() {
+		return "logs/"
+				+ getServerConnection().getBot().getServer() + "/"
+				+ getChannelName();
 	}
 	
 	private void logMessageHtml(String s) {
 
-		File file = new File("logs/"+getServerConnection().getBot().getServer()+"/"+getChannelName()+".html");
+		File file = new File(getDefaultLogPath() + ".html");
 
-		if(createIfNotExist(file)) {
-			
+		boolean needsIntro = false;
+		if (createIfNotExist(file)) {
+			needsIntro = true;
 		}
 
-		try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, true))) {
-			writer.write("["+new java.util.Date() + "] " + s);
-		} catch (IOException e) {
-			e.printStackTrace();
+		if (needsIntro) {
+			try (BufferedWriter writer = new BufferedWriter(new FileWriter(
+					file, true))) {
+				writer.write("<html><head><title>"
+						+ bot.getServer()
+						+ " - "
+						+ cChannel.getChannelString()
+						+ "</title><link rel=\"stylesheet\" type=\"text/css\" href=\"http://kellyirc.googlecode.com/svn/trunk/logstyle.css\" /</head><body></body></html>");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
-		
+		appendToHtml(s);
+
 	}
 
 	private boolean createIfNotExist(File logs) {
-		if(!logs.exists()) {
+		if (!logs.exists()) {
 			try {
 				logs.createNewFile();
 				return true;
@@ -823,4 +853,87 @@ public class Room extends Composite {
 		newMessage(s, false);
 	}
 
+	public void appendToHtml(String s) {
+		//s = s.replaceAll("[<]", "&lt;");
+		Document doc = null;
+		try {
+			doc = Jsoup
+					.parse(new File("logs/irc.esper.net/#dgr.html"), "UTF-8");
+		} catch (IOException e) {
+		}
+		if (session == 0) {
+			session = System.currentTimeMillis();
+			Element body = doc.select("body").first();
+			body.appendElement("br");
+			Element sess = new Element(Tag.valueOf("div"), "", new Attributes());
+			sess.addClass("session");
+			sess.attr("id", String.valueOf(session));
+			sess.append("Session started on "+new java.util.Date());
+			body.appendChild(sess);
+			body.appendElement("br");
+		}
+		Element cursession = doc.select("#" + session).first();
+		if(cursession == null) return;
+		
+		Element timestamp = new Element(Tag.valueOf("span"), "", new Attributes());
+		timestamp.addClass("timestamp");
+		timestamp.append(new java.util.Date().toString());
+
+		String userNick = s.trim().split(" ")[0];
+		
+		if(s.startsWith("<"+this.getChannelName()+">") || userNick.contains(".")) {
+			Element system = new Element(Tag.valueOf("div"), "", new Attributes());
+			system.addClass("system");
+			
+			Element systemmsg = new Element(Tag.valueOf("span"), "", new Attributes());
+			systemmsg.addClass("system-msg");
+			systemmsg.append(s);
+			
+			system.appendChild(timestamp);
+			system.appendChild(systemmsg);
+			
+			cursession.appendChild(system);
+			
+		} else {
+			//TODO use default user timestamp format
+			//TODO format links and quicklinks in html log
+			Element message = new Element(Tag.valueOf("div"), "", new Attributes());
+			message.addClass("message"+(alternateMessage ? "-alt" : ""));
+			
+			Element nick = new Element(Tag.valueOf("span"), "", new Attributes());
+			nick.addClass("nick"+ (userNick.contains(getBot().getNick()) ? "-me" : ""));
+			nick.append(userNick.replaceAll("<", "&lt;"));
+			
+			message.appendChild(timestamp);
+			message.appendChild(nick);
+			message.append(s.substring(userNick.length())+" ");
+			
+			cursession.appendChild(message);
+		}
+		alternateMessage=!alternateMessage;
+		
+		File swap = new File(getDefaultLogPath()+".html.swap");
+		try(FileWriter out = new FileWriter(swap)) {
+			out.write(doc.toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		copy(swap, new File(getDefaultLogPath() + ".html"));
+		swap.delete();
+		
+	}
+	
+    private void copy(File file, File output) {
+        try (FileInputStream from = new FileInputStream(file); FileOutputStream to = new FileOutputStream(output) ){
+                byte[] buffer = new byte[4096];
+                int bytesRead;
+
+                while ((bytesRead = from.read(buffer)) != -1)
+                        to.write(buffer, 0, bytesRead);
+                
+        } catch (IOException e) {
+                e.printStackTrace();
+        }
+    }
 }

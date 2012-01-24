@@ -23,5 +23,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/SWT"/>
 	<classpathentry kind="lib" path="libs/rsyntaxtextarea.jar"/>
 	<classpathentry kind="lib" path="libs/autocomplete.jar"/>
+	<classpathentry kind="lib" path="libs/jsoup1.6.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
