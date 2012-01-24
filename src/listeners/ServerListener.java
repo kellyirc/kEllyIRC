@@ -30,7 +30,7 @@ public class ServerListener extends ConnectionListener {
 			break;	
 			
 		default: 
-			RoomManager.enQueue(new Message(nc, event.getResponse(), "["+event.getCode()+"] Server Response", "Console", Message.CONSOLE));    
+			RoomManager.enQueue(new Message(nc, event.getResponse(), "["+event.getCode()+"] Server Response", Connection.CONSOLE_ROOM, Message.CONSOLE));    
 		}
 		super.onServerResponse(event);
 	}

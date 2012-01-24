@@ -30,9 +30,10 @@ public class KEllyBot extends PircBotX {
 		if (message.startsWith("/")) {
 			doCommand(message.substring(1));
 		} else {
-	        if(target==null || target.equals("Console")){
+	        if(target==null || target.equals(Connection.CONSOLE_ROOM)){
 	        	return;
 	        }
+	        message = Message.quicklinkToLink(message);
 	        RoomManager.enQueue(new Message(this.getConnection(), message, this.getUserBot(), getChannel(target), Message.MSG));  
 			super.sendMessage(target, message);
 		}
@@ -43,7 +44,7 @@ public class KEllyBot extends PircBotX {
 		if (message.startsWith("/")) {
 			doCommand(message.substring(1));
 		} else {
-	        if(target==null || target.equals("Console")){
+	        if(target==null || target.equals(Connection.CONSOLE_ROOM)){
 	        	return;
 	        }
 	        RoomManager.enQueue(new Message(this, message, getNick(), target, Message.ACTION));  
@@ -53,7 +54,7 @@ public class KEllyBot extends PircBotX {
 	
 	@Override
 	public void sendNotice(String target, String notice) {
-        if(target==null || target.equals("Console")){
+        if(target==null || target.equals(Connection.CONSOLE_ROOM)){
         	return;
         }
         RoomManager.enQueue(new Message(this, "NOTICE: "+notice, getNick(), target, Message.NOTICE));

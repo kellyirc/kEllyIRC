@@ -48,6 +48,8 @@ import ui.room.Room;
 
 @EqualsAndHashCode(callSuper = false)
 public class Connection extends Composite {
+	
+	public static final String CONSOLE_ROOM = "Console";
 
 	public static LinkedList<ConnectionData> connections = new LinkedList<>();
 
@@ -228,7 +230,7 @@ public class Connection extends Composite {
 
 				addTooltipListener();
 
-				createRoom("Console", Room.IO);
+				createRoom(CONSOLE_ROOM, Room.IO);
 				RoomManager.getMain().getContainer().setSelection(c);
 			}
 		});

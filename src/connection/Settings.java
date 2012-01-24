@@ -80,6 +80,9 @@ public class Settings {
 		timestampsEnabled = true;
 		chatLogs=false;
 		minimizeTray=false;
+		
+		quicklinks = new HashMap<>();
+		quicklinks.put("google","http://google.com/?q=%INPUT%");
 	}
 	
 	public static void writeToFile()

@@ -30,7 +30,7 @@ public class Message {
 			String target, short type) {
 		this.setDate(new Date());
 		this.setBot(kEllyBot);
-		this.setContent(message+(message.contains(NEW_LINE) ? "" : NEW_LINE));
+		this.setContent(quicklinkToLink(message)+(message.contains(NEW_LINE) ? "" : NEW_LINE));
 		this.setSender(nick);
 		this.setChannel(target);
 		this.type = type;
@@ -41,11 +41,11 @@ public class Message {
 	}
 	
 	public Message(Connection nc, String message, String nick, Channel channel, short type) {
-		this(nc, message, nick, channel == null ? nc.getBot().getServer(): channel.getName(), type);
+		this(nc, message, nick, channel == null ? Connection.CONSOLE_ROOM : channel.getName(), type);
 	}
 	
 	public Message(Connection nc, String message, User user, Channel channel, short type) {
-		this(nc, message, getUserCode(user, channel)+user.getNick(), channel, type);
+		this(nc, message, channel == null ? user.getNick() : (getUserCode(user, channel)+user.getNick()), channel, type);
 	}
 	
 	public static String getUserCode(User user, Channel channel) {
@@ -57,6 +57,30 @@ public class Message {
 		return "";
 	}
 	
+	public static String quicklinkToLink(String string) {
+		StringBuilder sb = new StringBuilder();
+		String[] arr = string.split(" ");
+		for(String s : arr) {
+			 if(Quicklinks.hasQuicklink(s)) {
+				sb.append(Quicklinks.getLink(s));
+			} else sb.append(s);
+			if(!s.equals(arr[arr.length-1])) sb.append(" ");
+		}
+		return sb.toString();
+	}
 	
+	public static String parseForLinks(String substring) {
+		StringBuilder sb = new StringBuilder();
+		String[] arr = substring.split(" ");
+		for(String s : arr) {
+			if(s.contains("://")) {
+				sb.append("<a href=\""+s+"\">"+s+"</a>");
+			}else if(Quicklinks.hasQuicklink(s)) {
+				sb.append("<a href=\""+Quicklinks.getLink(s)+"\">"+Quicklinks.getLink(s)+"</a>");
+			} else sb.append(s);
+			if(!s.equals(arr[arr.length-1])) sb.append(" ");
+		}
+		return sb.toString();
+	}
 	
 }

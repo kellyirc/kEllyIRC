@@ -31,7 +31,7 @@ public class MessageListener extends ConnectionListener{
 	@Override
 	public void onNotice(NoticeEvent<KEllyBot> event) throws Exception {	
 		super.onNotice(event);
-		manageMessage(new Message(nc, "NOTICE: "+event.getNotice(), event.getUser(), event.getChannel(), Message.NOTICE));
+		manageMessage(new Message(nc, "NOTICE: "+event.getNotice(), event.getUser(), null, Message.NOTICE));
 	}
 
 	@Override

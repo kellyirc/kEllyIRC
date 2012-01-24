@@ -783,7 +783,7 @@ public class Room extends Composite {
 		if (!Settings.getSettings().isChatLogs())
 			return;
 		
-		if(getChannelName().equals("Console")) return;
+		if(getChannelName().equals(Connection.CONSOLE_ROOM)) return;
 
 		new File("logs/").mkdir();
 		new File("logs/" + getServerConnection().getBot().getServer() + "/")
@@ -906,7 +906,7 @@ public class Room extends Composite {
 			
 			message.appendChild(timestamp);
 			message.appendChild(nick);
-			message.append(s.substring(userNick.length())+" ");
+			message.append(Message.parseForLinks(s.substring(userNick.length()))+" ");
 			
 			body.appendChild(message);
 		}
