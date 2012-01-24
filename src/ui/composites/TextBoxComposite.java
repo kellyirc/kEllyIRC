@@ -117,6 +117,8 @@ public class TextBoxComposite extends Composite
 	@Override
 	public void dispose()
 	{
+		if(timestampFormatText.getText().isEmpty())
+			timestampFormatText.setText("[hh:mm:ss]");
 		Settings.getSettings().setTimestampsEnabled(btnEnableTimestamps.getSelection());
 		Settings.getSettings().setTimestampFormatPattern(timestampFormatText.getText());
 		Settings.writeToFile();
