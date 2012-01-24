@@ -1,3 +1,6 @@
+/*
+ * @author Kyle Kemp
+ */
 package scripting.styles;
 /*******************************************************************************
  * Copyright (c) 2000, 2006 IBM Corporation and others.
@@ -21,13 +24,22 @@ import org.eclipse.swt.widgets.Display;
 
 import scripting.ScriptManager;
 
+/**
+ * The Class JavaLineStyler.
+ */
 public class JavaLineStyler extends LineStyler {
 
+	/**
+	 * Instantiates a new java line styler.
+	 */
 	public JavaLineStyler() {
 		initializeColors();
 		scanner = new JavaScanner();
 	}
 
+	/* (non-Javadoc)
+	 * @see scripting.styles.LineStyler#initializeColors()
+	 */
 	protected void initializeColors() {
 		Display display = Display.getDefault();
 		colors = new Color[] { 
@@ -46,6 +58,9 @@ public class JavaLineStyler extends LineStyler {
 		tokenColors[NUMBER] = 0;
 	}
 	
+	/* (non-Javadoc)
+	 * @see scripting.styles.LineStyler#parseBlockComments(java.lang.String)
+	 */
 	public void parseBlockComments(String text) {
 		blockComments = new Vector<int[]>();
 		StringReader buffer = new StringReader(text);
@@ -104,7 +119,7 @@ public class JavaLineStyler extends LineStyler {
 	}
 
 	/**
-	 * A simple fuzzy scanner for Java
+	 * A simple fuzzy scanner for Java.
 	 */
 	protected class JavaScanner extends LanguageScanner{
 
@@ -118,6 +133,9 @@ public class JavaLineStyler extends LineStyler {
 				fgKeys.put(ScriptManager.jsKeywords[i], k);
 		}
 
+		/* (non-Javadoc)
+		 * @see scripting.styles.LanguageScanner#nextToken()
+		 */
 		public int nextToken() {
 			int c;
 			fStartToken = fPos;

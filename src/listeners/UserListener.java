@@ -1,5 +1,7 @@
+/*
+ * @author Kyle Kemp
+ */
 package listeners;
-
 
 import java.util.Collection;
 
@@ -12,12 +14,31 @@ import shared.Message;
 import connection.Connection;
 import connection.KEllyBot;
 
+/**
+ * The listener interface for receiving user events.
+ * The class that is interested in processing a user
+ * event implements this interface, and the object created
+ * with that class is registered with a component using the
+ * component's <code>addUserListener<code> method. When
+ * the user event occurs, that object's appropriate
+ * method is invoked.
+ *
+ * @see UserEvent
+ */
 public class UserListener extends ConnectionListener{
 
+	/**
+	 * Instantiates a new user listener.
+	 *
+	 * @param nc the nc
+	 */
 	public UserListener(Connection nc) {
 		super(nc);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.pircbotx.hooks.ListenerAdapter#onNickChange(org.pircbotx.hooks.events.NickChangeEvent)
+	 */
 	@Override
 	public void onNickChange(NickChangeEvent<KEllyBot> event) throws Exception {
 		Collection<Channel> channels = event.getBot().getChannels();
@@ -30,6 +51,9 @@ public class UserListener extends ConnectionListener{
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.pircbotx.hooks.ListenerAdapter#onQuit(org.pircbotx.hooks.events.QuitEvent)
+	 */
 	@Override
 	public void onQuit(QuitEvent<KEllyBot> event) throws Exception {
 		for(Channel c : event.getUser().getChannels()){

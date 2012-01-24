@@ -1,3 +1,6 @@
+/*
+ * @author Kyle Kemp
+ */
 package scripting.styles;
 
 import java.util.Hashtable;
@@ -9,13 +12,22 @@ import org.eclipse.swt.widgets.Display;
 
 import scripting.ScriptManager;
 
+/**
+ * The Class RubyLineStyler.
+ */
 public class RubyLineStyler extends LineStyler {
 
+	/**
+	 * Instantiates a new ruby line styler.
+	 */
 	public RubyLineStyler() {
 		initializeColors();
 		scanner = new RubyScanner();
 	}
 
+	/* (non-Javadoc)
+	 * @see scripting.styles.LineStyler#initializeColors()
+	 */
 	protected void initializeColors() {
 		Display display = Display.getDefault();
 		colors = new Color[] { 
@@ -34,6 +46,9 @@ public class RubyLineStyler extends LineStyler {
 		tokenColors[NUMBER] = 0;
 	}
 	
+	/* (non-Javadoc)
+	 * @see scripting.styles.LineStyler#parseBlockComments(java.lang.String)
+	 */
 	public void parseBlockComments(String text) {
 		blockComments = new Vector<int[]>();
 		boolean blkComment = false;
@@ -58,6 +73,9 @@ public class RubyLineStyler extends LineStyler {
 		}
 	}
 
+	/**
+	 * The Class RubyScanner.
+	 */
 	protected class RubyScanner extends LanguageScanner{
 
 		/**
@@ -70,6 +88,9 @@ public class RubyLineStyler extends LineStyler {
 				fgKeys.put(ScriptManager.rbKeywords[i], k);
 		}
 
+		/* (non-Javadoc)
+		 * @see scripting.styles.LanguageScanner#nextToken()
+		 */
 		public int nextToken() {
 			int c;
 			fStartToken = fPos;

@@ -1,3 +1,6 @@
+/*
+ * @author Kyle Kemp
+ */
 package ui.composites;
 
 import org.eclipse.swt.widgets.Composite;
@@ -8,13 +11,19 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.GridData;
 
+/**
+ * The Class IgnoreListComposite.
+ */
 public class IgnoreListComposite extends Composite {
+	
+	/** The table. */
 	private Table table;
 
 	/**
 	 * Create the composite.
-	 * @param parent
-	 * @param style
+	 *
+	 * @param parent the parent
+	 * @param style the style
 	 */
 	public IgnoreListComposite(Composite parent, int style) {
 		super(parent, style);
@@ -43,6 +52,9 @@ public class IgnoreListComposite extends Composite {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Composite#checkSubclass()
+	 */
 	@Override
 	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components

@@ -1,3 +1,6 @@
+/*
+ * @author Kyle Kemp
+ */
 package ui.composites;
 
 import java.util.ArrayList;
@@ -28,8 +31,17 @@ import ui.room.Room;
 import connection.Connection;
 import connection.Settings;
 
+/**
+ * The Class ColorsComposite.
+ */
 public class ColorsComposite extends Composite {
 
+	/**
+	 * Instantiates a new colors composite.
+	 *
+	 * @param parent the parent
+	 * @param style the style
+	 */
 	public ColorsComposite(Composite parent, int style) {
 		super(parent, style);
 		setLayout(null);
@@ -267,6 +279,9 @@ public class ColorsComposite extends Composite {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Composite#checkSubclass()
+	 */
 	@Override
 	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components
@@ -274,6 +289,13 @@ public class ColorsComposite extends Composite {
 
 	// Put in a map and a value, and it will return the key if
 	// map.get(key).equals(value), else it will return null
+	/**
+	 * Reverse lookup.
+	 *
+	 * @param map the map
+	 * @param value the value
+	 * @return the object
+	 */
 	public static Object reverseLookup(Map<?, ?> map, Object value) {
 		if (!map.containsValue(value))
 			return null;

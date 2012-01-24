@@ -1,3 +1,6 @@
+/*
+ * @author Kyle Kemp
+ */
 package ui.composites;
 
 import org.eclipse.swt.events.SelectionEvent;
@@ -13,18 +16,27 @@ import org.eclipse.swt.widgets.Label;
 
 import shared.Quicklinks;
 
+/**
+ * The Class QuicklinksComposite.
+ */
 public class QuicklinksComposite extends Composite {
+	
+	/** The table. */
 	private Table table;
+	
+	/** The name. */
 	private Text name;
+	
+	/** The url. */
 	private Text url;
 	
 	//TODO when parsing quicklinks, replace the text in the message with the url, but don't remove the old code for quicklink parsing
 
 	/**
 	 * Create the composite.
-	 * 
-	 * @param parent
-	 * @param style
+	 *
+	 * @param parent the parent
+	 * @param style the style
 	 */
 	public QuicklinksComposite(Composite parent, int style) {
 		super(parent, style);
@@ -88,6 +100,9 @@ public class QuicklinksComposite extends Composite {
 		loadTable();
 	}
 
+	/**
+	 * Load table.
+	 */
 	private void loadTable() {
 		for (String cs : Quicklinks.getQuicklinks().keySet()) {
 			TableItem i = new TableItem(table, SWT.NONE);
@@ -96,6 +111,9 @@ public class QuicklinksComposite extends Composite {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Composite#checkSubclass()
+	 */
 	@Override
 	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components

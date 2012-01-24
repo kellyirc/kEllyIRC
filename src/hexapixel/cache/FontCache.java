@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.Display;
  */
 public class FontCache {
 
+	/** The _existing. */
 	private static List<OneFont> _existing = new ArrayList<OneFont>();
 
 	/**
@@ -33,10 +34,9 @@ public class FontCache {
 	}
 
 	/**
-	 * Gets a font from existing FontData
-	 * 
-	 * @param fd
-	 *            FontData
+	 * Gets a font from existing FontData.
+	 *
+	 * @param fd FontData
 	 * @return Font or null on error
 	 */
 	public static Font getFont(FontData fd) {
@@ -69,6 +69,11 @@ public class FontCache {
 		return null;
 	}
 
+	/**
+	 * Gets the count.
+	 *
+	 * @return the count
+	 */
 	public static int getCount() {
 		return _existing.size();
 	}

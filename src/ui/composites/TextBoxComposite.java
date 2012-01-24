@@ -1,3 +1,6 @@
+/*
+ * @author Kyle Kemp
+ */
 package ui.composites;
 
 import hexapixel.cache.ImageCache;
@@ -16,15 +19,23 @@ import connection.Settings;
 
 import shared.NSAlertBox;
 
+/**
+ * The Class TextBoxComposite.
+ */
 public class TextBoxComposite extends Composite
 {
+	
+	/** The timestamp format text. */
 	private Text timestampFormatText;
+	
+	/** The btn enable timestamps. */
 	private Button btnEnableTimestamps;
 
 	/**
 	 * Create the composite.
-	 * @param parent
-	 * @param style
+	 *
+	 * @param parent the parent
+	 * @param style the style
 	 */
 	public TextBoxComposite(Composite parent, int style)
 	{
@@ -117,6 +128,9 @@ public class TextBoxComposite extends Composite
 
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Widget#dispose()
+	 */
 	@Override
 	public void dispose()
 	{
@@ -128,6 +142,9 @@ public class TextBoxComposite extends Composite
 		super.dispose();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Composite#checkSubclass()
+	 */
 	@Override
 	protected void checkSubclass()
 	{

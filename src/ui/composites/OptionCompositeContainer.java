@@ -1,3 +1,6 @@
+/*
+ * @author Kyle Kemp
+ */
 package ui.composites;
 
 import java.lang.reflect.Constructor;
@@ -17,20 +20,29 @@ import org.eclipse.wb.swt.layout.grouplayout.LayoutStyle;
 import shared.ClassDiscovery;
 
 /**
- * @author Kyle Kemp
+ * The Class OptionCompositeContainer.
  *
  */
 public class OptionCompositeContainer extends Composite {
 
+	/**
+	 * Gets the current composite.
+	 *
+	 * @return the current composite
+	 */
 	public static Composite getCurrentComposite() { return currentComposite; }
 	
+	/** The current composite. */
 	private static Composite currentComposite;
+	
+	/** The scrolled composite. */
 	private final ScrolledComposite scrolledComposite;
 	
 	/**
 	 * Create the composite.
-	 * @param parent
-	 * @param style
+	 *
+	 * @param parent the parent
+	 * @param style the style
 	 */
 	public OptionCompositeContainer(Composite parent, int style) {
 		super(parent, style);
@@ -94,6 +106,11 @@ public class OptionCompositeContainer extends Composite {
 
 	}
 
+	/**
+	 * Switch composite.
+	 *
+	 * @param c the c
+	 */
 	public void switchComposite(Composite c){
 		if(currentComposite!=null){
 			currentComposite.dispose();
@@ -102,6 +119,9 @@ public class OptionCompositeContainer extends Composite {
 		scrolledComposite.setContent(c);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Composite#checkSubclass()
+	 */
 	@Override
 	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components

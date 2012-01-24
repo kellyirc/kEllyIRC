@@ -1,3 +1,6 @@
+/*
+ * @author Kyle Kemp
+ */
 package shared;
 
 import java.awt.BorderLayout;
@@ -22,13 +25,18 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.SWT;
 
+/**
+ * The Class test.
+ */
 public class test {
 
+	/** The shell. */
 	protected Shell shell;
 
 	/**
 	 * Launch the application.
-	 * @param args
+	 *
+	 * @param args the arguments
 	 */
 	public static void main(String[] args) {
 		try {
@@ -67,12 +75,23 @@ public class test {
 		new ScriptEditor(composite, new File("aliases.js").toString());
 	}
 
+	/**
+	 * The Class ScriptEditor.
+	 */
 	class ScriptEditor extends JPanel {
 
+		/** The Constant serialVersionUID. */
 		private static final long serialVersionUID = 1L;
 
+		/** The text area. */
 		RSyntaxTextArea textArea;
 
+		/**
+		 * Instantiates a new script editor.
+		 *
+		 * @param parent the parent
+		 * @param s the s
+		 */
 		public ScriptEditor(Composite parent, String s) {
 
 			Frame frame = SWT_AWT.new_Frame(parent);
@@ -101,6 +120,11 @@ public class test {
 			frame.add(scroll, BorderLayout.CENTER);
 		}
 
+		/**
+		 * Change syntax style.
+		 *
+		 * @param s the s
+		 */
 		public void changeSyntaxStyle(String s) {
 			// textArea.setSyntaxEditingStyle(determineScriptType(s));
 			CompletionProvider provider = createCompletionProvider();
@@ -110,6 +134,11 @@ public class test {
 
 		}
 
+		/**
+		 * Creates the completion provider.
+		 *
+		 * @return the completion provider
+		 */
 		private CompletionProvider createCompletionProvider() {
 			DefaultCompletionProvider provider = new DefaultCompletionProvider();
 			String[] keywords = { "cake" };

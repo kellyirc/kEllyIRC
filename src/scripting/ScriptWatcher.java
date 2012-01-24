@@ -1,3 +1,6 @@
+/*
+ * @author Kyle Kemp
+ */
 package scripting;
 
 import java.io.File;
@@ -15,11 +18,20 @@ import ui.composites.OptionCompositeContainer;
 import ui.composites.ScriptingComposite;
 import static java.nio.file.StandardWatchEventKinds.*;
 
+/**
+ * The Class ScriptWatcher.
+ */
 public final class ScriptWatcher implements Runnable {
 	
+	/** The watcher. */
 	private WatchService watcher;
+	
+	/** The keys. */
 	private Map<WatchKey, Path> keys  = new HashMap<WatchKey, Path>();
 
+	/**
+	 * Instantiates a new script watcher.
+	 */
 	public ScriptWatcher() {
 		File f = new File("./scripts/");
 		if(!f.isDirectory()) { f.mkdirs(); }
@@ -32,6 +44,12 @@ public final class ScriptWatcher implements Runnable {
 		}
 	}
 	
+	/**
+	 * Register the script directory.
+	 *
+	 * @param dir the dir
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	private void register(Path dir) throws IOException {
 		WatchKey key = dir.register(watcher, ENTRY_CREATE, ENTRY_DELETE,
 				ENTRY_MODIFY);
@@ -44,6 +62,12 @@ public final class ScriptWatcher implements Runnable {
 		}
 	}
 
+	/**
+	 * Update the files as they get modified.
+	 *
+	 * @param event the event
+	 * @param file the file
+	 */
 	private void updateFile(WatchEvent<?> event, File file) {
 		WatchEvent.Kind<?> eventType = event.kind();
 
@@ -64,6 +88,9 @@ public final class ScriptWatcher implements Runnable {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Runnable#run()
+	 */
 	@Override
 	public void run() {
 		while(true) {

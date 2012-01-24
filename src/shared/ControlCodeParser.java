@@ -1,3 +1,6 @@
+/*
+ * @author Kyle Kemp
+ */
 package shared;
 
 import java.util.ArrayList;
@@ -6,11 +9,28 @@ import java.util.List;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 
+/**
+ * The Class ControlCodeParser.
+ */
 public class ControlCodeParser {
+	
+	/**
+	 * Parses the control codes.
+	 *
+	 * @param input the input
+	 * @return the list
+	 */
 	public static List<StyleRange> parseControlCodes(String input) {
 		return parseControlCodes(input,0);
 	}
 	
+	/**
+	 * Parses the control codes.
+	 *
+	 * @param input the input
+	 * @param dispos the dispos
+	 * @return the list
+	 */
 	public static List<StyleRange> parseControlCodes(String input, int dispos) {
 		List<StyleRange> styleRanges = new ArrayList<StyleRange>();
 		if(input == null || input.length() == 0) return styleRanges;

@@ -1,3 +1,6 @@
+/*
+ * @author Kyle Kemp
+ */
 package shared;
 
 import java.util.HashMap;
@@ -7,16 +10,26 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Display;
 
+/**
+ * The Class Customs.
+ */
 public class Customs{
 	
+	/** The fonts. */
 	public HashMap<String, Font> fonts;
 	
+	/** The colors. */
 	public HashMap<String, Color> colors;
 	
+	/** The irc colors str. */
 	public HashMap<String, String> ircColorsStr;
 	
+	/** The irc colors. */
 	public HashMap<String, Integer> ircColors;
 	
+	/**
+	 * Instantiates a new customs.
+	 */
 	public Customs() {
 		//initFonts();
 		initColors();
@@ -31,6 +44,9 @@ public class Customs{
 		}
 	}*/
 	
+	/**
+	 * Inits the colors.
+	 */
 	private void initColors(){
 		ircColorsStr = new HashMap<String, String>();
 		this.ircColorsStr.put("white", 		"\u000300");
@@ -87,6 +103,9 @@ public class Customs{
 		this.colors.put("light gray",	Display.getDefault().getSystemColor(SWT.COLOR_GRAY));
 	}
 	
+	/**
+	 * Clean up.
+	 */
 	public void cleanUp() {
 		for(Font f : this.fonts.values()){
 			f.dispose();
@@ -96,6 +115,9 @@ public class Customs{
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#finalize()
+	 */
 	public void finalize() {
 		cleanUp();
 	}

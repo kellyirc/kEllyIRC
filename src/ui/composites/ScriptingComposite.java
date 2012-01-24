@@ -1,3 +1,6 @@
+/*
+ * @author Kyle Kemp
+ */
 package ui.composites;
 
 import java.io.BufferedWriter;
@@ -39,9 +42,19 @@ import org.eclipse.swt.widgets.Label;
 
 //TODO show file headers in scripts otherwise line numbers will be off
 
+/**
+ * The Class ScriptingComposite.
+ */
 public class ScriptingComposite extends Composite {
 
+	/**
+	 * The Class ValidFileName.
+	 */
 	private final class ValidFileName implements IInputValidator {
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.dialogs.IInputValidator#isValid(java.lang.String)
+		 */
 		@Override
 		public String isValid(String newText) {
 			if(newText == null){return "Needs a file name.";}
@@ -69,18 +82,26 @@ public class ScriptingComposite extends Composite {
 		}
 	}
 
+	/** The cur editor. */
 	ScriptEditor curEditor;
+	
+	/** The cur script. */
 	Script curScript;
+	
+	/** The tabs. */
 	CTabFolder tabs;
+	
+	/** The tree. */
 	Tree tree;
 	
+	/** The combo. */
 	private Combo combo;
 
 	/**
 	 * Create the composite.
-	 * 
-	 * @param parent
-	 * @param style
+	 *
+	 * @param parent the parent
+	 * @param style the style
 	 */
 	public ScriptingComposite(final Composite parent, int style) {
 		super(parent, style);
@@ -89,6 +110,11 @@ public class ScriptingComposite extends Composite {
 		buildLayout(parent);
 	}
 
+	/**
+	 * Builds the layout.
+	 *
+	 * @param parent the parent
+	 */
 	private void buildLayout(final Composite parent) {
 		setLayout(new GridLayout(3,false));
 
@@ -265,6 +291,14 @@ public class ScriptingComposite extends Composite {
 		});
 	}
 
+	/**
+	 * Builds the tab folder.
+	 *
+	 * @param tltmSave the tltm save
+	 * @param tltmCut the tltm cut
+	 * @param tltmCopy the tltm copy
+	 * @param tltmPaste the tltm paste
+	 */
 	private void buildTabFolder(final ToolItem tltmSave,
 			final ToolItem tltmCut, final ToolItem tltmCopy,
 			final ToolItem tltmPaste) {
@@ -289,6 +323,9 @@ public class ScriptingComposite extends Composite {
 			}});
 	}
 
+	/**
+	 * Builds the combo.
+	 */
 	private void buildCombo() {
 		combo = new Combo(this, SWT.NONE);
 		combo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
@@ -306,6 +343,18 @@ public class ScriptingComposite extends Composite {
 		});*/
 	}
 
+	/**
+	 * Button listeners.
+	 *
+	 * @param parent the parent
+	 * @param tltmNew the tltm new
+	 * @param tltmSave the tltm save
+	 * @param tltmCut the tltm cut
+	 * @param tltmCopy the tltm copy
+	 * @param tltmPaste the tltm paste
+	 * @param tltmDelete the tltm delete
+	 * @param tltmRename the tltm rename
+	 */
 	private void buttonListeners(final Composite parent, ToolItem tltmNew,
 			final ToolItem tltmSave, final ToolItem tltmCut,
 			final ToolItem tltmCopy, final ToolItem tltmPaste, ToolItem tltmDelete, ToolItem tltmRename) {
@@ -432,6 +481,9 @@ public class ScriptingComposite extends Composite {
 			}});*/
 	}
 
+	/**
+	 * Update tree items.
+	 */
 	public void updateTreeItems() {
 		
 		RoomManager.getMain().getDisplay().asyncExec(new Runnable(){
@@ -449,11 +501,17 @@ public class ScriptingComposite extends Composite {
 			}});
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Composite#checkSubclass()
+	 */
 	@Override
 	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components
 	}
 
+	/**
+	 * Save.
+	 */
 	private void save() {
 		CTabItem currentTab = tabs.getSelection();
 		if(currentTab.getText().startsWith("*")){
@@ -471,6 +529,9 @@ public class ScriptingComposite extends Composite {
 		updateFunctionList();
 	}
 
+	/**
+	 * Update function list.
+	 */
 	private void updateFunctionList() {
 		combo.removeAll();
 		for (String tag : curScript.getDescriptFunctions()) {
@@ -478,6 +539,14 @@ public class ScriptingComposite extends Composite {
 		}
 	}
 
+	/**
+	 * Enable top bar.
+	 *
+	 * @param tltmSave the tltm save
+	 * @param tltmCut the tltm cut
+	 * @param tltmCopy the tltm copy
+	 * @param tltmPaste the tltm paste
+	 */
 	private void enableTopBar(final ToolItem tltmSave, final ToolItem tltmCut,
 			final ToolItem tltmCopy, final ToolItem tltmPaste) {
 		//curTextBox = (StyledText) tabs.getSelection().getControl();
@@ -491,6 +560,11 @@ public class ScriptingComposite extends Composite {
 		tltmPaste.setEnabled(true);
 	}
 
+	/**
+	 * Change tab.
+	 *
+	 * @param c the c
+	 */
 	private void changeTab(CTabItem c) {
 		tabs.setSelection(c);
 		

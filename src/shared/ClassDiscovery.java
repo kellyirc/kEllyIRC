@@ -76,8 +76,18 @@ class ClassComparator implements Comparator<Class<?>>, Serializable {
 
 }
 
+/**
+ * The Class ClassDiscovery.
+ */
 public class ClassDiscovery {
 
+	/**
+	 * Gets the class name_after package as path.
+	 *
+	 * @param pFileName the file name
+	 * @param pPkgAsPath the pkg as path
+	 * @return the string
+	 */
 	static private String GetClassName_afterPackageAsPath(
 			final String pFileName, final String pPkgAsPath) {
 		final String CName = pFileName.substring(0, pFileName.length() - 6)
@@ -87,6 +97,13 @@ public class ClassDiscovery {
 		return CName_AfterPackageAsPath;
 	}
 
+	/**
+	 * Gets the class name_of package as path.
+	 *
+	 * @param pFileName the file name
+	 * @param pPkgAsPath the pkg as path
+	 * @return the string
+	 */
 	static private String GetClassName_ofPackageAsPath(final String pFileName,
 			final String pPkgAsPath) {
 
@@ -103,6 +120,13 @@ public class ClassDiscovery {
 		return aClassName;
 	}
 
+	/**
+	 * Gets the package file.
+	 *
+	 * @param pPkgName the pkg name
+	 * @param pPkgPath the pkg path
+	 * @return the file
+	 */
 	static private File GetPackageFile(final String pPkgName,
 			final File pPkgPath) {
 
@@ -119,11 +143,23 @@ public class ClassDiscovery {
 		return aPkgFile;
 	}
 
+	/**
+	 * Check_is jar file.
+	 *
+	 * @param pFile the file
+	 * @return true, if successful
+	 */
 	static private boolean Check_isJarFile(final File pFile) {
 		final boolean aIsJarFile = pFile.toString().endsWith(".jar");
 		return aIsJarFile;
 	}
 
+	/**
+	 * Discover class names_from jar file.
+	 *
+	 * @param pPkgInfo the pkg info
+	 * @return the array list
+	 */
 	static private ArrayList<String> DiscoverClassNames_fromJarFile(
 			final PkgInfo pPkgInfo) {
 
@@ -152,6 +188,14 @@ public class ClassDiscovery {
 		return aClassNames;
 	}
 
+	/**
+	 * Discover class names_from directory.
+	 *
+	 * @param pAbsolutePackagePath the absolute package path
+	 * @param pPackageName the package name
+	 * @param pPackageFolder the package folder
+	 * @param pClassNames the class names
+	 */
 	static private void DiscoverClassNames_fromDirectory(
 			final String pAbsolutePackagePath, final String pPackageName,
 			final File pPackageFolder, final ArrayList<String> pClassNames) {
@@ -177,6 +221,12 @@ public class ClassDiscovery {
 		}
 	}
 
+	/**
+	 * Discover class names_from directory.
+	 *
+	 * @param pPkgInfo the pkg info
+	 * @return the array list
+	 */
 	static private ArrayList<String> DiscoverClassNames_fromDirectory(
 			PkgInfo pPkgInfo) {
 
@@ -191,7 +241,18 @@ public class ClassDiscovery {
 		return aClassNames;
 	}
 
+	/**
+	 * The Class PkgInfo.
+	 */
 	static public class PkgInfo {
+		
+		/**
+		 * Instantiates a new pkg info.
+		 *
+		 * @param pPkgPath the pkg path
+		 * @param pPkgName the pkg name
+		 * @param pPkgAsPath the pkg as path
+		 */
 		PkgInfo(final File pPkgPath, final String pPkgName,
 				final String pPkgAsPath) {
 
@@ -200,11 +261,22 @@ public class ClassDiscovery {
 			this.PkgAsPath = pPkgAsPath;
 		}
 
+		/** The Pkg path. */
 		final File PkgPath;
+		
+		/** The Pkg name. */
 		final String PkgName;
+		
+		/** The Pkg as path. */
 		final String PkgAsPath;
 	}
 
+	/**
+	 * Gets the package info of.
+	 *
+	 * @param pClass the class
+	 * @return the pkg info
+	 */
 	static public PkgInfo GetPackageInfoOf(Class<?> pClass) {
 		File aPkgPath = null;
 		String aPkgName = null;
@@ -225,6 +297,12 @@ public class ClassDiscovery {
 		return aPkgInfo;
 	}
 
+	/**
+	 * Discover class names_in package.
+	 *
+	 * @param pPkgInfo the pkg info
+	 * @return the array list
+	 */
 	static public ArrayList<String> DiscoverClassNames_inPackage(
 			final PkgInfo pPkgInfo) {
 
@@ -251,19 +329,17 @@ public class ClassDiscovery {
 	}
 
 	/**
-	 * Returns an array of class in the same package as the the SeedClass
-	 * 
-	 * @param pFilterName
-	 *            - Regular expression to match the desired classes' name (nullif no filtering
-	 *            needed)
-	 * @param pFilterClass
-	 *            - The super class of the desired classes (null if no filtering needed)
-	 * 
+	 * Returns an array of class in the same package as the the SeedClass.
+	 *
+	 * @param <T> the generic type
+	 * @param pSeedClass the seed class
+	 * @param pFilterName - Regular expression to match the desired classes' name (nullif no filtering
+	 * needed)
+	 * @param pFilterClass - The super class of the desired classes (null if no filtering needed)
 	 * @return - The array of matched classes, null if there is a problem.
-	 * 
 	 * @author The rest - Nawaman http://nawaman.net
 	 * @author Package as Dir - Jon Peck http://jonpeck.com (adapted from
-	 *         http://www.javaworld.com/javaworld/javatips/jw-javatip113.html)
+	 * http://www.javaworld.com/javaworld/javatips/jw-javatip113.html)
 	 */
 	@SuppressWarnings("unchecked")
 	public

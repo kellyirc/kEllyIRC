@@ -1,3 +1,6 @@
+/*
+ * @author Kyle Kemp
+ */
 package ui.room;
 
 import java.io.BufferedWriter;
@@ -64,13 +67,31 @@ import connection.Connection;
 import connection.KEllyBot;
 import connection.Settings;
 
+/* (non-Javadoc)
+ * @see java.lang.Object#hashCode()
+ */
 @EqualsAndHashCode(callSuper = false)
 @Data
 public class Room extends Composite {
 
+	/** The current listener. */
 	private WhoListener curListener;
 
+	/**
+	 * The listener interface for receiving who events. The class that is interested in processing a
+	 * who event implements this interface, and the object created with that class is registered
+	 * with a component using the component's <code>addWhoListener<code> method. When
+	 * the who event occurs, that object's appropriate
+	 * method is invoked.
+	 * 
+	 * @see WhoEvent
+	 */
 	private class WhoListener implements Listener {
+
+		/*
+		 * (non-Javadoc)
+		 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
+		 */
 		public void handleEvent(Event event) {
 			Point point = new Point(event.x, event.y);
 			final TreeItem item = who.getItem(point);
@@ -86,6 +107,14 @@ public class Room extends Composite {
 			}
 		}
 
+		/**
+		 * Custom items.
+		 * 
+		 * @param item
+		 *            the item
+		 * @param m
+		 *            the m
+		 */
 		private void customItems(final TreeItem item, Menu m) {
 			final Script[] contextScripts = findContextScript();
 			if (contextScripts == null || contextScripts.length == 0)
@@ -111,6 +140,11 @@ public class Room extends Composite {
 			}
 		}
 
+		/**
+		 * Find context script.
+		 * 
+		 * @return the script[]
+		 */
 		private Script[] findContextScript() {
 			ArrayList<Script> scripts = new ArrayList<Script>();
 			for (Script s : ScriptManager.scripts) {
@@ -121,6 +155,14 @@ public class Room extends Composite {
 			return scripts.toArray(new Script[0]);
 		}
 
+		/**
+		 * Ctcp items.
+		 * 
+		 * @param item
+		 *            the item
+		 * @param m
+		 *            the m
+		 */
 		private void ctcpItems(TreeItem item, Menu m) {
 			final User tUser = (User) item.getData();
 
@@ -136,6 +178,16 @@ public class Room extends Composite {
 			createCTCP(tUser, parent, "VERSION");
 		}
 
+		/**
+		 * Creates the ctcp.
+		 * 
+		 * @param tUser
+		 *            the t user
+		 * @param parent
+		 *            the parent
+		 * @param command
+		 *            the command
+		 */
 		private void createCTCP(final User tUser, Menu parent,
 				final String command) {
 			MenuItem mitem = new MenuItem(parent, SWT.PUSH);
@@ -153,6 +205,14 @@ public class Room extends Composite {
 			});
 		}
 
+		/**
+		 * Basic items.
+		 * 
+		 * @param item
+		 *            the item
+		 * @param m
+		 *            the m
+		 */
 		private void basicItems(final TreeItem item, Menu m) {
 			MenuItem mitem = new MenuItem(m, SWT.PUSH);
 			mitem.setText("Query");
@@ -170,6 +230,14 @@ public class Room extends Composite {
 			});
 		}
 
+		/**
+		 * Operator items.
+		 * 
+		 * @param item
+		 *            the item
+		 * @param m
+		 *            the m
+		 */
 		private void operatorItems(final TreeItem item, Menu m) {
 			final Channel thisChan = cChannel.getChannel();
 			final User tUser = (User) item.getData();
@@ -214,41 +282,85 @@ public class Room extends Composite {
 	// (http://dev.eclipse.org/viewcvs/viewvc.cgi/org.eclipse.swt.snippets/src/org/eclipse/swt/snippets/Snippet125.java?view=co)
 
 	// TODO: change to booleans
+	/** The constants that dictate what a room gets for data. */
 	public static final int WHO = 1, TOPIC = 2, IO = 4;
 
+	/** The c channel. */
 	private CustomChannel cChannel;
+
+	/** The server connection. */
 	private Connection serverConnection;
+
+	/** The bot. */
 	private KEllyBot bot;
+
+	/** The channel list item. */
 	private TreeItem chanListItem;
 
 	// make clickable links by changing the style and the data of the individual
 	// messages
+	/** The topic box. */
 	private StyledText output, input, topicBox;
 
+	/** The who list. */
 	private Tree who;
 
+	/** The room layout. */
 	private int roomLayout;
 
+	/** The customs. */
 	private Customs customs;
 
 	// determines color of TreeItem in the channel list
+	/** The status. */
 	private int status;
+
+	/** The Constant NAME_CALLED. */
 	public static final int NORMAL = 0, NEW_IRC_EVENT = 1, NEW_MESSAGE = 2,
 			NAME_CALLED = 3;
 
 	// first item is the newest
+	/** The last messages. */
 	private LinkedList<String> lastMessages;
+
+	/** The list index. */
 	private int listIndex;
 
 	// variables used with the tool tip
+	/** The user count. */
 	private int userCount;
+
+	/** The last message. */
 	private String lastMessage;
+
+	/** The channel name. */
 	private String channelName;
 
 	// TODO extract logging logic into separate class
+	/** The session. */
 	private long session = 0;
+
+	/** The alternate message. */
 	private boolean alternateMessage = false;
 
+	/**
+	 * Instantiates a new room.
+	 * 
+	 * @param c
+	 *            the c
+	 * @param style
+	 *            the style
+	 * @param layout
+	 *            the layout
+	 * @param tree
+	 *            the tree
+	 * @param channelstr
+	 *            the channelstr
+	 * @param newConnection
+	 *            the new connection
+	 * @param channel
+	 *            the channel
+	 */
 	public Room(Composite c, int style, int layout, Tree tree,
 			String channelstr, Connection newConnection, Channel channel) {
 		super(c, style);
@@ -274,6 +386,12 @@ public class Room extends Composite {
 		instantiate(layout);
 	}
 
+	/**
+	 * Instantiate.
+	 * 
+	 * @param layout
+	 *            the layout
+	 */
 	public void instantiate(int layout) {
 		MovementListener linkClickListener = new MovementListener() {
 			@Override
@@ -571,6 +689,9 @@ public class Room extends Composite {
 		serverConnection.switchComposite(this);
 	}
 
+	/**
+	 * Update who listener.
+	 */
 	private void updateWhoListener() {
 		if (curListener != null) {
 			who.removeListener(SWT.MouseDown, curListener);
@@ -579,6 +700,9 @@ public class Room extends Composite {
 		who.addListener(SWT.MouseDown, curListener);
 	}
 
+	/**
+	 * Update topic.
+	 */
 	public void updateTopic() {
 		if (topicBox == null)
 			return;
@@ -620,6 +744,10 @@ public class Room extends Composite {
 		});
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Control#getToolTipText()
+	 */
 	public String getToolTipText() {
 		String output = "";
 		output += "Room: " + channelName;
@@ -629,14 +757,26 @@ public class Room extends Composite {
 		return output;
 	}
 
+	/**
+	 * Update user count.
+	 */
 	private void updateUserCount() {
 		userCount = cChannel.getChannel().getUsers().size();
 	}
 
+	/**
+	 * Update last message.
+	 * 
+	 * @param lastMessage
+	 *            the last message
+	 */
 	public void updateLastMessage(String lastMessage) {
 		this.lastMessage = lastMessage;
 	}
 
+	/**
+	 * Update who.
+	 */
 	public void updateWho() {
 		if (who == null)
 			return;
@@ -735,6 +875,12 @@ public class Room extends Composite {
 		});
 	}
 
+	/**
+	 * Change status.
+	 * 
+	 * @param status
+	 *            the status
+	 */
 	public void changeStatus(int status) {
 		HashMap<Integer, RGB> roomColors = Settings.getSettings()
 				.getRoomStatusColors();
@@ -766,11 +912,23 @@ public class Room extends Composite {
 		this.status = status;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Widget#toString()
+	 */
 	public String toString() {
 		return channelName;
 
 	}
 
+	/**
+	 * New message.
+	 * 
+	 * @param s
+	 *            the s
+	 * @param update
+	 *            the update
+	 */
 	public void newMessage(String s, boolean update) {
 		output.append(s);
 		logMessage(s);
@@ -779,11 +937,28 @@ public class Room extends Composite {
 		}
 	}
 
+	/**
+	 * New message.
+	 * 
+	 * @param s
+	 *            the s
+	 */
+	public void newMessage(String s) {
+		newMessage(s, false);
+	}
+
+	/**
+	 * Log message.
+	 * 
+	 * @param s
+	 *            the s
+	 */
 	private void logMessage(String s) {
 		if (!Settings.getSettings().isChatLogs())
 			return;
-		
-		if(getChannelName().equals(Connection.CONSOLE_ROOM)) return;
+
+		if (getChannelName().equals(Connection.CONSOLE_ROOM))
+			return;
 
 		new File("logs/").mkdir();
 		new File("logs/" + getServerConnection().getBot().getServer() + "/")
@@ -793,6 +968,12 @@ public class Room extends Composite {
 		logMessageHtml(s);
 	}
 
+	/**
+	 * Log message txt.
+	 * 
+	 * @param s
+	 *            the s
+	 */
 	private void logMessageTxt(String s) {
 		File file = new File(getDefaultLogPath() + ".txt");
 
@@ -806,12 +987,22 @@ public class Room extends Composite {
 		}
 	}
 
+	/**
+	 * Gets the default log path.
+	 * 
+	 * @return the default log path
+	 */
 	private String getDefaultLogPath() {
-		return "logs/"
-				+ getServerConnection().getBot().getServer() + "/"
+		return "logs/" + getServerConnection().getBot().getServer() + "/"
 				+ getChannelName();
 	}
-	
+
+	/**
+	 * Log message html.
+	 * 
+	 * @param s
+	 *            the s
+	 */
 	private void logMessageHtml(String s) {
 
 		File file = new File(getDefaultLogPath() + ".html");
@@ -837,6 +1028,13 @@ public class Room extends Composite {
 
 	}
 
+	/**
+	 * Creates the if not exist.
+	 * 
+	 * @param logs
+	 *            the logs
+	 * @return true, if successful
+	 */
 	private boolean createIfNotExist(File logs) {
 		if (!logs.exists()) {
 			try {
@@ -849,15 +1047,16 @@ public class Room extends Composite {
 		return false;
 	}
 
-	public void newMessage(String s) {
-		newMessage(s, false);
-	}
-
+	/**
+	 * Append to html.
+	 * 
+	 * @param s
+	 *            the s
+	 */
 	public void appendToHtml(String s) {
 		Document doc = null;
 		try {
-			doc = Jsoup
-					.parse(new File(getDefaultLogPath()+".html"), "UTF-8");
+			doc = Jsoup.parse(new File(getDefaultLogPath() + ".html"), "UTF-8");
 		} catch (IOException e) {
 		}
 		Element body = doc.select("body").first();
@@ -867,77 +1066,105 @@ public class Room extends Composite {
 			Element sess = new Element(Tag.valueOf("div"), "", new Attributes());
 			sess.addClass("session");
 			sess.attr("id", String.valueOf(session));
-			sess.append("Session started on "+new java.util.Date());
+			sess.append("Session started on " + new java.util.Date());
 			body.appendChild(sess);
 			body.appendElement("br");
-			if(s.equals("")) { saveLogFile(doc); return; }
+			if (s.equals("")) {
+				saveLogFile(doc);
+				return;
+			}
 		}
 		Element cursession = doc.select("#" + session).first();
-		if(cursession == null) return;
-		
-		Element timestamp = new Element(Tag.valueOf("span"), "", new Attributes());
+		if (cursession == null)
+			return;
+
+		Element timestamp = new Element(Tag.valueOf("span"), "",
+				new Attributes());
 		timestamp.addClass("timestamp");
-		if(!s.equals(""))timestamp.append(new java.util.Date().toString());
+		if (!s.equals(""))
+			timestamp.append(new java.util.Date().toString());
 
 		String userNick = s.trim().split(" ")[0];
-		
-		if(s.startsWith("<"+this.getChannelName()+">") || userNick.contains(".") || s.startsWith("<SYSTEM>")) {
-			Element system = new Element(Tag.valueOf("div"), "", new Attributes());
+
+		if (s.startsWith("<" + this.getChannelName() + ">")
+				|| userNick.contains(".") || s.startsWith("<SYSTEM>")) {
+			Element system = new Element(Tag.valueOf("div"), "",
+					new Attributes());
 			system.addClass("system");
-			
-			Element systemmsg = new Element(Tag.valueOf("span"), "", new Attributes());
+
+			Element systemmsg = new Element(Tag.valueOf("span"), "",
+					new Attributes());
 			systemmsg.addClass("system-msg");
 			systemmsg.append(s.replaceAll("<", "&lt;"));
-			
+
 			system.appendChild(timestamp);
 			system.appendChild(systemmsg);
-			
+
 			body.appendChild(system);
-			
+
 		} else {
-			//TODO use default user timestamp format
-			//TODO format links and quicklinks in html log
-			Element message = new Element(Tag.valueOf("div"), "", new Attributes());
-			message.addClass("message"+(alternateMessage ? "-alt" : ""));
-			
-			Element nick = new Element(Tag.valueOf("span"), "", new Attributes());
-			nick.addClass("nick"+ (userNick.contains(getBot().getNick()) ? "-me" : ""));
+			// TODO use default user timestamp format
+			// TODO format links and quicklinks in html log
+			Element message = new Element(Tag.valueOf("div"), "",
+					new Attributes());
+			message.addClass("message" + (alternateMessage ? "-alt" : ""));
+
+			Element nick = new Element(Tag.valueOf("span"), "",
+					new Attributes());
+			nick.addClass("nick"
+					+ (userNick.contains(getBot().getNick()) ? "-me" : ""));
 			nick.append(userNick.replaceAll("<", "&lt;"));
-			
+
 			message.appendChild(timestamp);
 			message.appendChild(nick);
-			message.append(Message.parseForLinks(s.substring(userNick.length()))+" ");
-			
+			message.append(Message.parseForLinks(s.substring(userNick.length()))
+					+ " ");
+
 			body.appendChild(message);
 		}
-		alternateMessage=!alternateMessage;
-		
+		alternateMessage = !alternateMessage;
+
 		saveLogFile(doc);
-		
+
 	}
 
+	/**
+	 * Save log file.
+	 * 
+	 * @param doc
+	 *            the doc
+	 */
 	private void saveLogFile(Document doc) {
-		File swap = new File(getDefaultLogPath()+".html.swap");
-		try(FileWriter out = new FileWriter(swap)) {
+		File swap = new File(getDefaultLogPath() + ".html.swap");
+		try (FileWriter out = new FileWriter(swap)) {
 			out.write(doc.toString());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		copy(swap, new File(getDefaultLogPath() + ".html"));
 		swap.delete();
 	}
-	
-    private void copy(File file, File output) {
-        try (FileInputStream from = new FileInputStream(file); FileOutputStream to = new FileOutputStream(output) ){
-                byte[] buffer = new byte[4096];
-                int bytesRead;
 
-                while ((bytesRead = from.read(buffer)) != -1)
-                        to.write(buffer, 0, bytesRead);
-                
-        } catch (IOException e) {
-                e.printStackTrace();
-        }
-    }
+	/**
+	 * Copy.
+	 * 
+	 * @param file
+	 *            the file
+	 * @param output
+	 *            the output
+	 */
+	private void copy(File file, File output) {
+		try (FileInputStream from = new FileInputStream(file);
+				FileOutputStream to = new FileOutputStream(output)) {
+			byte[] buffer = new byte[4096];
+			int bytesRead;
+
+			while ((bytesRead = from.read(buffer)) != -1)
+				to.write(buffer, 0, bytesRead);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }

@@ -1,3 +1,6 @@
+/*
+ * @author Kyle Kemp
+ */
 package ui.composites;
 
 import java.util.ArrayList;
@@ -34,19 +37,58 @@ import connection.Connection;
 import connection.ConnectionSettings;
 import connection.Settings;
 
+/**
+ * The Class MainWindow.
+ */
 public class MainWindow extends ApplicationWindow {
 	
-	@Getter @Setter
+	/**
+	 * Gets the display.
+	 *
+	 * @return the display
+	 */
+	@Getter /**
+  * Sets the display.
+  *
+  * @param display the new display
+  */
+ @Setter
 	private Display display;
-	@Getter @Setter
+	
+	/**
+	 * Gets the parent.
+	 *
+	 * @return the parent
+	 */
+	@Getter 
+ /**
+  * Sets the parent.
+  *
+  * @param parent the new parent
+  */
+ @Setter
 	private Composite parent;
-	@Getter @Setter
+	
+	/**
+	 * Gets the container.
+	 *
+	 * @return the container
+	 */
+	@Getter 
+ /**
+  * Sets the container.
+  *
+  * @param container the new container
+  */
+ @Setter
 	private CTabFolder container;
 
 	//TODO look into blinking http://stackoverflow.com/questions/2773364/make-jface-window-blink-in-taskbar-or-get-users-attention
 	
 	/**
 	 * Create the application window.
+	 *
+	 * @param d the d
 	 */
 	public MainWindow(Display d) {
 		super(null);
@@ -86,7 +128,9 @@ public class MainWindow extends ApplicationWindow {
 
 	/**
 	 * Create contents of the application window.
-	 * @param parent
+	 *
+	 * @param parent the parent
+	 * @return the control
 	 */
 	@Override
 	protected Control createContents(Composite parent) {
@@ -120,6 +164,8 @@ public class MainWindow extends ApplicationWindow {
 
 	/**
 	 * Create the toolbar manager.
+	 *
+	 * @param style the style
 	 * @return the toolbar manager
 	 */
 	@Override
@@ -140,7 +186,8 @@ public class MainWindow extends ApplicationWindow {
 
 	/**
 	 * Configure the shell.
-	 * @param newShell
+	 *
+	 * @param newShell the new shell
 	 */
 	@Override
 	protected void configureShell(final Shell newShell) {
@@ -182,6 +229,8 @@ public class MainWindow extends ApplicationWindow {
 
 	/**
 	 * Return the initial size of the window.
+	 *
+	 * @return the initial size
 	 */
 	@Override
 	protected Point getInitialSize() {

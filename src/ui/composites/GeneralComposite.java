@@ -1,3 +1,6 @@
+/*
+ * @author Kyle Kemp
+ */
 package ui.composites;
 
 import org.eclipse.swt.widgets.Composite;
@@ -10,16 +13,22 @@ import shared.RoomManager;
 
 import connection.Settings;
 
+/**
+ * The Class GeneralComposite.
+ */
 public class GeneralComposite extends Composite {
 
+	/** The btn minimize to system. */
 	Button btnMinimizeToSystem;
+	
+	/** The btn generate chat logs. */
 	Button btnGenerateChatLogs;
 
 	/**
 	 * Create the composite.
-	 * 
-	 * @param parent
-	 * @param style
+	 *
+	 * @param parent the parent
+	 * @param style the style
 	 */
 	public GeneralComposite(Composite parent, int style) {
 		super(parent, style);
@@ -65,6 +74,9 @@ public class GeneralComposite extends Composite {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Widget#dispose()
+	 */
 	@Override
 	public void dispose()
 	{
@@ -76,6 +88,9 @@ public class GeneralComposite extends Composite {
 		super.dispose();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Composite#checkSubclass()
+	 */
 	@Override
 	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components

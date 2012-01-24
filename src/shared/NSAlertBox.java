@@ -1,10 +1,17 @@
+/*
+ * @author Kyle Kemp
+ */
 package shared;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
 
+/**
+ * The Class NSAlertBox.
+ */
 public class NSAlertBox {
 
+	/** The messagebox. */
 	private MessageBox messagebox;
 	/*FIXME: You get NullPointerExceptions when using this,
 	 * but it still works. Still annoying so fix it.
@@ -22,8 +29,17 @@ public class NSAlertBox {
 	at shared.Initializer.main(Initializer.java:41)
 	 */
 	//this is a hack to make it so MODIFY events on the file system don't cause two boxes to appear
+	/** The alert visible. */
 	private static boolean alertVisible=false;
 	
+	/**
+	 * Instantiates a new nS alert box.
+	 *
+	 * @param title the title
+	 * @param message the message
+	 * @param icon the icon
+	 * @param type the type
+	 */
 	public NSAlertBox(String title, String message, int icon, int type){
 		messagebox = new MessageBox(RoomManager.getMain().getShell(), type|icon);
 
@@ -31,6 +47,13 @@ public class NSAlertBox {
 		messagebox.setMessage(message);
 	}
 	
+	/**
+	 * Instantiates a new nS alert box.
+	 *
+	 * @param title the title
+	 * @param message the message
+	 * @param icon the icon
+	 */
 	public NSAlertBox(final String title, final String message, final int icon){
 		if(alertVisible) return;
 		alertVisible = true;
@@ -50,6 +73,11 @@ public class NSAlertBox {
 			}});
 	}
 	
+	/**
+	 * Go.
+	 *
+	 * @return the int
+	 */
 	public int go(){
 		return messagebox.open();
 	}

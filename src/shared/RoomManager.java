@@ -1,3 +1,6 @@
+/*
+ * @author Kyle Kemp
+ */
 package shared;
 
 import java.text.SimpleDateFormat;
@@ -24,20 +27,46 @@ import connection.Connection;
 import connection.KEllyBot;
 import connection.Settings;
 
+/**
+ * The Class RoomManager.
+ */
 public class RoomManager {
 
+	/**
+	 * Gets the main.
+	 *
+	 * @return the main
+	 */
 	public static MainWindow getMain() {
 		return main;
 	}
 
+	/** The main. */
 	private static MainWindow main;
 
+	/** The colorset. */
 	public static Customs colorset = new Customs();
 
+	/**
+	 * En queue.
+	 *
+	 * @param mes the mes
+	 */
 	public static void enQueue(Message mes) {
 		filterMessage(mes);
 	}
 
+	/**
+	 * Creates the room.
+	 *
+	 * @param c the c
+	 * @param tree the tree
+	 * @param style the style
+	 * @param channelstr the channelstr
+	 * @param newConnection the new connection
+	 * @param layout the layout
+	 * @param channel the channel
+	 */
 	public static void createRoom(final Composite c, final Tree tree,
 			final int style, final String channelstr,
 			final Connection newConnection, final int layout,
@@ -55,12 +84,20 @@ public class RoomManager {
 		}
 	}
 
+	/**
+	 * Sets the main.
+	 *
+	 * @param w the new main
+	 */
 	public static void setMain(MainWindow w) {
 		main = w;
 
 		initTray();
 	}
 
+	/**
+	 * Initializes the tray icon.
+	 */
 	private static void initTray() {
 		Tray sysTray = main.getDisplay().getSystemTray();
 		if (sysTray != null) {
@@ -91,10 +128,22 @@ public class RoomManager {
 		}
 	}
 
+	/**
+	 * Can add room.
+	 *
+	 * @param newConnection the new connection
+	 * @param s the s
+	 * @return true, if successful
+	 */
 	public static boolean canAddRoom(Connection newConnection, String s) {
 		return newConnection.canAddRoom(s);
 	}
 
+	/**
+	 * Filter message.
+	 *
+	 * @param m the m
+	 */
 	private static void filterMessage(final Message m) {
 		if (!main.getDisplay().isDisposed()) {
 			main.getDisplay().asyncExec(new Runnable() {

@@ -1,3 +1,6 @@
+/*
+ * @author Emil
+ */
 package hexapixel.notifier;
 
 import java.util.ArrayList;
@@ -27,28 +30,50 @@ import shared.RoomManager;
 
 import hexapixel.cache.FontCache;
 
+/**
+ * The Class NotifierDialog.
+ */
 public class NotifierDialog {
 
 
 	
 	// how long the the tray popup is displayed after fading in (in
 	// milliseconds)
+	/** The Constant DISPLAY_TIME. */
 	private static final int DISPLAY_TIME = 4500;
 	// how long each tick is when fading in (in ms)
+	/** The Constant FADE_TIMER. */
 	private static final int FADE_TIMER = 50;
 	// how long each tick is when fading out (in ms)
+	/** The Constant FADE_IN_STEP. */
 	private static final int FADE_IN_STEP = 30;
 	// how many tick steps we use when fading out
+	/** The Constant FADE_OUT_STEP. */
 	private static final int FADE_OUT_STEP = 8;
 
 	// how high the alpha value is when we have finished fading in
+	/** The Constant FINAL_ALPHA. */
 	private static final int FINAL_ALPHA = 225;
 
 	// contains list of all active popup shells
+	/** The _active shells. */
 	private static List<Shell> _activeShells = new ArrayList<Shell>();
 
+	/** The _shell. */
 	private static Shell _shell;
 
+	/**
+	 * Window.
+	 *
+	 * @param message the message
+	 * @param title the title
+	 * @param type the type
+	 * @param textColor the text color
+	 * @param titleColor the title color
+	 * @param borderColor the border color
+	 * @param topGradient the top gradient
+	 * @param btmGradient the btm gradient
+	 */
 	public static void window(final String message, final String title,
 			final NotificationType type, final Color textColor,
 			final Color titleColor, final Color borderColor,
@@ -209,6 +234,11 @@ public class NotifierDialog {
 		});
 	}
 
+	/**
+	 * Fade in.
+	 *
+	 * @param _shell the _shell
+	 */
 	private static void fadeIn(final Shell _shell) {
 		Runnable run = new Runnable() {
 
@@ -240,6 +270,11 @@ public class NotifierDialog {
 		RoomManager.getMain().getDisplay().timerExec(FADE_TIMER, run);
 	}
 
+	/**
+	 * Start timer.
+	 *
+	 * @param _shell the _shell
+	 */
 	private static void startTimer(final Shell _shell) {
 		Runnable run = new Runnable() {
 
@@ -262,6 +297,11 @@ public class NotifierDialog {
 
 	}
 
+	/**
+	 * Fade out.
+	 *
+	 * @param _shell the _shell
+	 */
 	private static void fadeOut(final Shell _shell) {
 		final Runnable run = new Runnable() {
 

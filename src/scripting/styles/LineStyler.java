@@ -1,3 +1,6 @@
+/*
+ * @author Kyle Kemp
+ */
 package scripting.styles;
 
 import java.util.Vector;
@@ -9,27 +12,56 @@ import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Control;
 
+/**
+ * The Class LineStyler.
+ */
 public abstract class LineStyler implements LineStyleListener {
 
+	/** The scanner. */
 	protected LanguageScanner scanner;
 	
+	/** The token colors. */
 	protected int[] tokenColors;
+	
+	/** The colors. */
 	protected Color[] colors;
+	
+	/** The block comments. */
 	protected Vector<int[]> blockComments = new Vector<int[]>();
 
+	/** The Constant EOF. */
 	public static final int EOF = -1;
+	
+	/** The Constant EOL. */
 	public static final int EOL = 10;
 
+	/** The Constant WORD. */
 	public static final int WORD = 0;
+	
+	/** The Constant WHITE. */
 	public static final int WHITE = 1;
+	
+	/** The Constant KEY. */
 	public static final int KEY = 2;
+	
+	/** The Constant COMMENT. */
 	public static final int COMMENT = 3;
+	
+	/** The Constant STRING. */
 	public static final int STRING = 5;
+	
+	/** The Constant OTHER. */
 	public static final int OTHER = 6;
+	
+	/** The Constant NUMBER. */
 	public static final int NUMBER = 7;
 
+	/** The Constant MAXIMUM_TOKEN. */
 	public static final int MAXIMUM_TOKEN = 8;
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.custom.LineStyleListener#lineGetStyle(org.eclipse.swt.custom.LineStyleEvent)
+	 */
 	@Override
 	public void lineGetStyle(LineStyleEvent event) {
 		Vector<StyleRange> styles = new Vector<StyleRange>();
@@ -97,14 +129,26 @@ public abstract class LineStyler implements LineStyleListener {
 		styles.copyInto(event.styles);
 	}
 	
+	/**
+	 * Initialize colors.
+	 */
 	protected abstract void initializeColors();
 
+	/**
+	 * Dispose colors.
+	 */
 	protected void disposeColors() {
 		for (int i = 0; i < colors.length; i++) {
 			colors[i].dispose();
 		}
 	}
 
+	/**
+	 * Gets the color.
+	 *
+	 * @param type the type
+	 * @return the color
+	 */
 	protected final Color getColor(int type) {
 		if (type < 0 || type >= tokenColors.length) {
 			return null;
@@ -112,6 +156,13 @@ public abstract class LineStyler implements LineStyleListener {
 		return colors[tokenColors[type]];
 	}
 
+	/**
+	 * In block comment.
+	 *
+	 * @param start the start
+	 * @param end the end
+	 * @return true, if successful
+	 */
 	protected final boolean inBlockComment(int start, int end) {
 		for (int i = 0; i < blockComments.size(); i++) {
 			int[] offsets = blockComments.elementAt(i);
@@ -131,5 +182,10 @@ public abstract class LineStyler implements LineStyleListener {
 	}
 
 	
+	/**
+	 * Parses the block comments.
+	 *
+	 * @param script the script
+	 */
 	public abstract void parseBlockComments(String script);
 }

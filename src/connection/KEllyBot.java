@@ -1,3 +1,6 @@
+/*
+ * @author Kyle Kemp
+ */
 package connection;
 
 import lombok.Getter;
@@ -12,19 +15,44 @@ import scripting.ScriptVars;
 import shared.Message;
 import shared.RoomManager;
 
+/**
+ * The Class KEllyBot.
+ */
 public class KEllyBot extends PircBotX {
 	
+	/** The Constant VERSION. */
 	public static final String VERSION = "kEllyIRC 0.5.167 alpha";
+	
+	/** The Constant systemName. */
 	public static final String systemName = "SYSTEM";
 	
+	/**
+	 * Gets the connection.
+	 *
+	 * @return the connection
+	 */
 	@Getter 
+	
+	/**
+	 * Sets the connection.
+	 *
+	 * @param connection the new connection
+	 */
 	@Setter 
 	private Connection connection;
 
+	/**
+	 * Instantiates a new kellybot.
+	 *
+	 * @param c the c
+	 */
 	public KEllyBot(Connection c){
 		this.connection = c;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.pircbotx.PircBotX#sendMessage(java.lang.String, java.lang.String)
+	 */
 	@Override
 	public void sendMessage(String target, String message) {
 		if (message.startsWith("/")) {
@@ -39,6 +67,9 @@ public class KEllyBot extends PircBotX {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.pircbotx.PircBotX#sendAction(java.lang.String, java.lang.String)
+	 */
 	@Override
 	public void sendAction(String target, String message) {
 		if (message.startsWith("/")) {
@@ -52,6 +83,9 @@ public class KEllyBot extends PircBotX {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.pircbotx.PircBotX#sendNotice(java.lang.String, java.lang.String)
+	 */
 	@Override
 	public void sendNotice(String target, String notice) {
         if(target==null || target.equals(Connection.CONSOLE_ROOM)){
@@ -61,12 +95,21 @@ public class KEllyBot extends PircBotX {
 		super.sendNotice(target, notice);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.pircbotx.PircBotX#changeNick(java.lang.String)
+	 */
 	public void changeNick(String nick){
 		super.changeNick(nick);
 		RoomManager.enQueue(new Message(connection, "You are now known as "+nick, systemName, ScriptVars.curChannel, Message.CONSOLE));
 	}
 
+	/**
+	 * Do command.
+	 *
+	 * @param line the line
+	 */
 	public void doCommand(String line) {
+		if(line.startsWith("/")) line = line.substring(1);
 		String command = line.split(" ")[0].trim();
 		
 		boolean found=false;

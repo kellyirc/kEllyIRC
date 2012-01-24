@@ -1,3 +1,6 @@
+/*
+ * @author Kyle Kemp
+ */
 package connection;
 
 import java.io.File;
@@ -22,38 +25,164 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.reflection.Sun14ReflectionProvider;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
+/**
+ * The Class Settings.
+ */
 public class Settings {
 	
 	//stuff to read and write files with
+	/** The filename. */
 	static String filename = "settings.xml";
+	
+	/** The xstream. */
 	static XStream xstream = new XStream(new Sun14ReflectionProvider( ), new DomDriver( ));
 	
 	//the sole Settings instance
+	/**
+	 * Gets the settings.
+	 *
+	 * @return the settings
+	 */
 	public static Settings getSettings() { return settings; }
+	
+	/** The settings. */
 	static Settings settings = Settings.readFromFile();
 	
 	//This keeps the list of servers the user has saved.
-	@Getter @Setter ArrayList<ConnectionSettings> connSettings;
+	/** The conn settings. */
 	
-	@Getter @Setter boolean chatLogs;
-	@Getter @Setter boolean minimizeTray;
+	/**
+	 * Gets the conn settings.
+	 *
+	 * @return the conn settings
+	 */
+	@Getter 
+ /**
+  * Sets the conn settings.
+  *
+  * @param connSettings the new conn settings
+  */
+ @Setter ArrayList<ConnectionSettings> connSettings;
+	
+	/**
+	 * Checks if is chat logs.
+	 *
+	 * @return true, if is chat logs
+	 */
+	@Getter /**
+  * Sets the chat logs.
+  *
+  * @param chatLogs the new chat logs
+  */
+ @Setter boolean chatLogs;
+	
+	/**
+	 * Checks if is minimize tray.
+	 *
+	 * @return true, if is minimize tray
+	 */
+	@Getter 
+ /**
+  * Sets the minimize tray.
+  *
+  * @param minimizeTray the new minimize tray
+  */
+ @Setter boolean minimizeTray;
 	
 	//Other variables/objects to hold settings/preferences go here 
-	@Getter @Setter ArrayList<String> nicksIgnored;
-	@Getter @Setter HashMap<Short,String> outputColors;
-	@Getter @Setter HashMap<Integer,RGB> roomStatusColors;
-	@Getter @Setter HashMap<String,String> quicklinks;
+	/** The nicks ignored. */
+	
+	/**
+	 * Gets the nicks ignored.
+	 *
+	 * @return the nicks ignored
+	 */
+	@Getter 
+ /**
+  * Sets the nicks ignored.
+  *
+  * @param nicksIgnored the new nicks ignored
+  */
+ @Setter ArrayList<String> nicksIgnored;
+	
+	/**
+	 * Gets the output colors.
+	 *
+	 * @return the output colors
+	 */
+	@Getter 
+ /**
+  * Sets the output colors.
+  *
+  * @param outputColors the output colors
+  */
+ @Setter HashMap<Short,String> outputColors;
+	
+	/**
+	 * Gets the room status colors.
+	 *
+	 * @return the room status colors
+	 */
+	@Getter 
+ /**
+  * Sets the room status colors.
+  *
+  * @param roomStatusColors the room status colors
+  */
+ @Setter HashMap<Integer,RGB> roomStatusColors;
+	
+	/**
+	 * Gets the quicklinks.
+	 *
+	 * @return the quicklinks
+	 */
+	@Getter 
+ /**
+  * Sets the quicklinks.
+  *
+  * @param quicklinks the quicklinks
+  */
+ @Setter HashMap<String,String> quicklinks;
 	
 	
 	//Other static variables
+	/** The Constant BACKGROUND. */
 	public static final short BACKGROUND = -1;
 	
 	//TextBoxComposite settings
-	@Getter @Setter boolean timestampsEnabled;
-	@Getter @Setter String timestampFormatPattern;
+	/** The timestamps enabled. */
+	
+	/**
+	 * Checks if is timestamps enabled.
+	 *
+	 * @return true, if is timestamps enabled
+	 */
+	@Getter 
+ /**
+  * Sets the timestamps enabled.
+  *
+  * @param timestampsEnabled the new timestamps enabled
+  */
+ @Setter boolean timestampsEnabled;
+	
+	/**
+	 * Gets the timestamp format pattern.
+	 *
+	 * @return the timestamp format pattern
+	 */
+	@Getter 
+ /**
+  * Sets the timestamp format pattern.
+  *
+  * @param timestampFormatPattern the new timestamp format pattern
+  */
+ @Setter String timestampFormatPattern;
 	
 	
 	//creates default settings
+	/**
+	 * Instantiates a new settings.
+	 */
 	public Settings()
 	{
 		connSettings = new ArrayList<ConnectionSettings>();
@@ -85,6 +214,9 @@ public class Settings {
 		quicklinks.put("google","http://google.com/?q=%INPUT%");
 	}
 	
+	/**
+	 * Write to file.
+	 */
 	public static void writeToFile()
 	{
 		try {
@@ -98,6 +230,11 @@ public class Settings {
 	
 	//if a settings file exists, returns that
 	//else returns default settings
+	/**
+	 * Read from file.
+	 *
+	 * @return the settings
+	 */
 	public static Settings readFromFile() 
 	{
 		File f = new File(filename);

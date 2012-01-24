@@ -1,3 +1,6 @@
+/*
+ * @author Kyle Kemp
+ */
 package shared;
 
 import org.apache.log4j.BasicConfigurator;
@@ -12,13 +15,18 @@ import connection.KEllyBot;
 
 import ui.composites.MainWindow;
 
+/**
+ * The Class Initializer.
+ */
 public class Initializer {
 
+	/** The DEBU g_ mode. */
 	public static boolean DEBUG_MODE = true;
 	
 	/**
 	 * Launch the application.
-	 * @param args
+	 *
+	 * @param args the arguments
 	 */
 	public static void main(String args[]) {
 		checkVersion();
@@ -47,6 +55,9 @@ public class Initializer {
 		}
 	}
 
+	/**
+	 * Check version.
+	 */
 	private static void checkVersion() {
 		String s = System.getProperty("java.version");
 		int version = Integer.parseInt(s.split("[.]")[1]);
@@ -59,6 +70,9 @@ public class Initializer {
 	}
 
 	// called when the program exits
+	/**
+	 * Quit.
+	 */
 	public static void quit() {
 		RoomManager.getMain().getDisplay().getSystemTray().dispose();
 

@@ -1,3 +1,6 @@
+/*
+ * @author Kyle Kemp
+ */
 package shared;
 
 import org.eclipse.swt.SWT;
@@ -11,9 +14,22 @@ import org.eclipse.swt.widgets.Shell;
  * USE NSAlertBox INSTEAD!
  */
 public class AlertBox {
+	
+	/** The display. */
 	private static Display display = new Display();
+	
+	/** The shell. */
 	private static Shell shell = new Shell(display);
 	
+	/**
+	 * Alert.
+	 *
+	 * @param title the title
+	 * @param message the message
+	 * @param icon the icon
+	 * @param type the type
+	 * @return the int
+	 */
 	public static int alert(String title, String message, int icon, int type) {
 		MessageBox messageBox = new MessageBox(shell, type|icon);
 
@@ -24,6 +40,11 @@ public class AlertBox {
 	}
 
 	//sample usages
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(String[] args) {
 		//SWT.ICON_ERROR, ICON_INFORMATION, ICON_QUESTION, ICON_WARNING, ICON_WORKING
 		//OK, OK | CANCEL

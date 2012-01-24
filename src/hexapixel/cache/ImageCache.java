@@ -9,15 +9,17 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * Class for caching images
- * 
+ * Class for caching images.
+ *
  * @author Emil
  */
 public class ImageCache {
 
+	/** The _ image map. */
 	private static HashMap<String, Image> _ImageMap;
 
 	// what path to get to the "icons" directory without actually including it
+	/** The Constant ICON_ROOT_PATH. */
 	private static final String ICON_ROOT_PATH = "/";
 
 	static {
@@ -43,6 +45,12 @@ public class ImageCache {
 	}
 
 	// creates the image, and tries really hard to do so
+	/**
+	 * Creates the image.
+	 *
+	 * @param fileName the file name
+	 * @return the image
+	 */
 	private static Image createImage(String fileName) {
 		ClassLoader classLoader = ImageCache.class.getClassLoader();
 		InputStream is = classLoader.getResourceAsStream(fileName);

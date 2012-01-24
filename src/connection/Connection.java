@@ -1,3 +1,6 @@
+/*
+ * @author Kyle Kemp
+ */
 package connection;
 
 import java.io.IOException;
@@ -46,19 +49,41 @@ import shared.NSAlertBox;
 import shared.RoomManager;
 import ui.room.Room;
 
+/* (non-Javadoc)
+ * @see java.lang.Object#hashCode()
+ */
 @EqualsAndHashCode(callSuper = false)
 public class Connection extends Composite {
 	
+	/** The console room name. */
 	public static final String CONSOLE_ROOM = "Console";
 
+	/** The list of connections used so no duplicate connections are made. */
 	public static LinkedList<ConnectionData> connections = new LinkedList<>();
 
+	/**
+	 * The Class ConnectionData.
+	 */
 	public class ConnectionData extends ListenerAdapter<KEllyBot> {
 
+		/**
+		 * Gets the bot representing this connection.
+		 *
+		 * @return the bot
+		 */
 		@Getter
 		private KEllyBot bot;
+		
+		/** The connection settings represented by this data. */
 		private ConnectionSettings cs;
 
+		/**
+		 * Instantiates a new connection data.
+		 *
+		 * @param bot the bot
+		 * @param cs the cs
+		 * @param nc the nc
+		 */
 		public ConnectionData(final KEllyBot bot, final ConnectionSettings cs,
 				final Connection nc) {
 
@@ -117,6 +142,11 @@ public class Connection extends Composite {
 			}).start();
 		}
 
+		/**
+		 * Attempt to connect.
+		 *
+		 * @param cs the cs
+		 */
 		private void attemptToConnect(ConnectionSettings cs) {
 			final ConnectionSettings CS = cs;
 			new Thread(new Runnable() {
@@ -160,19 +190,54 @@ public class Connection extends Composite {
 		}
 	}
 
+	/**
+	 * Gets the scrolled composite.
+	 *
+	 * @return the scrolled composite
+	 */
 	@Getter
 	private ScrolledComposite scrolledComposite;
+	
+	/**
+	 * Gets the bot.
+	 *
+	 * @return the bot
+	 */
 	@Getter
 	private KEllyBot bot;
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Widget#getData()
+	 */
 	@Getter
 	private ConnectionData data;
+	
+	/**
+	 * Gets the connection settings represented solely by this connection.
+	 *
+	 * @return the cs
+	 */
 	@Getter
 	private ConnectionSettings cs;
+	
+	/** The channel list. */
 	private Tree chanList;
+	
+	/**
+	 * Gets the rooms available to this connection.
+	 *
+	 * @return the rooms
+	 */
 	@Getter
 	private LinkedList<Room> rooms = new LinkedList<Room>();
 
 
+	/**
+	 * Check if the connection in question already exists.
+	 *
+	 * @param cs the cs
+	 * @return true, if successful
+	 */
 	private boolean alreadyExists(ConnectionSettings cs) {
 		for (ConnectionData c : connections) {
 			if (c.cs.equals(cs)) {
@@ -183,10 +248,11 @@ public class Connection extends Composite {
 	}
 	
 	/**
-	 * Create the composite.
-	 * 
-	 * @param parent
-	 * @param style
+	 * Create the composite and connect to the server.
+	 *
+	 * @param parent the parent
+	 * @param style the style
+	 * @param cs the cs
 	 */
 	public Connection(final Composite parent, int style,
 			final ConnectionSettings cs) {
@@ -237,6 +303,9 @@ public class Connection extends Composite {
 
 	}
 
+	/**
+	 * Adds the tooltip listener.
+	 */
 	private void addTooltipListener() {
 		Listener treeListener = buildTooltip();
 		chanList.addListener(SWT.Dispose, treeListener);
@@ -245,6 +314,11 @@ public class Connection extends Composite {
 		chanList.addListener(SWT.MouseHover, treeListener);
 	}
 
+	/**
+	 * Builds the tooltip.
+	 *
+	 * @return the listener
+	 */
 	private Listener buildTooltip() {
 		final Listener labelListener = new Listener() {
 			public void handleEvent(Event event) {
@@ -322,6 +396,13 @@ public class Connection extends Composite {
 		return treeListener;
 	}
 
+	/**
+	 * Builds the layout.
+	 *
+	 * @param parent the parent
+	 * @param cs the cs
+	 * @return the c tab item
+	 */
 	private CTabItem buildLayout(Composite parent, ConnectionSettings cs) {
 		CTabItem c = new CTabItem((CTabFolder) parent, SWT.NONE);
 		c.setText(cs.getConnectionName());
@@ -351,11 +432,19 @@ public class Connection extends Composite {
 		return c;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Composite#checkSubclass()
+	 */
 	@Override
 	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components
 	}
 
+	/**
+	 * Switch rooms.
+	 *
+	 * @param c the c
+	 */
 	public void switchComposite(Room c) {
 		scrolledComposite.setContent(c);
 		ScriptVars.curChannel = c.getCChannel().getChannel();
@@ -366,6 +455,12 @@ public class Connection extends Composite {
 		c.getInput().setFocus();
 	}
 
+	/**
+	 * Creates the room.
+	 *
+	 * @param s the s
+	 * @param layout the layout
+	 */
 	public void createRoom(String s, int layout) {
 		createRoom(s, layout, null);
 	}
@@ -373,20 +468,31 @@ public class Connection extends Composite {
 	/**
 	 * Create a new room based on a channel name. This does NOT need to lead to
 	 * an actual channel, as it just handles creation of the window itself.
-	 * 
-	 * @param channel
-	 *            the name of the ctabitem that will be created
+	 *
+	 * @param chanstr the chanstr
+	 * @param layout the layout
+	 * @param chan the chan
 	 */
 	public void createRoom(String chanstr, int layout, Channel chan) {
 		RoomManager.createRoom((Composite) scrolledComposite, chanList,
 				SWT.NONE, chanstr, this, layout, chan);
 	}
 
+	/**
+	 * Adds the room.
+	 *
+	 * @param r the r
+	 */
 	public void addRoom(Room r) {
 		rooms.add(r);
 
 	}
 
+	/**
+	 * Update who list.
+	 *
+	 * @param channel the channel
+	 */
 	public void updateWho(String channel) {
 		Room r = findRoom(channel);
 		if (r != null) {
@@ -394,6 +500,11 @@ public class Connection extends Composite {
 		}
 	}
 
+	/**
+	 * Update topic.
+	 *
+	 * @param channel the channel
+	 */
 	public void updateTopic(String channel) {
 		Room r = findRoom(channel);
 		if (r != null) {
@@ -401,6 +512,12 @@ public class Connection extends Composite {
 		}
 	}
 
+	/**
+	 * Find room.
+	 *
+	 * @param channel the channel
+	 * @return the room
+	 */
 	public Room findRoom(String channel) {
 		for (Room r : rooms) {
 			if (r.getCChannel().getChannelString().equals(channel)) {
@@ -410,6 +527,12 @@ public class Connection extends Composite {
 		return null;
 	}
 
+	/**
+	 * Can add room.
+	 *
+	 * @param s the s
+	 * @return true, if successful
+	 */
 	public boolean canAddRoom(String s) {
 		for (Room r : rooms) {
 			if (r.getCChannel().getChannelString().equals(s)) {

@@ -1,3 +1,6 @@
+/*
+ * @author Kyle Kemp
+ */
 package scripting;
 
 import java.io.BufferedReader;
@@ -23,40 +26,107 @@ import lombok.Setter;
 import shared.NSAlertBox;
 import sun.org.mozilla.javascript.internal.NativeArray;
 
+/**
+ * The Class Script.
+ */
 public final class Script implements Comparable<Script> {
 	
+	/** The Constant JAVASCRIPT. */
 	public static final int JAVASCRIPT = 1;
+	
+	/** The Constant RUBY. */
 	public static final int RUBY = 2;
 	
 	//XXX not supported yet
+	/** The Constant PYTHON. */
 	public static final int PYTHON = 3;
 	
+	/**
+	 * Gets the script type.
+	 *
+	 * @return the script type
+	 */
 	@Getter
 	private int scriptType=0;
 	
-	@Getter @Setter
+	/**
+	 * Checks if is in use.
+	 *
+	 * @return true, if is in use
+	 */
+	@Getter /**
+  * Sets the in use.
+  *
+  * @param inUse the new in use
+  */
+ @Setter
 	private boolean inUse = true;
+	
+	/**
+	 * Gets the script.
+	 *
+	 * @return the script
+	 */
 	@Getter
 	private String script;
+	
+	/**
+	 * Gets the file reference.
+	 *
+	 * @return the reference
+	 */
 	@Getter
 	private File reference;
+	
+	/**
+	 * Gets the function list associated with this script.
+	 *
+	 * @return the functions
+	 */
 	@Getter
 	private ConcurrentSkipListSet<String> functions = new ConcurrentSkipListSet<String>();
+	
+	/**
+	 * Gets the descript version of the functions associated with this script.
+	 *
+	 * @return the descript functions
+	 */
 	@Getter
 	private ConcurrentSkipListSet<String> descriptFunctions = new ConcurrentSkipListSet<String>();
+	
+	/**
+	 * Gets the name of the script.
+	 *
+	 * @return the name
+	 */
 	@Getter
 	private String name;
 	
+	/** The newline constant. */
 	private static final String nl = System.getProperty("line.separator");
+	
+	/** The manager. */
 	private static ScriptEngineManager manager = new ScriptEngineManager();
+	
+	/** The js engine. */
 	private static ScriptEngine jsEngine = manager.getEngineByName("JavaScript");
+	
+	/** The rb engine. */
 	private static ScriptEngine rbEngine = manager.getEngineByName("jruby");
+	
+	/** The js invocable. */
 	private static Invocable jsInvocable = (Invocable) jsEngine;
+	
+	/** The rb invocable. */
 	private static Invocable rbInvocable = (Invocable) rbEngine;
+	
+	/** The bindings. */
 	private static Bindings bindings = jsEngine.getBindings(ScriptContext.ENGINE_SCOPE);
 	
+	/** The rb base script. */
 	private String rbBase = "require \"java\""+nl;
 	
+	/** The js base script. */
 	private String jsBase = "importClass(org.eclipse.swt.SWT);" +nl+
 							"importClass(Packages.hexapixel.notifier.NotificationType);" +nl+
 							"importClass(Packages.org.pircbotx.Colors);" +nl+
@@ -66,6 +136,11 @@ public final class Script implements Comparable<Script> {
 							"importPackage(java.util);" +nl+
 							"importPackage(java.lang);" +nl;
 	
+	/**
+	 * Instantiates a new script.
+	 *
+	 * @param f the f
+	 */
 	public Script(File f) {
 		this.reference = f;
 		this.name = f.getName();
@@ -81,6 +156,9 @@ public final class Script implements Comparable<Script> {
 		reset();
 	}
 
+	/**
+	 * Reset the script.
+	 */
 	public void reset() {
 		readScript();
 		
@@ -89,6 +167,9 @@ public final class Script implements Comparable<Script> {
 		initialize();
 	}
 
+	/**
+	 * Initialize.
+	 */
 	private void initialize() {
 		try {
 			switch(scriptType){
@@ -113,6 +194,9 @@ public final class Script implements Comparable<Script> {
 		
 	}
 
+	/**
+	 * Initialize the bindings.
+	 */
 	private void initBindings() {
 		bindings.put("global", new ScriptVars());
 		bindings.put("util", new ScriptFunctions());
@@ -120,6 +204,9 @@ public final class Script implements Comparable<Script> {
 		bindings.put("sound", new SoundData());
 	}
 
+	/**
+	 * Read script.
+	 */
 	public void readScript() {
 
 		//reset the functions list
@@ -149,6 +236,11 @@ public final class Script implements Comparable<Script> {
 	}
 	
 	//check line-by-line for a function name
+	/**
+	 * Parses the function.
+	 *
+	 * @param text the text
+	 */
 	private void parseFunction(String text) {
 		if(text.toLowerCase().contains("meta")) {
 			parseMeta(text);
@@ -173,6 +265,11 @@ public final class Script implements Comparable<Script> {
 		}
 	}
 	
+	/**
+	 * Parses the metadata of a script.
+	 *
+	 * @param text the text
+	 */
 	private void parseMeta(String text){
 		//META<inuse=false>
 		String[] cleanMeta = text.replaceAll("[<>]", " ").split(" ")[1].split("=");
@@ -182,6 +279,12 @@ public final class Script implements Comparable<Script> {
 	}
 	
 	//event invocation
+	/**
+	 * Invoke a function on a script, using a specified invocation schema
+	 *
+	 * @param function the function
+	 * @param e the e
+	 */
 	public void invoke(String function, Event<KEllyBot> e){
 		if(!inUse)return;
 		try {
@@ -203,6 +306,12 @@ public final class Script implements Comparable<Script> {
 	}
 
 	//open-ended invocation
+	/**
+	 * Invoke with no expectation of returning a vlaue.
+	 *
+	 * @param command the command
+	 * @param args the args
+	 */
 	public void invoke(String command, Object... args) { 
 		if(!inUse)return;
 		try {
@@ -223,6 +332,12 @@ public final class Script implements Comparable<Script> {
 		}
 	}
 	
+	/**
+	 * Invoke, and turn objects back into Java-accessible objects.
+	 *
+	 * @param command the command
+	 * @return the object[]
+	 */
 	public Object[] invoke(String command) {
 		Object[] rv = null;
 		try {
@@ -250,6 +365,9 @@ public final class Script implements Comparable<Script> {
 		return rv;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
 	@Override
 	public int compareTo(Script o) {
 		return reference.getName().compareTo(o.reference.getName());

@@ -1,3 +1,6 @@
+/*
+ * @author Kyle Kemp
+ */
 package ui.composites;
 
 import java.awt.BorderLayout;
@@ -21,18 +24,26 @@ import org.fife.ui.rtextarea.RTextScrollPane;
 import scripting.Script;
 import scripting.ScriptManager;
 
+/**
+ * The Class ScriptEditor.
+ */
 public class ScriptEditor extends JPanel {
 
 	//TODO make ctrl space work
 	//TODO custom script parser to show errors at problematic lines
 
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 	
+	/** The text area. */
 	RSyntaxTextArea textArea;
 	
+	/**
+	 * Instantiates a new script editor.
+	 *
+	 * @param parent the parent
+	 * @param s the s
+	 */
 	public ScriptEditor(Composite parent, Script s) {
 		
 	    Frame frame = SWT_AWT.new_Frame(parent);
@@ -60,6 +71,11 @@ public class ScriptEditor extends JPanel {
 	    frame.add(scroll, BorderLayout.CENTER);
 	}
 	
+	/**
+	 * Change syntax style.
+	 *
+	 * @param s the s
+	 */
 	public void changeSyntaxStyle(Script s) {
 		textArea.setSyntaxEditingStyle(determineScriptType(s));
 		CompletionProvider provider = createCompletionProvider(s.getScript());
@@ -69,6 +85,12 @@ public class ScriptEditor extends JPanel {
 		
 	}
 
+	/**
+	 * Determine script type.
+	 *
+	 * @param s the s
+	 * @return the string
+	 */
 	private String determineScriptType(Script s) {
 		switch(s.getScriptType()) {
 		case Script.JAVASCRIPT:
@@ -82,6 +104,12 @@ public class ScriptEditor extends JPanel {
 		}
 	}
 
+	/**
+	 * Creates the completion provider.
+	 *
+	 * @param s the s
+	 * @return the completion provider
+	 */
 	private CompletionProvider createCompletionProvider(String s) {
 		DefaultCompletionProvider provider = new DefaultCompletionProvider();
 		for(String keyword : ScriptManager.globalKeywords) {
@@ -107,11 +135,21 @@ public class ScriptEditor extends JPanel {
 		return provider;
 	}
 
+	/**
+	 * Sets the text.
+	 *
+	 * @param script the new text
+	 */
 	public void setText(String script) {
 		this.textArea.setText(script);
 		
 	}
 
+	/**
+	 * Gets the text.
+	 *
+	 * @return the text
+	 */
 	public String getText() {
 		return textArea.getText();
 	}

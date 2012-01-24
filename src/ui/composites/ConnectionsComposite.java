@@ -1,3 +1,6 @@
+/*
+ * @author Kyle Kemp
+ */
 package ui.composites;
 
 import java.util.ArrayList;
@@ -29,27 +32,58 @@ import connection.Connection;
 import connection.ConnectionSettings;
 import connection.Settings;
 
+/**
+ * The Class ConnectionsComposite.
+ */
 public class ConnectionsComposite extends Composite {
+	
+	/** The table. */
 	private Table table;
+	
+	/** The text conn name. */
 	private Text textConnName;
+	
+	/** The text server. */
 	private Text textServer;
+	
+	/** The text serv pass. */
 	private Text textServPass;
+	
+	/** The text nick. */
 	private Text textNick;
+	
+	/** The text nick pass. */
 	private Text textNickPass;
+	
+	/** The text port. */
 	private Text textPort;
+	
+	/** The text ident. */
 	private Text textIdent;
+	
+	/** The btn use ssl. */
 	private Button btnUseSsl;
+	
+	/** The btn connect on startup. */
 	private Button btnConnectOnStartup;
+	
+	/** The btn connect. */
 	private Button btnConnect;
+	
+	/** The btn save. */
 	private Button btnSave;
+	
+	/** The incomplete alert. */
 	private Label incompleteAlert;
+	
+	/** The text auto join. */
 	private Text textAutoJoin;
 
 	/**
 	 * Create the composite.
-	 * 
-	 * @param parent
-	 * @param style
+	 *
+	 * @param parent the parent
+	 * @param style the style
 	 */
 	public ConnectionsComposite(Composite parent, int style) {
 		super(parent, style);
@@ -267,6 +301,9 @@ public class ConnectionsComposite extends Composite {
 	}
 
 	// load table from connSettings from Settings
+	/**
+	 * Load table.
+	 */
 	private void loadTable() {
 		ArrayList<ConnectionSettings> list = Settings.getSettings()
 				.getConnSettings();
@@ -278,6 +315,9 @@ public class ConnectionsComposite extends Composite {
 		}
 	}
 
+	/**
+	 * Save table.
+	 */
 	private void saveTable() {
 		ArrayList<ConnectionSettings> list = new ArrayList<ConnectionSettings>();
 		for (TableItem i : table.getItems()) {
@@ -287,6 +327,9 @@ public class ConnectionsComposite extends Composite {
 		Settings.writeToFile();
 	}
 
+	/**
+	 * Save entry.
+	 */
 	private void saveEntry()
 	{
 		ArrayList<String> autoJoin = new ArrayList<String>();
@@ -307,6 +350,11 @@ public class ConnectionsComposite extends Composite {
 		saveTable();
 	}
 	
+	/**
+	 * Load forms.
+	 *
+	 * @param cs the cs
+	 */
 	private void loadForms(ConnectionSettings cs) {
 		textConnName.setText(cs.getConnectionName());
 		textServer.setText(cs.getServer());
@@ -324,11 +372,19 @@ public class ConnectionsComposite extends Composite {
 		textAutoJoin.setText(autoJoin.substring(0, autoJoin.length() - 1));
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Composite#checkSubclass()
+	 */
 	@Override
 	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components
 	}
 
+	/**
+	 * Check if completed.
+	 *
+	 * @return true, if successful
+	 */
 	private boolean checkIfCompleted() {
 		boolean complete = true;
 		if (textServer.getText().equals("")) {
@@ -362,6 +418,9 @@ public class ConnectionsComposite extends Composite {
 		return complete;
 	}
 
+	/**
+	 * Clear blanks.
+	 */
 	private void clearBlanks() {
 		TableItem[] items = table.getItems();
 		for (int k = items.length - 1; k >= 0; k--) {
@@ -382,6 +441,9 @@ public class ConnectionsComposite extends Composite {
 		}
 	}
 
+	/**
+	 * Enable fields.
+	 */
 	private void enableFields() {
 		textConnName.setEnabled(true);
 		textServer.setEnabled(true);
@@ -396,6 +458,9 @@ public class ConnectionsComposite extends Composite {
 		btnConnect.setEnabled(true);
 	}
 
+	/**
+	 * Disable fields.
+	 */
 	private void disableFields() {
 		textConnName.setEnabled(false);
 		textServer.setEnabled(false);
@@ -410,6 +475,9 @@ public class ConnectionsComposite extends Composite {
 		btnConnect.setEnabled(false);
 	}
 
+	/**
+	 * Clear fields.
+	 */
 	private void clearFields() {
 		textConnName.setText("");
 		textServer.setText("");
@@ -423,6 +491,9 @@ public class ConnectionsComposite extends Composite {
 		textAutoJoin.setText("");
 	}
 
+	/**
+	 * Default fields.
+	 */
 	private void defaultFields() {
 		textConnName.setText("");
 		textServer.setText("");
@@ -436,6 +507,9 @@ public class ConnectionsComposite extends Composite {
 		textAutoJoin.setText("");
 	}
 
+	/**
+	 * Save and connect.
+	 */
 	private void saveAndConnect() {
 		if (table.getSelectionCount() == 1 && checkIfCompleted()) {
 			// save stuff
@@ -448,6 +522,7 @@ public class ConnectionsComposite extends Composite {
 		}
 	}
 	
+	/** The field saver. */
 	private FocusAdapter fieldSaver = new FocusAdapter() {
 
 		@Override
@@ -465,16 +540,37 @@ public class ConnectionsComposite extends Composite {
 		}
 		
 	};
+	
+	/** The lbl name. */
 	private Label lblName;
+	
+	/** The lbl server. */
 	private Label lblServer;
+	
+	/** The lbl port. */
 	private Label lblPort;
+	
+	/** The lbl server password. */
 	private Label lblServerPassword;
+	
+	/** The lbl nickname. */
 	private Label lblNickname;
+	
+	/** The lbl nickserv password. */
 	private Label lblNickservPassword;
+	
+	/** The lbl ident. */
 	private Label lblIdent;
+	
+	/** The lbl autojoin. */
 	private Label lblAutojoin;
+	
+	/** The lbl separate channels by. */
 	private Label lblSeparateChannelsBy;
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Widget#dispose()
+	 */
 	@Override
 	public void dispose()
 	{

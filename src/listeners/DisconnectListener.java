@@ -1,3 +1,6 @@
+/*
+ * @author Kyle Kemp
+ */
 package listeners;
 
 import java.io.IOException;
@@ -11,12 +14,33 @@ import shared.Message;
 import connection.Connection;
 import connection.KEllyBot;
 
+/**
+ * The listener interface for receiving disconnect events.
+ * The class that is interested in processing a disconnect
+ * event implements this interface, and the object created
+ * with that class is registered with a component using the
+ * component's <code>addDisconnectListener<code> method. When
+ * the disconnect event occurs, that object's appropriate
+ * method is invoked.
+ *
+ * @see DisconnectEvent
+ */
 public class DisconnectListener extends ConnectionListener {
 
+	/**
+	 * Instantiates a new disconnect listener.
+	 *
+	 * @param nc the nc
+	 */
 	public DisconnectListener(Connection nc) {
 		super(nc);
 	}
 	
+	/**
+	 * On disconnect.
+	 *
+	 * @param event the event
+	 */
 	public void onDisconnect(Event<KEllyBot> event){
 		for(Channel c : event.getBot().getChannels()){
 			manageMessage(new Message(nc, "You have been disconnected, attempting to reconnect.", c.getName(), c, Message.CONSOLE));
