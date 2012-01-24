@@ -5,6 +5,7 @@ import java.util.Date;
 import lombok.Data;
 
 import org.pircbotx.Channel;
+import org.pircbotx.User;
 
 import connection.Connection;
 import connection.KEllyBot;
@@ -24,7 +25,7 @@ public class Message {
 	private KEllyBot bot;
 	private short type;
 	private Date date;
-	
+		
 	public Message(KEllyBot kEllyBot, String message, String nick,
 			String target, short type) {
 		this.setDate(new Date());
@@ -40,6 +41,22 @@ public class Message {
 	}
 	
 	public Message(Connection nc, String message, String nick, Channel channel, short type) {
-		this(nc, message, nick, channel == null ? "Console" : channel.getName(), type);
+		this(nc, message, nick, channel == null ? nc.getBot().getServer(): channel.getName(), type);
 	}
+	
+	public Message(Connection nc, String message, User user, Channel channel, short type) {
+		this(nc, message, getUserCode(user, channel)+user.getNick(), channel, type);
+	}
+	
+	public static String getUserCode(User user, Channel channel) {
+		if(channel.getOwners().contains(user)) return "~";
+		if(channel.getSuperOps().contains(user)) return "&";
+		if(channel.getOps().contains(user)) return "@";
+		if(channel.getHalfOps().contains(user)) return "%";
+		if(channel.getVoices().contains(user)) return "+";
+		return "";
+	}
+	
+	
+	
 }

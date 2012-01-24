@@ -19,19 +19,19 @@ public class MessageListener extends ConnectionListener{
 	@Override
 	public void onMessage(MessageEvent<KEllyBot> event) throws Exception {
 		super.onMessage(event);
-		manageMessage(new Message(nc, event.getMessage(), event.getUser().getNick(), event.getChannel(), Message.MSG));
+		manageMessage(new Message(nc, event.getMessage(), event.getUser(), event.getChannel(), Message.MSG));
 	}
 
 	@Override
 	public void onAction(ActionEvent<KEllyBot> event) throws Exception {
 		super.onAction(event);
-		manageMessage(new Message(nc, event.getAction(), event.getUser().getNick(), event.getChannel(), Message.ACTION));	
+		manageMessage(new Message(nc, event.getAction(), event.getUser(), event.getChannel(), Message.ACTION));	
 	}
 
 	@Override
 	public void onNotice(NoticeEvent<KEllyBot> event) throws Exception {	
 		super.onNotice(event);
-		manageMessage(new Message(nc, "NOTICE: "+event.getNotice(), event.getUser().getNick(), event.getChannel(), Message.NOTICE));
+		manageMessage(new Message(nc, "NOTICE: "+event.getNotice(), event.getUser(), event.getChannel(), Message.NOTICE));
 	}
 
 	@Override

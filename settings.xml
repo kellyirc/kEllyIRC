@@ -6,12 +6,12 @@
       <port>6667</port>
       <serverPassword></serverPassword>
       <ssl>false</ssl>
-      <connectOnStart>false</connectOnStart>
+      <connectOnStart>true</connectOnStart>
       <nickname>mentos</nickname>
       <nickPassword></nickPassword>
       <ident>dietcoke</ident>
       <autoJoin>
-        <string>#dgr</string>
+        <string>#kellyirc</string>
       </autoJoin>
     </connection.ConnectionSettings>
   </connSettings>
@@ -81,7 +81,7 @@
   <quicklinks>
     <entry>
       <string>google</string>
-      <string>google.ca</string>
+      <string>http://google.com/?q=%INPUT%</string>
     </entry>
   </quicklinks>
   <timestampsEnabled>false</timestampsEnabled>

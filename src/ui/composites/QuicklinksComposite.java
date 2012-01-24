@@ -17,6 +17,8 @@ public class QuicklinksComposite extends Composite {
 	private Table table;
 	private Text name;
 	private Text url;
+	
+	//TODO when parsing quicklinks, replace the text in the message with the url, but don't remove the old code for quicklink parsing
 
 	/**
 	 * Create the composite.
@@ -59,6 +61,8 @@ public class QuicklinksComposite extends Composite {
 			public void widgetSelected(SelectionEvent arg0) {
 				if (name.getText() != "" && url.getText() != "") {
 					addQuickLink(name.getText(), url.getText());
+					name.setText("");
+					url.setText("");
 				}
 			}
 

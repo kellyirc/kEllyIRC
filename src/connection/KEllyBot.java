@@ -15,6 +15,7 @@ import shared.RoomManager;
 public class KEllyBot extends PircBotX {
 	
 	public static final String VERSION = "kEllyIRC 0.5.167 alpha";
+	public static final String systemName = "SYSTEM";
 	
 	@Getter 
 	@Setter 
@@ -32,7 +33,7 @@ public class KEllyBot extends PircBotX {
 	        if(target==null || target.equals("Console")){
 	        	return;
 	        }
-	        RoomManager.enQueue(new Message(this, message, getNick(), target, Message.MSG));  
+	        RoomManager.enQueue(new Message(this.getConnection(), message, this.getUserBot(), getChannel(target), Message.MSG));  
 			super.sendMessage(target, message);
 		}
 	}
@@ -61,7 +62,7 @@ public class KEllyBot extends PircBotX {
 
 	public void changeNick(String nick){
 		super.changeNick(nick);
-		RoomManager.enQueue(new Message(connection, "You are now known as "+nick, "System", ScriptVars.curChannel, Message.CONSOLE));
+		RoomManager.enQueue(new Message(connection, "You are now known as "+nick, systemName, ScriptVars.curChannel, Message.CONSOLE));
 	}
 
 	public void doCommand(String line) {

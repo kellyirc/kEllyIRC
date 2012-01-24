@@ -261,7 +261,7 @@ public class Room extends Composite {
 		roomLayout = layout;
 		lastMessages = new LinkedList<String>();
 		listIndex = -1;
-		this.logMessage("\nSession started at " + new java.util.Date() + "\n");
+		this.logMessage("");
 
 		for (TreeItem i : tree.getItems()) {
 			if (i.getData() == this) {
@@ -773,17 +773,17 @@ public class Room extends Composite {
 
 	public void newMessage(String s, boolean update) {
 		output.append(s);
+		logMessage(s);
 		if (update) {
-			logMessage(s);
 			updateLastMessage(s);
 		}
 	}
 
-	// TODO show timestamps
-
 	private void logMessage(String s) {
 		if (!Settings.getSettings().isChatLogs())
 			return;
+		
+		if(getChannelName().equals("Console")) return;
 
 		new File("logs/").mkdir();
 		new File("logs/" + getServerConnection().getBot().getServer() + "/")
@@ -854,16 +854,15 @@ public class Room extends Composite {
 	}
 
 	public void appendToHtml(String s) {
-		//s = s.replaceAll("[<]", "&lt;");
 		Document doc = null;
 		try {
 			doc = Jsoup
-					.parse(new File("logs/irc.esper.net/#dgr.html"), "UTF-8");
+					.parse(new File(getDefaultLogPath()+".html"), "UTF-8");
 		} catch (IOException e) {
 		}
+		Element body = doc.select("body").first();
 		if (session == 0) {
 			session = System.currentTimeMillis();
-			Element body = doc.select("body").first();
 			body.appendElement("br");
 			Element sess = new Element(Tag.valueOf("div"), "", new Attributes());
 			sess.addClass("session");
@@ -871,28 +870,29 @@ public class Room extends Composite {
 			sess.append("Session started on "+new java.util.Date());
 			body.appendChild(sess);
 			body.appendElement("br");
+			if(s.equals("")) { saveLogFile(doc); return; }
 		}
 		Element cursession = doc.select("#" + session).first();
 		if(cursession == null) return;
 		
 		Element timestamp = new Element(Tag.valueOf("span"), "", new Attributes());
 		timestamp.addClass("timestamp");
-		timestamp.append(new java.util.Date().toString());
+		if(!s.equals(""))timestamp.append(new java.util.Date().toString());
 
 		String userNick = s.trim().split(" ")[0];
 		
-		if(s.startsWith("<"+this.getChannelName()+">") || userNick.contains(".")) {
+		if(s.startsWith("<"+this.getChannelName()+">") || userNick.contains(".") || s.startsWith("<SYSTEM>")) {
 			Element system = new Element(Tag.valueOf("div"), "", new Attributes());
 			system.addClass("system");
 			
 			Element systemmsg = new Element(Tag.valueOf("span"), "", new Attributes());
 			systemmsg.addClass("system-msg");
-			systemmsg.append(s);
+			systemmsg.append(s.replaceAll("<", "&lt;"));
 			
 			system.appendChild(timestamp);
 			system.appendChild(systemmsg);
 			
-			cursession.appendChild(system);
+			body.appendChild(system);
 			
 		} else {
 			//TODO use default user timestamp format
@@ -908,10 +908,15 @@ public class Room extends Composite {
 			message.appendChild(nick);
 			message.append(s.substring(userNick.length())+" ");
 			
-			cursession.appendChild(message);
+			body.appendChild(message);
 		}
 		alternateMessage=!alternateMessage;
 		
+		saveLogFile(doc);
+		
+	}
+
+	private void saveLogFile(Document doc) {
 		File swap = new File(getDefaultLogPath()+".html.swap");
 		try(FileWriter out = new FileWriter(swap)) {
 			out.write(doc.toString());
@@ -921,7 +926,6 @@ public class Room extends Composite {
 		
 		copy(swap, new File(getDefaultLogPath() + ".html"));
 		swap.delete();
-		
 	}
 	
     private void copy(File file, File output) {

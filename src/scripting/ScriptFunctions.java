@@ -17,6 +17,8 @@ import org.wishray.copernicus.NeptuneCore;
 import org.wishray.copernicus.Sound;
 import org.wishray.copernicus.SoundReference;
 
+import connection.KEllyBot;
+
 import shared.Message;
 import shared.RoomManager;
 
@@ -145,7 +147,7 @@ public final class ScriptFunctions {
 	}
 
 	public final void error(String err) {
-		error("System", err);
+		error(KEllyBot.systemName, err);
 	}
 
 	public final void error(String sender, String err) {

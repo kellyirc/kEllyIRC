@@ -67,7 +67,7 @@ public class Connection extends Composite {
 			this.cs = cs;
 
 			bot.setVersion(KEllyBot.VERSION);
-			bot.setVerbose(true);
+			bot.setVerbose(false);
 			bot.changeNick(cs.getNickname());
 			bot.setAutoNickChange(true);
 			bot.setName(cs.getNickname());
