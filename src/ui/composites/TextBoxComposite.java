@@ -5,19 +5,25 @@ package ui.composites;
 
 import hexapixel.cache.ImageCache;
 
-import org.eclipse.swt.widgets.Composite;
+import java.util.Date;
+import java.text.SimpleDateFormat;
+
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-
-import connection.Settings;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 import shared.NSAlertBox;
+import connection.Settings;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.VerifyListener;
+import org.eclipse.swt.events.VerifyEvent;
 
 /**
  * The Class TextBoxComposite.
@@ -30,6 +36,8 @@ public class TextBoxComposite extends Composite
 	
 	/** The btn enable timestamps. */
 	private Button btnEnableTimestamps;
+	private SimpleDateFormat sdf;
+	private Label lblPreview;
 
 	/**
 	 * Create the composite.
@@ -40,11 +48,10 @@ public class TextBoxComposite extends Composite
 	public TextBoxComposite(Composite parent, int style)
 	{
 		super(parent, style);
-		setLayout(new GridLayout(4, false));
+		setLayout(new GridLayout(3, false));
 		
 		Label lblTimestamp = new Label(this, SWT.NONE);
 		lblTimestamp.setText("Timestamps");
-		new Label(this, SWT.NONE);
 		new Label(this, SWT.NONE);
 		new Label(this, SWT.NONE);
 		
@@ -53,12 +60,25 @@ public class TextBoxComposite extends Composite
 		btnEnableTimestamps.setSelection(Settings.getSettings().isTimestampsEnabled());
 		new Label(this, SWT.NONE);
 		new Label(this, SWT.NONE);
-		new Label(this, SWT.NONE);
 		
 		Label lblTimestampFormat = new Label(this, SWT.NONE);
 		lblTimestampFormat.setText("Timestamp format: ");
 		
 		timestampFormatText = new Text(this, SWT.BORDER);
+		timestampFormatText.addVerifyListener(new VerifyListener() {
+			public void verifyText(VerifyEvent e) {
+				if(Character.isAlphabetic(e.character) && 
+						!"GyYMwWDdFEuaHkKhmsSzZX".contains(""+e.character))
+					e.doit = false;
+			}
+		});
+		timestampFormatText.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				sdf.applyPattern(timestampFormatText.getText());
+				lblPreview.setText(sdf.format(new Date()));
+			}
+		});
 		GridData gd_timestampFormatText = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
 		gd_timestampFormatText.widthHint = 97;
 		timestampFormatText.setLayoutData(gd_timestampFormatText);
@@ -82,38 +102,13 @@ public class TextBoxComposite extends Composite
 			}
 		});
 		
-		new Label(this, SWT.NONE);
-		new Label(this, SWT.NONE);
-		new Label(this, SWT.NONE);
-		new Label(this, SWT.NONE);
-		new Label(this, SWT.NONE);
-		new Label(this, SWT.NONE);
-		new Label(this, SWT.NONE);
-		new Label(this, SWT.NONE);
-		new Label(this, SWT.NONE);
-		new Label(this, SWT.NONE);
-		new Label(this, SWT.NONE);
-		new Label(this, SWT.NONE);
-		new Label(this, SWT.NONE);
-		new Label(this, SWT.NONE);
-		new Label(this, SWT.NONE);
-		new Label(this, SWT.NONE);
-		new Label(this, SWT.NONE);
-		new Label(this, SWT.NONE);
-		new Label(this, SWT.NONE);
-		new Label(this, SWT.NONE);
-		new Label(this, SWT.NONE);
-		new Label(this, SWT.NONE);
-		new Label(this, SWT.NONE);
-		new Label(this, SWT.NONE);
-		new Label(this, SWT.NONE);
-		new Label(this, SWT.NONE);
-		new Label(this, SWT.NONE);
-		new Label(this, SWT.NONE);
-		new Label(this, SWT.NONE);
-		new Label(this, SWT.NONE);
-		new Label(this, SWT.NONE);
-		new Label(this, SWT.NONE);
+		Label lblPreview1 = new Label(this, SWT.NONE);
+		lblPreview1.setText("Preview: ");
+		
+		lblPreview = new Label(this, SWT.NONE);
+		lblPreview.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		sdf = new SimpleDateFormat(timestampFormatText.getText());
+		lblPreview.setText(sdf.format(new Date()));
 		new Label(this, SWT.NONE);
 		
 //		Button btnSave = new Button(this, SWT.NONE);
