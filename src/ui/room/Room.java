@@ -284,6 +284,8 @@ public class Room extends Composite {
 	// TODO: change to booleans
 	/** The constants that dictate what a room gets for data. */
 	public static final int WHO = 1, TOPIC = 2, IO = 4;
+	
+	boolean hasLoaded;
 
 	/** The c channel. */
 	private CustomChannel cChannel;
@@ -384,6 +386,7 @@ public class Room extends Composite {
 
 		changeStatus(NORMAL);
 		instantiate(layout);
+		hasLoaded=true;
 	}
 
 	/**

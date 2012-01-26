@@ -34,8 +34,25 @@
       <performOnConnect>
         <string>/join #kellyirc</string>
         <string>/join #POCWORKS</string>
-        <string>/me #kellyirc has arrived, bitches</string>
-        <string>/msg #kellyirc perform on connect works!</string>
+        <string>/ame has arrived, bitches</string>
+        <string>/amsg perform on connect works!</string>
+      </performOnConnect>
+    </connection.ConnectionSettings>
+    <connection.ConnectionSettings>
+      <connectionName>Esper</connectionName>
+      <server>irc.esper.net</server>
+      <port>6667</port>
+      <serverPassword></serverPassword>
+      <ssl>false</ssl>
+      <connectOnStart>false</connectOnStart>
+      <nickname>kElly</nickname>
+      <nickPassword></nickPassword>
+      <ident>kElly</ident>
+      <autoJoin>
+        <string></string>
+      </autoJoin>
+      <performOnConnect>
+        <string>/join kellyirc</string>
       </performOnConnect>
     </connection.ConnectionSettings>
   </connSettings>

@@ -39,6 +39,16 @@ function action(connection, sargs) {
 //alias of an alias, woo!
 function me(connection, sargs) { action(connection, sargs); }
 
+//send an emote to a specific channel
+function emote(connection, sargs) { 
+	if(util.checkArgs(sargs,2)) {
+		var args = util.getArgs(sargs,2);
+		connection.sendAction(args[0], args[1]);
+	} else {
+		util.error("Invalid format; please use /emote [channel|user] [message]");
+	}
+}
+
 //send a message to all channels on the given connection
 function amsg(connection, sargs) {
 	var channels = connection.getChannels().toArray();

@@ -371,4 +371,5 @@ public final class ScriptFunctions {
 		return new FileDialog(RoomManager.getMain().getShell(), SWT.SAVE)
 				.open();
 	}
+
 }

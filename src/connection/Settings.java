@@ -212,6 +212,8 @@ public class Settings {
 		
 		quicklinks = new HashMap<>();
 		quicklinks.put("google","http://google.com/?q=%INPUT%");
+		
+		//TODO add a default connection to our channel
 	}
 	
 	/**
