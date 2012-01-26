@@ -157,16 +157,13 @@ public class Connection extends Composite {
 						try {
 							tries++;
 							if (!CS.getServerPassword().equals(""))
-								bot.connect(CS.getServer(),
-										Integer.parseInt(CS.getPort()),
+								bot.connect(CS.getServer(), CS.getPort(),
 										CS.getServerPassword());
 							else if (CS.isSsl())
-								bot.connect(CS.getServer(),
-										Integer.parseInt(CS.getPort()),
+								bot.connect(CS.getServer(), CS.getPort(),
 										SSLSocketFactory.getDefault());
 							else
-								bot.connect(CS.getServer(),
-										Integer.parseInt(CS.getPort()));
+								bot.connect(CS.getServer(), CS.getPort());
 						} catch (NumberFormatException e) {
 							Logger dLog = Logger.getLogger("log.error");
 							dLog.error("Improper port, not a number", e);
@@ -183,6 +180,13 @@ public class Connection extends Composite {
 							dLog.error("IrcException while trying to connect",
 									e);
 						}
+					if(bot.isConnected())
+					{
+						for(String cmd:CS.getPerformOnConnect())
+						{
+							bot.doCommand(cmd);
+						}
+					}
 				}
 
 			}).run();

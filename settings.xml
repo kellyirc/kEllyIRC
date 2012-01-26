@@ -1,21 +1,45 @@
 <connection.Settings>
   <connSettings>
     <connection.ConnectionSettings>
-      <connectionName>esper</connectionName>
+      <connectionName>irc.esper.net</connectionName>
       <server>irc.esper.net</server>
       <port>6667</port>
       <serverPassword></serverPassword>
       <ssl>false</ssl>
-      <connectOnStart>true</connectOnStart>
-      <nickname>mentos</nickname>
-      <nickPassword></nickPassword>
-      <ident>dietcoke</ident>
+      <connectOnStart>false</connectOnStart>
+      <nickname>Freek</nickname>
+      <nickPassword>nothispassword</nickPassword>
+      <ident>Freek</ident>
       <autoJoin>
+        <string>#dgr</string>
+        <string>#pesterchum</string>
         <string>#kellyirc</string>
+        <string>#kwrpg</string>
       </autoJoin>
+      <performOnConnect/>
+    </connection.ConnectionSettings>
+    <connection.ConnectionSettings>
+      <connectionName>EsperNet</connectionName>
+      <server>irc.esper.net</server>
+      <port>6667</port>
+      <serverPassword></serverPassword>
+      <ssl>false</ssl>
+      <connectOnStart>false</connectOnStart>
+      <nickname>KEllyFreek</nickname>
+      <nickPassword></nickPassword>
+      <ident>KEllyFreek</ident>
+      <autoJoin>
+        <string></string>
+      </autoJoin>
+      <performOnConnect>
+        <string>/join #kellyirc</string>
+        <string>/join #POCWORKS</string>
+        <string>/me #kellyirc has arrived, bitches</string>
+        <string>/msg #kellyirc perform on connect works!</string>
+      </performOnConnect>
     </connection.ConnectionSettings>
   </connSettings>
-  <chatLogs>true</chatLogs>
+  <chatLogs>false</chatLogs>
   <minimizeTray>false</minimizeTray>
   <nicksIgnored/>
   <outputColors>
@@ -84,6 +108,6 @@
       <string>http://google.com/?q=%INPUT%</string>
     </entry>
   </quicklinks>
-  <timestampsEnabled>false</timestampsEnabled>
-  <timestampFormatPattern></timestampFormatPattern>
+  <timestampsEnabled>true</timestampsEnabled>
+  <timestampFormatPattern>[hh:mm:ss]</timestampFormatPattern>
 </connection.Settings>

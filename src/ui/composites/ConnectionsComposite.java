@@ -14,6 +14,7 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -26,6 +27,8 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
+import shared.Message;
+import shared.NSAlertBox;
 import shared.RoomManager;
 import shared.SWTResourceManager;
 import connection.Connection;
@@ -70,9 +73,6 @@ public class ConnectionsComposite extends Composite {
 	/** The btn connect. */
 	private Button btnConnect;
 	
-	/** The btn save. */
-	private Button btnSave;
-	
 	/** The incomplete alert. */
 	private Label incompleteAlert;
 	
@@ -94,9 +94,13 @@ public class ConnectionsComposite extends Composite {
 		table.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (!table.getItem(table.getSelectionIndex()).getText(0)
-						.equals("")) {
+				//if the CS data isn't null, load dat up
+				if (!(table.getItem(table.getSelectionIndex()).getData() == null)) {
 					incompleteAlert.setVisible(false);
+					lblServer.setForeground(SWTResourceManager
+							.getColor(SWT.COLOR_BLACK));
+					lblNickname.setForeground(SWTResourceManager
+							.getColor(SWT.COLOR_BLACK));
 					enableFields();
 					loadForms((ConnectionSettings) table.getItem(
 							table.getSelectionIndex()).getData());
@@ -192,6 +196,9 @@ public class ConnectionsComposite extends Composite {
 		btnConnect.setText("Connect");
 
 		Group grpConnectionInfo = new Group(this, SWT.NONE);
+		GridData gd_grpConnectionInfo = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_grpConnectionInfo.widthHint = 609;
+		grpConnectionInfo.setLayoutData(gd_grpConnectionInfo);
 		grpConnectionInfo.setText("Connection Info");
 
 		lblName = new Label(grpConnectionInfo, SWT.NONE);
@@ -268,20 +275,6 @@ public class ConnectionsComposite extends Composite {
 		textAutoJoin.setBounds(341, 103, 76, 19);
 		textAutoJoin.addFocusListener(fieldSaver);
 
-		btnSave = new Button(grpConnectionInfo, SWT.NONE);
-		btnSave.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (checkIfCompleted()) {
-					// save stuff
-					saveEntry();
-				}
-			}
-
-		});
-		btnSave.setBounds(349, 155, 68, 23);
-		btnSave.setText("Save");
-
 		incompleteAlert = new Label(grpConnectionInfo, SWT.NONE);
 		incompleteAlert.setForeground(SWTResourceManager
 				.getColor(SWT.COLOR_RED));
@@ -294,13 +287,20 @@ public class ConnectionsComposite extends Composite {
 				.getColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
 		lblSeparateChannelsBy.setBounds(240, 131, 174, 14);
 		lblSeparateChannelsBy.setText("Separate channels by commas");
+		
+		textPerform = new Text(grpConnectionInfo, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);
+		textPerform.setBounds(434, 50, 162, 72);
+		textPerform.addFocusListener(fieldSaver);
+
+		lblPerformOnConnect = new Label(grpConnectionInfo, SWT.NONE);
+		lblPerformOnConnect.setBounds(434, 26, 173, 15);
+		lblPerformOnConnect.setText("Perform on connect:");
 		new Label(this, SWT.NONE);
 
 		loadTable();
 		disableFields();
 	}
 
-	// load table from connSettings from Settings
 	/**
 	 * Load table.
 	 */
@@ -328,25 +328,41 @@ public class ConnectionsComposite extends Composite {
 	}
 
 	/**
-	 * Save entry.
+	 * Save selected table entry.
 	 */
 	private void saveEntry()
 	{
-		ArrayList<String> autoJoin = new ArrayList<String>();
+		//do nothing if nothing selected
+		if(table.getSelectionCount()==0)
+			return;
+		ArrayList<String> autoJoin = new ArrayList<>();
 		for (String ch : textAutoJoin.getText().split(","))
 			autoJoin.add(ch);
-		ConnectionSettings newCS = new ConnectionSettings(
-				textConnName.getText(), textServer.getText(),
-				textPort.getText(), textServPass.getText(),
-				btnUseSsl.getSelection(), btnConnectOnStartup
-						.getSelection(), textNick.getText(),
-				textNickPass.getText(), textIdent.getText(),
-				autoJoin);
+		
+		ArrayList<String> performOnConnect = new ArrayList<>();
+		for (String cmd : textPerform.getText().split(Message.NEW_LINE))
+			performOnConnect.add(cmd);
+		
+		ConnectionSettings newCS = new ConnectionSettings(textServer.getText(),
+										textNick.getText());
+		
+		if(!textConnName.getText().isEmpty())
+			newCS.setConnectionName(textConnName.getText());
+		
+		newCS.setPort(Integer.parseInt(textPort.getText()));
+		newCS.setServerPassword(textServPass.getText());
+		newCS.setSsl(btnUseSsl.getSelection());
+		newCS.setConnectOnStart(btnConnectOnStartup.getSelection());
+		newCS.setNickPassword(textNickPass.getText());
+		if(!textIdent.getText().isEmpty())	
+			newCS.setIdent(textIdent.getText());
+		newCS.setAutoJoin(autoJoin);
+		newCS.setPerformOnConnect(performOnConnect);
+		
 		table.getItem(table.getSelectionIndex()).setData(newCS);
 		table.getItem(table.getSelectionIndex()).setText(
 				new String[] { newCS.getConnectionName(),
 						newCS.getServer(), newCS.getNickname() });
-		System.out.println(newCS);
 		saveTable();
 	}
 	
@@ -358,18 +374,30 @@ public class ConnectionsComposite extends Composite {
 	private void loadForms(ConnectionSettings cs) {
 		textConnName.setText(cs.getConnectionName());
 		textServer.setText(cs.getServer());
-		textPort.setText(cs.getPort());
+		textPort.setText(String.valueOf(cs.getPort()));
 		textServPass.setText(cs.getServerPassword());
 		btnUseSsl.setSelection(cs.isSsl());
 		btnConnectOnStartup.setSelection(cs.isConnectOnStart());
 		textNick.setText(cs.getNickname());
 		textNickPass.setText(cs.getNickPassword());
 		textIdent.setText(cs.getIdent());
+		
 		String autoJoin = "";
 		for (String ch : cs.getAutoJoin()) {
-			autoJoin += ch + ",";
+			if(!autoJoin.isEmpty())
+				autoJoin += ",";
+			autoJoin += ch;
 		}
-		textAutoJoin.setText(autoJoin.substring(0, autoJoin.length() - 1));
+		textAutoJoin.setText(autoJoin.substring(0, autoJoin.length()));
+		
+		String perform = "";
+		for (String cmd : cs.getPerformOnConnect())
+		{
+			if(!perform.isEmpty())
+				perform += Message.NEW_LINE;
+			perform += cmd;
+		}
+		textPerform.setText(perform);
 	}
 
 	/* (non-Javadoc)
@@ -386,8 +414,10 @@ public class ConnectionsComposite extends Composite {
 	 * @return true, if successful
 	 */
 	private boolean checkIfCompleted() {
+		
 		boolean complete = true;
-		if (textServer.getText().equals("")) {
+		//check if server text empty
+		if (textServer.getText().isEmpty()) {
 			incompleteAlert.setText("Missing server.");
 			lblServer.setForeground(SWTResourceManager
 					.getColor(SWT.COLOR_RED));
@@ -396,13 +426,8 @@ public class ConnectionsComposite extends Composite {
 		else
 			lblServer.setForeground(SWTResourceManager
 					.getColor(SWT.COLOR_BLACK));
-		if (textConnName.getText().equals("")) {
-			textConnName.setText(textServer.getText());
-		}
-		if (textPort.getText().equals("")) {
-			textPort.setText("6667");
-		}
-		if (textNick.getText().equals("")) {
+		//check if nick text is empty
+		if (textNick.getText().isEmpty()) {
 			incompleteAlert.setText("Missing nickname.");
 			lblNickname.setForeground(SWTResourceManager
 					.getColor(SWT.COLOR_RED));
@@ -411,10 +436,16 @@ public class ConnectionsComposite extends Composite {
 		else
 			lblNickname.setForeground(SWTResourceManager
 					.getColor(SWT.COLOR_BLACK));
-		if (textIdent.getText().equals("")) {
-			textIdent.setText(textNick.getText());
-		}
 		incompleteAlert.setVisible(!complete);
+		
+		//try to fill empty ident and conn name and port fields
+		if(textPort.getText().isEmpty())
+			textPort.setText(String.valueOf(ConnectionSettings.DEFAULT_PORT));
+		if(textConnName.getText().isEmpty())
+			textConnName.setText(textServer.getText());
+		if(textIdent.getText().isEmpty())
+			textIdent.setText(textNick.getText());
+		
 		return complete;
 	}
 
@@ -424,19 +455,9 @@ public class ConnectionsComposite extends Composite {
 	private void clearBlanks() {
 		TableItem[] items = table.getItems();
 		for (int k = items.length - 1; k >= 0; k--) {
-//			int j = 0;
-//			String text = items[k].getText(j);
-//			while(!text.equals(""))
-//			{
-//				if (text.equals("[blank]") || text.trim().equals("")) {
-//					table.remove(k);
-//					break;
-//				}
-//				j++;
-//				text = items[k].getText(j);
-//			}
 			ConnectionSettings cs = ((ConnectionSettings)items[k].getData());
-			if (cs == null || cs.getNickname().equals("") || cs.getServer().equals(""))
+			if (cs == null || cs.getNickname().isEmpty() && 
+					cs.getServer().isEmpty() && cs.getConnectionName().isEmpty())
 				table.remove(k);
 		}
 	}
@@ -456,6 +477,7 @@ public class ConnectionsComposite extends Composite {
 		btnUseSsl.setEnabled(true);
 		btnConnectOnStartup.setEnabled(true);
 		btnConnect.setEnabled(true);
+		textPerform.setEnabled(true);
 	}
 
 	/**
@@ -473,6 +495,7 @@ public class ConnectionsComposite extends Composite {
 		btnUseSsl.setEnabled(false);
 		btnConnectOnStartup.setEnabled(false);
 		btnConnect.setEnabled(false);
+		textPerform.setEnabled(false);
 	}
 
 	/**
@@ -489,6 +512,7 @@ public class ConnectionsComposite extends Composite {
 		textNickPass.setText("");
 		textIdent.setText("");
 		textAutoJoin.setText("");
+		textPerform.setText("");
 	}
 
 	/**
@@ -497,21 +521,23 @@ public class ConnectionsComposite extends Composite {
 	private void defaultFields() {
 		textConnName.setText("");
 		textServer.setText("");
-		textPort.setText("6667");
+		textPort.setText(String.valueOf(ConnectionSettings.DEFAULT_PORT));
 		textServPass.setText("");
-		btnUseSsl.setSelection(false);
-		btnConnectOnStartup.setSelection(false);
+		btnUseSsl.setSelection(ConnectionSettings.DEFAULT_SSL);
+		btnConnectOnStartup.setSelection(ConnectionSettings.DEFAULT_CONNECT_ON_START);
 		textNick.setText("");
 		textNickPass.setText("");
 		textIdent.setText("");
 		textAutoJoin.setText("");
+		textPerform.setText("");
 	}
 
 	/**
 	 * Save and connect.
 	 */
 	private void saveAndConnect() {
-		if (table.getSelectionCount() == 1 && checkIfCompleted()) {
+		boolean completed = checkIfCompleted();
+		if (table.getSelectionCount() == 1 && completed) {
 			// save stuff
 			saveEntry();
 			//connect
@@ -520,6 +546,8 @@ public class ConnectionsComposite extends Composite {
 			new Connection(RoomManager.getMain().getContainer(), SWT.NONE,
 					selected);
 		}
+		else if(!completed)
+			new NSAlertBox("Unable to connect", "The selected connection does not have enough information.", SWT.OK).go();
 	}
 	
 	/** The field saver. */
@@ -528,14 +556,11 @@ public class ConnectionsComposite extends Composite {
 		@Override
 		public void focusLost(FocusEvent e)
 		{
-			if(checkIfCompleted())
-				saveEntry();
-			else //still want the table to look updated?
-			{
-				table.getItem(table.getSelectionIndex()).setText(
-						new String[] { textConnName.getText(),
-								textServer.getText(), textNick.getText() });
-			}
+			checkIfCompleted();
+			saveEntry();
+			table.getItem(table.getSelectionIndex()).setText(
+					new String[] { textConnName.getText(),
+							textServer.getText(), textNick.getText() });
 			super.focusLost(e);
 		}
 		
@@ -567,6 +592,8 @@ public class ConnectionsComposite extends Composite {
 	
 	/** The lbl separate channels by. */
 	private Label lblSeparateChannelsBy;
+	private Text textPerform;
+	private Label lblPerformOnConnect;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.widgets.Widget#dispose()
@@ -575,7 +602,7 @@ public class ConnectionsComposite extends Composite {
 	public void dispose()
 	{
 		clearBlanks();
-		saveTable();
+		saveEntry();
 		super.dispose();
 	}
 }
