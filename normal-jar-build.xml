@@ -2,8 +2,6 @@
 <project default="create_run_jar" name="Create Runnable Jar for Project kEllyIRClient">
     <!--this file was created by Eclipse Runnable JAR Export Wizard-->
     <!--ANT 1.7 is required                                        -->
-	<taskdef name="swtjar" classname="org.swtjar.ant.SWTJarTask"
-	                           classpath="./libs/swtjar.jar"/>
     <target name="create_run_jar">
     	<mkdir dir="./release/"/>
     	<!--Create a temporary jar file with all the dependencies (i.e. the libs folder)-->
@@ -13,7 +11,7 @@
     	  </zipgroupfileset>
     	</jar>
     	
-    	<swtjar jarfile="./release/KEllyIRC.jar" targetmainclass="shared.Initializer" swtversion="3.7.1">
+        <jar destfile="./release/KEllyIRC.jar" filesetmanifest="mergewithoutmain">
             <manifest>
                 <attribute name="Main-Class" value="shared.Initializer"/>
                 <attribute name="Class-Path" value="."/>
@@ -23,7 +21,7 @@
         	<!--Add the dependencies jar to the jar, but exclude the meta-inf/manifest stuff
         	cause that screws stuff up.-->
 			<zipfileset excludes="META-INF/*.SF" src="./release/externalLibsTemp.jar" />
-        </swtjar>
+        </jar>
     	<!--Delete temporary file-->
     	<delete file="./release/externalLibsTemp.jar"/>
     </target>
