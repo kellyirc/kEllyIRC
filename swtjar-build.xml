@@ -1,30 +1,61 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="create_run_jar" name="Create Runnable Jar for Project kEllyIRClient">
     <!--this file was created by Eclipse Runnable JAR Export Wizard-->
-    <!--ANT 1.7 is required                                        -->
-	<taskdef name="swtjar" classname="org.swtjar.ant.SWTJarTask"
-	                           classpath="./libs/swtjar.jar"/>
+    <!--ANT 1.7 is required-->
     <target name="create_run_jar">
+    	
+    	<!--make the release directory if it doesn't exist-->
     	<mkdir dir="./release/"/>
+    	
     	<!--Create a temporary jar file with all the dependencies (i.e. the libs folder)-->
     	<jar jarfile="./release/externalLibsTemp.jar">
     	  <zipgroupfileset dir="./libs/">
+    	  	<exclude name="swt/*swt*.jar"/>
     	    <include name="**/*.jar"/>
     	  </zipgroupfileset>
     	</jar>
     	
-    	<swtjar jarfile="./release/KEllyIRC.jar" targetmainclass="shared.Initializer" swtversion="3.7.1">
+    	<!--package with windows swt-->
+        <jar destfile="./release/KEllyIRC-windows.jar" filesetmanifest="mergewithoutmain">
             <manifest>
                 <attribute name="Main-Class" value="shared.Initializer"/>
                 <attribute name="Class-Path" value="."/>
             </manifest>
         	<fileset dir="./bin"/>
-			<fileset dir="./libs"/>
         	<!--Add the dependencies jar to the jar, but exclude the meta-inf/manifest stuff
         	cause that screws stuff up.-->
 			<zipfileset excludes="META-INF/*.SF" src="./release/externalLibsTemp.jar" />
-        </swtjar>
+        	<zipfileset src="./libs/swt/swt-win32-3.7.1.jar"/>
+        </jar>
+    	
+    	<!--package with osx swt-->
+    	<jar destfile="./release/KEllyIRC-osx.jar" filesetmanifest="mergewithoutmain">
+    	            <manifest>
+    	                <attribute name="Main-Class" value="shared.Initializer"/>
+    	                <attribute name="Class-Path" value="."/>
+    	            </manifest>
+    	        	<fileset dir="./bin"/>
+    	        	<!--Add the dependencies jar to the jar, but exclude the meta-inf/manifest stuff
+    	        	cause that screws stuff up.-->
+    				<zipfileset excludes="META-INF/*.SF" src="./release/externalLibsTemp.jar" />
+    	        	<zipfileset src="./libs/swt/swt-osx32-3.7.1.jar"/>
+    	        </jar>
+    	
+    	<!--package with linux swt-->
+    	<jar destfile="./release/KEllyIRC-linux.jar" filesetmanifest="mergewithoutmain">
+    	            <manifest>
+    	                <attribute name="Main-Class" value="shared.Initializer"/>
+    	                <attribute name="Class-Path" value="."/>
+    	            </manifest>
+    	        	<fileset dir="./bin"/>
+    	        	<!--Add the dependencies jar to the jar, but exclude the meta-inf/manifest stuff
+    	        	cause that screws stuff up.-->
+    				<zipfileset excludes="META-INF/*.SF" src="./release/externalLibsTemp.jar" />
+    	        	<zipfileset src="./libs/swt/swt-linux32-3.7.1.jar"/>
+    	        </jar>
+    	
     	<!--Delete temporary file-->
     	<delete file="./release/externalLibsTemp.jar"/>
+    	
     </target>
 </project>

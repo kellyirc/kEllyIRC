@@ -1,3 +1,6 @@
 Now with more sausage
 Hot
 Features now, refactor later
+Days of Ant script labor
+Half-sized
+Not 40MB (as of writing)

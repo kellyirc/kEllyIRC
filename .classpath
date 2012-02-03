@@ -11,9 +11,6 @@
 	<classpathentry kind="lib" path="libs/org.eclipse.jface_3.7.0.I20110522-1430.jar"/>
 	<classpathentry kind="lib" path="libs/swt-grouplayout.jar"/>
 	<classpathentry kind="lib" path="libs/jar-in-jar-loader.jar"/>
-	<classpathentry kind="lib" path="libs/swt-win32-3.7.1.jar"/>
-	<classpathentry kind="lib" path="libs/swt-linux32-3.7.1.jar"/>
-	<classpathentry kind="lib" path="libs/swt-osx32-3.7.1.jar"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry kind="lib" path="libs/log4j-1.2.16.jar"/>
 	<classpathentry kind="lib" path="libs/Copernicus.jar"/>
