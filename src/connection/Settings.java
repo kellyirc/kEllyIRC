@@ -179,6 +179,8 @@ public class Settings {
  @Setter String timestampFormatPattern;
 	
 	
+	@Getter @Setter String messageFormat;
+	@Getter @Setter String actionFormat;
 	//creates default settings
 	/**
 	 * Instantiates a new settings.
@@ -209,6 +211,9 @@ public class Settings {
 		timestampsEnabled = true;
 		chatLogs=false;
 		minimizeTray=false;
+		
+		messageFormat = "%time% <%lvl%%nick%> %msg%";
+		actionFormat = "%time% ***%lvl%%nick% %msg%";
 		
 		quicklinks = new HashMap<>();
 		quicklinks.put("google","http://google.com/?q=%INPUT%");

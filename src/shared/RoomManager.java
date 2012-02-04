@@ -158,28 +158,32 @@ public class RoomManager {
 						return;
 
 					// use this so the nick tags <MyNick> get colored too.
-					String msgWithNick;
+					String formattedMsg;
 					if (m.getType() == Message.ACTION)
-						msgWithNick = "*** " + m.getSender() + " "
-								+ m.getContent();
+						formattedMsg = Settings.getSettings().getActionFormat();
 					else
-						msgWithNick = "<" + m.getSender() + "> "
-								+ m.getContent();
+						formattedMsg = Settings.getSettings().getMessageFormat();
+					formattedMsg = formattedMsg.replaceAll("%chan%", m.getChannel());
+					formattedMsg = formattedMsg.replaceAll("%msg%", m.getContent());
+					formattedMsg = formattedMsg.replaceAll("%nick%", m.getSender());
+					//replace time with timestamp if enabled, else get rid of it
 					SimpleDateFormat sdf = new SimpleDateFormat(Settings
 							.getSettings().getTimestampFormatPattern());
 					if (Settings.getSettings().isTimestampsEnabled())
-						msgWithNick = sdf.format(m.getDate()) + " "
-								+ msgWithNick;
+						formattedMsg = formattedMsg.replaceAll("%time%", sdf.format(m.getDate()));
+					else
+						formattedMsg = formattedMsg.replaceAll("%time%", "");
+					
 					// apply color for each type of message, except MSG because that's already
 					// default
 					if (m.getType() != Message.MSG) {
 						String colorStr = Settings.getSettings()
 								.getOutputColors().get(m.getType());
-						msgWithNick = colorset.ircColorsStr.get(colorStr)
-								+ msgWithNick;
+						formattedMsg = colorset.ircColorsStr.get(colorStr)
+								+ formattedMsg;
 					}
 					String strippedLine = Colors
-							.removeFormattingAndColors(msgWithNick);
+							.removeFormattingAndColors(formattedMsg);
 
 					if (r.getOutput() != null) {
 						int scrollPos = r.getOutput().getTopPixel();
@@ -205,7 +209,7 @@ public class RoomManager {
 					}
 
 					List<StyleRange> styleRanges = ControlCodeParser
-							.parseControlCodes(msgWithNick, r.getOutput()
+							.parseControlCodes(formattedMsg, r.getOutput()
 									.getText().length()
 									- strippedLine.length());
 

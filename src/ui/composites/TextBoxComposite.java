@@ -38,6 +38,8 @@ public class TextBoxComposite extends Composite
 	private Button btnEnableTimestamps;
 	private SimpleDateFormat sdf;
 	private Label lblPreview;
+	private Text messageFormatText;
+	private GridData gd_btnMessageHelp;
 
 	/**
 	 * Create the composite.
@@ -86,11 +88,11 @@ public class TextBoxComposite extends Composite
 		
 		Button btnTimestampHelp = new Button(this, SWT.NONE);
 		btnTimestampHelp.setImage(ImageCache.getImage("info_small.png"));
-		GridData gd_btnNewButton = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_btnNewButton.heightHint = 28;
-		gd_btnNewButton.widthHint = 28;
-		gd_btnNewButton.verticalIndent = -1; //one pixel up because Darkblizer
-		btnTimestampHelp.setLayoutData(gd_btnNewButton);
+		GridData gd_btnTimestampHelp = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_btnTimestampHelp.heightHint = 28;
+		gd_btnTimestampHelp.widthHint = 28;
+		gd_btnTimestampHelp.verticalIndent = -1; //one pixel up because Darkblizer
+		btnTimestampHelp.setLayoutData(gd_btnTimestampHelp);
 		btnTimestampHelp.addSelectionListener(new SelectionAdapter(){
 			@Override
 			public void widgetSelected(SelectionEvent e)
@@ -110,7 +112,39 @@ public class TextBoxComposite extends Composite
 		sdf = new SimpleDateFormat(timestampFormatText.getText());
 		lblPreview.setText(sdf.format(new Date()));
 		new Label(this, SWT.NONE);
+		new Label(this, SWT.NONE);
+		new Label(this, SWT.NONE);
+		new Label(this, SWT.NONE);
 		
+		Label lblAppearance = new Label(this, SWT.NONE);
+		lblAppearance.setText("Appearance");
+		new Label(this, SWT.NONE);
+		new Label(this, SWT.NONE);
+		
+		Label lblMessageFormat = new Label(this, SWT.NONE);
+		lblMessageFormat.setText("Message format:");
+		
+		messageFormatText = new Text(this, SWT.BORDER);
+		messageFormatText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		messageFormatText.setText(Settings.getSettings().getMessageFormat());
+		
+		Button btnMessageHelp = new Button(this, SWT.NONE);
+		btnMessageHelp.setImage(ImageCache.getImage("info_small.png"));
+		GridData gd_btnMessageHelp;
+		gd_btnMessageHelp = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_btnMessageHelp.widthHint = 28;
+		gd_btnMessageHelp.heightHint = 28;
+		btnMessageHelp.setLayoutData(gd_btnMessageHelp);
+		btnMessageHelp.addSelectionListener(new SelectionAdapter(){
+			@Override
+			public void widgetSelected(SelectionEvent e)
+			{
+				super.widgetSelected(e);
+				NSAlertBox infoAlert = new NSAlertBox("Message Formatting","These are the components you can use in the formatting of your message output:\nChannel - %chan%\nUser Level(op, voice, etc) - %lvl%\nMessage Content- %msg%\nNickname - %nick%\nTimestamp - %time%",SWT.ICON_QUESTION|SWT.OK);
+				infoAlert.go();
+				
+			}
+		});
 //		Button btnSave = new Button(this, SWT.NONE);
 //		btnSave.addSelectionListener(new SelectionAdapter() {
 //			@Override
@@ -131,8 +165,12 @@ public class TextBoxComposite extends Composite
 	{
 		if(timestampFormatText.getText().isEmpty())
 			timestampFormatText.setText("[hh:mm:ss]");
+		if(messageFormatText.getText().isEmpty())
+			messageFormatText.setText("%time% <%lvl%%nick%> %msg%");
+		
 		Settings.getSettings().setTimestampsEnabled(btnEnableTimestamps.getSelection());
 		Settings.getSettings().setTimestampFormatPattern(timestampFormatText.getText());
+		Settings.getSettings().setMessageFormat(messageFormatText.getText());
 		Settings.writeToFile();
 		super.dispose();
 	}
