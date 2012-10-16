@@ -166,7 +166,7 @@ public class TextBoxComposite extends Composite
 		if(timestampFormatText.getText().isEmpty())
 			timestampFormatText.setText("[hh:mm:ss]");
 		if(messageFormatText.getText().isEmpty())
-			messageFormatText.setText("%time% <%lvl%%nick%> %msg%");
+			messageFormatText.setText("%time% <%nick%> %msg%");
 		
 		Settings.getSettings().setTimestampsEnabled(btnEnableTimestamps.getSelection());
 		Settings.getSettings().setTimestampFormatPattern(timestampFormatText.getText());
